@@ -34,6 +34,7 @@ require 'ui.SelectButton'
 require 'ui.StartMenu'
 
 require 'ui.CreditsLayer'
+require 'ui.GameModeLayer'
 require 'ui.SelectLayer'
 require 'ui.SkillLayer'
 require 'ui.GearLayer'

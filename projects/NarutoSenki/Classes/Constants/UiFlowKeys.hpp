@@ -50,3 +50,13 @@ static constexpr const char *kShowDetail = "GearLayer_ShowGearDetail";
 // buttonType values: GearButtonType in GearLayer.h (Buy = 0, Sell = 1).
 static constexpr const char *kDecorateButton = "GearLayer_DecorateButton";
 } // namespace GearFlowKeys
+
+// Lua globals implemented in lua/ui/GameModeLayer.lua (game mode select screen).
+// First argument is the object named in the comment.
+namespace GameModeFlowKeys
+{
+// (GameModeLayer) - builds background, bars, title and lays out every control C++ created (mode buttons, label, return menu).
+static constexpr const char *kInit = "GameModeLayer_Init";
+// (ModeMenuButton, useMask2) - builds the chain mask over a locked button and hands it back with setLockMask.
+static constexpr const char *kDecorateLock = "GameModeLayer_DecorateLock";
+} // namespace GameModeFlowKeys

@@ -13,72 +13,34 @@ extern const GameData kDefaultGameData;
 
 bool GameModeLayer::init()
 {
-	auto bgSprite = Sprite::create("red_bg.png");
-	FULL_SCREEN_SPRITE(bgSprite);
-	bgSprite->setAnchorPoint(Vec2(0, 0));
-	bgSprite->setPosition(Vec2(0, 0));
-	addChild(bgSprite, -100);
-
-	// menu bars
-	auto menu_bar_b = Sprite::create("menu_bar2.png");
-	menu_bar_b->setAnchorPoint(Vec2(0, 0));
-	FULL_SCREEN_SPRITE(menu_bar_b);
-	addChild(menu_bar_b, 2);
-
-	auto menu_bar_t = Sprite::create("menu_bar3.png");
-	menu_bar_t->setAnchorPoint(Vec2(0, 0));
-	menu_bar_t->setPosition(Vec2(0, winSize.height - menu_bar_t->getContentSize().height));
-	FULL_SCREEN_SPRITE(menu_bar_t);
-	addChild(menu_bar_t, 2);
-
-	auto modemenu_title = Sprite::createWithSpriteFrameName("startmenu_title.png");
-	modemenu_title->setAnchorPoint(Vec2(0, 0));
-	modemenu_title->setPosition(Vec2(2, winSize.height - modemenu_title->getContentSize().height - 2));
-	addChild(modemenu_title, 3);
+	RETURN_FALSE_IF(!Layer::init());
 
 	initModeData();
 
-	// init menus
-	// const int padding = -10;
-	// const int width = 100;
-	const int offset = (winSize.width - 460) / 2 + 100 / 2;
-	const float posY = (winSize.height / 2) + 30;
-	for (int i = 0; i < 3; i++)
+	// Mode buttons: touch handling and selection live in ModeMenuButton /
+	// selectMode. Lua positions them (see lua/ui/GameModeLayer.lua).
+	for (size_t i = 0; i < GameMode::__Internal_Max_Length; i++)
 	{
 		auto mode_btn = ModeMenuButton::create(format("GameMode/{}.png", i + 1));
 		mode_btn->mode = (GameMode)i;
 		mode_btn->setDelegate(this);
-		mode_btn->setPositionX(offset);
-		mode_btn->setPositionY((posY + 55 + 7.5f) - i * (55 + 7.5f));
-		menuButtons[i] = mode_btn;
-		addChild(mode_btn);
-	}
-	for (int i = 3; i < 6; i++)
-	{
-		auto mode_btn = ModeMenuButton::create(format("GameMode/{}.png", i + 1));
-		mode_btn->mode = (GameMode)i;
-		mode_btn->setDelegate(this);
-		mode_btn->setPositionX(offset + 10 + (i - 2) * (80 + 5));
-		mode_btn->setPositionY(posY);
-		menuButtons[i] = mode_btn;
-		addChild(mode_btn);
-		// init animation
-		// auto delay = DelayTime::create(i * 0.3f);
-		// auto move = MoveTo::create(0.5f, Vec2((i - 1) * (width + padding) + offset, posY + 30));
-		// auto action = Sequence::createWithTwoActions(delay, move);
-		// mode_btn->runAction(action);
-	}
-	for (size_t i = 6; i < GameMode::__Internal_Max_Length; i++)
-	{
-		auto mode_btn = ModeMenuButton::create(format("GameMode/{}.png", i + 1));
-		mode_btn->mode = (GameMode)i;
-		mode_btn->setDelegate(this);
-		mode_btn->setPositionX(offset + 20 + (80 + 5) * 4);
-		mode_btn->setPositionY((posY + 47) - (i - 6) * (86 + 8.0f));
 		menuButtons[i] = mode_btn;
 		addChild(mode_btn);
 	}
 
+	// Text of the selected mode; Lua places it.
+	menuLabel = CCLabelTTF::create();
+	addChild(menuLabel, 5);
+
+	// Return button: the action stays here, Lua places the menu.
+	auto return_img = MenuItemSprite::create(Sprite::create("UI/return_btn.png"), nullptr, nullptr, this, menu_selector(GameModeLayer::backToMenu));
+	returnMenu = Menu::create(return_img, nullptr);
+	addChild(returnMenu, 5);
+
+	// Lua builds the decoration and lays out every control created above.
+	lua_call_func_self(GameModeFlowKeys::kInit, this, "GameModeLayer");
+
+	// Locking needs the final button positions (Lua draws the chain on top).
 	for (size_t i = 0; i < menuButtons.size(); i++)
 	{
 		if (modes[i].isLocked)
@@ -88,19 +50,7 @@ bool GameModeLayer::init()
 		}
 	}
 
-	menuLabel = CCLabelTTF::create();
-	menuLabel->setAnchorPoint(Vec2(0, 0));
-	menuLabel->setPosition(Vec2(10, 2));
-	addChild(menuLabel, 5);
-
-	// init return button
-	auto return_img = MenuItemSprite::create(Sprite::create("UI/return_btn.png"), nullptr, nullptr, this, menu_selector(GameModeLayer::backToMenu));
-	Menu *return_btn = Menu::create(return_img, nullptr);
-	return_btn->setAnchorPoint(Vec2(1, 0.5f));
-	return_btn->setPosition(winSize.width - 38, 65);
-	addChild(return_btn, 5);
-
-	return Layer::init();
+	return true;
 }
 
 void GameModeLayer::backToMenu(Ref *sender)

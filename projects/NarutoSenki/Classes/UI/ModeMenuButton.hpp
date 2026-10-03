@@ -1,5 +1,6 @@
 #pragma once
 #include "UI/GameModeLayer.h"
+#include "Constants/UiFlowKeys.hpp"
 
 class ModeMenuButton : public Sprite, public CCTouchDelegate
 {
@@ -10,7 +11,7 @@ public:
 	PROP(GameModeLayer *, _gameModeLayer, Delegate);
 
 	GameMode mode;
-	bool useMask2;
+	bool useMask2 = false;
 
 	bool init(const string &szImage)
 	{
@@ -55,22 +56,21 @@ public:
 		return lockMask != nullptr;
 	}
 
+	// Logical lock state stays here; the chain mask visual is built by Lua
+	// (GameModeFlowKeys::kDecorateLock) and handed back through setLockMask.
 	void lock()
 	{
 		if (lockMask == nullptr)
-		{
-			auto maskPath = useMask2 ? "GameMode/chain_mask2.png" : "GameMode/chain_mask.png";
-			lockMask = Sprite::create(maskPath);
-			lockMask->setPosition(getPosition());
-			_gameModeLayer->addChild(lockMask, 1000);
-		}
+			lua_call_func_self(GameModeFlowKeys::kDecorateLock, this, "ModeMenuButton", useMask2);
 	}
+
+	void setLockMask(Sprite *mask) { lockMask = mask; }
 
 	void unlock()
 	{
 		if (lockMask)
 		{
-			_gameModeLayer->removeChild(lockMask, true);
+			lockMask->removeFromParentAndCleanup(true);
 			lockMask = nullptr;
 		}
 	}

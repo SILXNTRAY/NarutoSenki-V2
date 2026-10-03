@@ -95,6 +95,8 @@ using namespace CocosDenshion;
 #include "GameScene.h"
 #include "BGLayer.h"
 #include "CreditsLayer.h"
+#include "UI/GameModeLayer.h"
+#include "UI/ModeMenuButton.hpp"
 #include "GameLayer.h"
 #include "GearLayer.h"
 #include "GameOver.h"
@@ -576,6 +578,8 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"CCActionManager");
  tolua_usertype(tolua_S,"CCTransitionSlideInT");
  tolua_usertype(tolua_S,"CreditsLayer");
+ tolua_usertype(tolua_S,"GameModeLayer");
+ tolua_usertype(tolua_S,"ModeMenuButton");
  tolua_usertype(tolua_S,"CCCatmullRomTo");
  tolua_usertype(tolua_S,"CCEaseBounceIn");
  tolua_usertype(tolua_S,"CCTransitionSceneOriented");
@@ -66950,6 +66954,173 @@ static int tolua_Cocos2d_GameScene_getPlatform00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setLockMask of class  ModeMenuButton */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_ModeMenuButton_setLockMask00
+static int tolua_Cocos2d_ModeMenuButton_setLockMask00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"ModeMenuButton",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,2,"CCSprite",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  ModeMenuButton* self = (ModeMenuButton*)  tolua_tousertype(tolua_S,1,0);
+  CCSprite* mask = ((CCSprite*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setLockMask'", NULL);
+#endif
+  {
+   self->setLockMask(mask);
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setLockMask'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getModeButtonCount of class  GameModeLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GameModeLayer_getModeButtonCount00
+static int tolua_Cocos2d_GameModeLayer_getModeButtonCount00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GameModeLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GameModeLayer* self = (GameModeLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getModeButtonCount'", NULL);
+#endif
+  {
+   int tolua_ret = (int)  self->getModeButtonCount();
+   tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getModeButtonCount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getModeButton of class  GameModeLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GameModeLayer_getModeButton00
+static int tolua_Cocos2d_GameModeLayer_getModeButton00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GameModeLayer",0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GameModeLayer* self = (GameModeLayer*)  tolua_tousertype(tolua_S,1,0);
+  int index = ((int)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getModeButton'", NULL);
+#endif
+  {
+   ModeMenuButton* tolua_ret = (ModeMenuButton*)  self->getModeButton(index);
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ModeMenuButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getModeButton'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getModeLabel of class  GameModeLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GameModeLayer_getModeLabel00
+static int tolua_Cocos2d_GameModeLayer_getModeLabel00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GameModeLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GameModeLayer* self = (GameModeLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getModeLabel'", NULL);
+#endif
+  {
+   CCLabelTTF* tolua_ret = (CCLabelTTF*)  self->getModeLabel();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCLabelTTF");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getModeLabel'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getReturnMenu of class  GameModeLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GameModeLayer_getReturnMenu00
+static int tolua_Cocos2d_GameModeLayer_getReturnMenu00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GameModeLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GameModeLayer* self = (GameModeLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getReturnMenu'", NULL);
+#endif
+  {
+   CCMenu* tolua_ret = (CCMenu*)  self->getReturnMenu();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCMenu");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getReturnMenu'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getSlotIndex of class  MenuButton */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_MenuButton_getSlotIndex00
 static int tolua_Cocos2d_MenuButton_getSlotIndex00(lua_State* tolua_S)
@@ -73163,6 +73334,17 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CreditsLayer","CreditsLayer","CCLayer",NULL);
   tolua_beginmodule(tolua_S,"CreditsLayer");
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"ModeMenuButton","ModeMenuButton","CCSprite",NULL);
+  tolua_beginmodule(tolua_S,"ModeMenuButton");
+   tolua_function(tolua_S,"setLockMask",tolua_Cocos2d_ModeMenuButton_setLockMask00);
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"GameModeLayer","GameModeLayer","CCLayer",NULL);
+  tolua_beginmodule(tolua_S,"GameModeLayer");
+   tolua_function(tolua_S,"getModeButtonCount",tolua_Cocos2d_GameModeLayer_getModeButtonCount00);
+   tolua_function(tolua_S,"getModeButton",tolua_Cocos2d_GameModeLayer_getModeButton00);
+   tolua_function(tolua_S,"getModeLabel",tolua_Cocos2d_GameModeLayer_getModeLabel00);
+   tolua_function(tolua_S,"getReturnMenu",tolua_Cocos2d_GameModeLayer_getReturnMenu00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"GearButton","GearButton","CCSprite",NULL);
   tolua_beginmodule(tolua_S,"GearButton");

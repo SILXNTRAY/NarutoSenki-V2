@@ -6,6 +6,8 @@ $#include "GameScene.h"
 
 $#include "BGLayer.h"
 $#include "CreditsLayer.h"
+$#include "UI/GameModeLayer.h"
+$#include "UI/ModeMenuButton.hpp"
 $#include "GameLayer.h"
 $#include "GearLayer.h"
 $#include "GameOver.h"
@@ -63,6 +65,26 @@ public:
  */
 class CreditsLayer : public CCLayer {
 public:
+};
+
+/* GameModeLayer.h / ModeMenuButton.hpp
+ * Created by C++ (StartMenu::onTrainingCallBack). Mode data, selection, touch
+ * handling, the return button and scene changes stay in C++;
+ * lua/ui/GameModeLayer.lua builds the decoration, places the controls through
+ * the getters below and draws the chain over locked buttons.
+ * NOTE: only methods are declared (see the HudLayer note below).
+ */
+class ModeMenuButton : public CCSprite {
+public:
+	void setLockMask(CCSprite *mask);
+};
+
+class GameModeLayer : public CCLayer {
+public:
+	int getModeButtonCount();
+	ModeMenuButton *getModeButton(int index);
+	CCLabelTTF *getModeLabel();
+	CCMenu *getReturnMenu();
 };
 
 /* GearLayer.h
