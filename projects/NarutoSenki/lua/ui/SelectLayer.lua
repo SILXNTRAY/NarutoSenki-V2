@@ -6,10 +6,17 @@ function SelectLayer:init()
 
     self.mode = _G.mode
     self.enableCustomSelect = _G.enableCustomSelect
-    if self.mode == GameMode.Clone or self.mode == GameMode.OneVsOne then
+    self.is1v1Mode = false
+    if self.mode == GameMode.Clone then
         self.enableCustomSelect = false
         self.is3v3Mode = false
         self.is4v4Mode = false
+    elseif self.mode == GameMode.OneVsOne then
+        -- 1v1: player picks their hero, then the enemy
+        self.enableCustomSelect = true
+        self.is3v3Mode = false
+        self.is4v4Mode = false
+        self.is1v1Mode = true
     else
         self.is3v3Mode = self.mode == GameMode.Classic or self.mode ==
                              GameMode.RandomDeathmatch
@@ -215,7 +222,9 @@ function SelectLayer:init()
     self.selectHero = selectBtn._charName
 
     if self.enableCustomSelect then
-        if self.is3v3Mode or self.is4v4Mode then
+        if self.is1v1Mode then
+            self:initCustomSelectMode1v1()
+        elseif self.is3v3Mode or self.is4v4Mode then
             self:initCustomSelectMode()
         end
     end
@@ -342,6 +351,30 @@ function SelectLayer:initCustomSelectMode()
     self:addChild(teamSelector, 50)
 end
 
+function SelectLayer:initCustomSelectMode1v1()
+    log('Initial Custom Select Mode (1v1)...')
+    local teamSelector = display.newLayer()
+
+    local teamBg = display.newSprite('#team_bg.png', 0, 185)
+    teamBg:setAnchorPoint(0, 0)
+    teamSelector:addChild(teamBg)
+
+    -- single opponent slot, no allies
+    local comSelector1 = display.newSprite('#unknow_select.png', 2, 194)
+    comSelector1:setAnchorPoint(0, 0)
+    teamSelector:addChild(comSelector1)
+    self._comSelector1 = comSelector1
+
+    self._comLabel1 = display.newSprite('#com_label.png')
+    self._comLabel1:setPosition(comSelector1:getPositionX() +
+                                    comSelector1:getContentSize().width + 2 + 18,
+                                comSelector1:getPositionY() +
+                                    comSelector1:getContentSize().height / 2)
+    teamSelector:addChild(self._comLabel1)
+
+    self:addChild(teamSelector, 50)
+end
+
 function SelectLayer:onQuestBtn()
     -- not support
     self:setTip('ComingSoon')
@@ -432,6 +465,11 @@ function SelectLayer:setSelected(btn)
             self._comLabel1:setOpacity(255)
             self._comLabel1:setDisplayFrame(
                 display.newSpriteFrame('com_label2.png'))
+
+            if self.is1v1Mode then
+                self._selectImg:removeFromParent()
+                self._selectImg = nil
+            end
         end
     elseif not self._com2Select then
         self._comSelector2:setDisplayFrame(
@@ -470,6 +508,8 @@ function SelectLayer:noComSelect()
         return self._com3Select
     elseif self.is3v3Mode then
         return self._com2Select
+    elseif self.is1v1Mode then
+        return self._com1Select
     else
         return self._playerSelect
     end
