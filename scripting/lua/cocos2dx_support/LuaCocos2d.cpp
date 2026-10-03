@@ -88,6 +88,7 @@ using namespace CocosDenshion;
 
 
 
+
 #include "LuaCocos2d.h"
 #include "Defines.h"
 #include "Core/Provider.hpp"
@@ -509,6 +510,7 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"CCAnimate");
  tolua_usertype(tolua_S,"CCTiledGrid3DAction");
  tolua_usertype(tolua_S,"std::vector<CCPoint*>");
+ tolua_usertype(tolua_S,"ActionButton");
  tolua_usertype(tolua_S,"CCPointArray");
  tolua_usertype(tolua_S,"CCTransitionProgressHorizontal");
  tolua_usertype(tolua_S,"ccColor3B");
@@ -67387,6 +67389,401 @@ static int tolua_Cocos2d_LoadLayer_onLoadFinish00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setStatusBars of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_setStatusBars00
+static int tolua_Cocos2d_HudLayer_setStatusBars00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,2,"CCSprite",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,3,"CCSprite",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,4,"CCProgressTimer",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,5,"CCLabelBMFont",0,&tolua_err) ||
+     !tolua_isusertype(tolua_S,6,"CCLabelBMFont",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,7,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+  CCSprite* hpbar = ((CCSprite*)  tolua_tousertype(tolua_S,2,0));
+  CCSprite* hpMark = ((CCSprite*)  tolua_tousertype(tolua_S,3,0));
+  CCProgressTimer* expbar = ((CCProgressTimer*)  tolua_tousertype(tolua_S,4,0));
+  CCLabelBMFont* hp = ((CCLabelBMFont*)  tolua_tousertype(tolua_S,5,0));
+  CCLabelBMFont* exp = ((CCLabelBMFont*)  tolua_tousertype(tolua_S,6,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setStatusBars'", NULL);
+#endif
+  {
+   self->setStatusBars(hpbar,hpMark,expbar,hp,exp);
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setStatusBars'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNAttackButton of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getNAttackButton00
+static int tolua_Cocos2d_HudLayer_getNAttackButton00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNAttackButton'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getNAttackButton();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNAttackButton'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSkill1Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getSkill1Button00
+static int tolua_Cocos2d_HudLayer_getSkill1Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSkill1Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getSkill1Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSkill1Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSkill2Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getSkill2Button00
+static int tolua_Cocos2d_HudLayer_getSkill2Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSkill2Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getSkill2Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSkill2Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSkill3Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getSkill3Button00
+static int tolua_Cocos2d_HudLayer_getSkill3Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSkill3Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getSkill3Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSkill3Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSkill4Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getSkill4Button00
+static int tolua_Cocos2d_HudLayer_getSkill4Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSkill4Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getSkill4Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSkill4Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSkill5Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getSkill5Button00
+static int tolua_Cocos2d_HudLayer_getSkill5Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSkill5Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getSkill5Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSkill5Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getItem1Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getItem1Button00
+static int tolua_Cocos2d_HudLayer_getItem1Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getItem1Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getItem1Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getItem1Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getItem2Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getItem2Button00
+static int tolua_Cocos2d_HudLayer_getItem2Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getItem2Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getItem2Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getItem2Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getItem3Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getItem3Button00
+static int tolua_Cocos2d_HudLayer_getItem3Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getItem3Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getItem3Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getItem3Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getItem4Button of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getItem4Button00
+static int tolua_Cocos2d_HudLayer_getItem4Button00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getItem4Button'", NULL);
+#endif
+  {
+   ActionButton* tolua_ret = (ActionButton*)  self->getItem4Button();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ActionButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getItem4Button'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getMiniLayer of class  HudLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_HudLayer_getMiniLayer00
+static int tolua_Cocos2d_HudLayer_getMiniLayer00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"HudLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  HudLayer* self = (HudLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMiniLayer'", NULL);
+#endif
+  {
+   CCLayer* tolua_ret = (CCLayer*)  self->getMiniLayer();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCLayer");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMiniLayer'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: delete of class  SelectLayer */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_SelectLayer_delete00
 static int tolua_Cocos2d_SelectLayer_delete00(lua_State* tolua_S)
@@ -72052,6 +72449,24 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"preloadIMG",tolua_Cocos2d_LoadLayer_preloadIMG00);
    tolua_function(tolua_S,"playBGM",tolua_Cocos2d_LoadLayer_playBGM00);
    tolua_function(tolua_S,"onLoadFinish",tolua_Cocos2d_LoadLayer_onLoadFinish00);
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"ActionButton","ActionButton","CCSprite",NULL);
+  tolua_beginmodule(tolua_S,"ActionButton");
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"HudLayer","HudLayer","CCLayer",NULL);
+  tolua_beginmodule(tolua_S,"HudLayer");
+   tolua_function(tolua_S,"setStatusBars",tolua_Cocos2d_HudLayer_setStatusBars00);
+   tolua_function(tolua_S,"getNAttackButton",tolua_Cocos2d_HudLayer_getNAttackButton00);
+   tolua_function(tolua_S,"getSkill1Button",tolua_Cocos2d_HudLayer_getSkill1Button00);
+   tolua_function(tolua_S,"getSkill2Button",tolua_Cocos2d_HudLayer_getSkill2Button00);
+   tolua_function(tolua_S,"getSkill3Button",tolua_Cocos2d_HudLayer_getSkill3Button00);
+   tolua_function(tolua_S,"getSkill4Button",tolua_Cocos2d_HudLayer_getSkill4Button00);
+   tolua_function(tolua_S,"getSkill5Button",tolua_Cocos2d_HudLayer_getSkill5Button00);
+   tolua_function(tolua_S,"getItem1Button",tolua_Cocos2d_HudLayer_getItem1Button00);
+   tolua_function(tolua_S,"getItem2Button",tolua_Cocos2d_HudLayer_getItem2Button00);
+   tolua_function(tolua_S,"getItem3Button",tolua_Cocos2d_HudLayer_getItem3Button00);
+   tolua_function(tolua_S,"getItem4Button",tolua_Cocos2d_HudLayer_getItem4Button00);
+   tolua_function(tolua_S,"getMiniLayer",tolua_Cocos2d_HudLayer_getMiniLayer00);
   tolua_endmodule(tolua_S);
   #ifdef __cplusplus
   tolua_cclass(tolua_S,"SelectLayer","SelectLayer","CCLayer",tolua_collect_SelectLayer);

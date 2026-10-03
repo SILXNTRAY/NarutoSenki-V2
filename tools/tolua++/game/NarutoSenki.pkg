@@ -57,6 +57,38 @@ public:
 	void onLoadFinish(float dt);
 };
 
+/* ActionButton.h
+ * Core logic stays in C++; Lua only positions / scales / rotates it
+ * (everything it needs is inherited from CCSprite).
+ */
+class ActionButton : public CCSprite {
+};
+
+/* HudLayer.h
+ * Created by C++ (LoadLayer). Lua builds the HP/XP bars and hands them back
+ * with setStatusBars, and lays out the C++-driven controls through the getters.
+ * NOTE: only methods are declared. tolua++ member-variable getters for
+ * cocos objects emit a toluafix_pushusertype_ccobject call that does not
+ * compile, so expose members through accessor methods instead.
+ */
+class HudLayer : public CCLayer {
+public:
+	void setStatusBars(CCSprite *hpbar, CCSprite *hpMark, CCProgressTimer *expbar, CCLabelBMFont *hp, CCLabelBMFont *exp);
+
+	ActionButton *getNAttackButton();
+	ActionButton *getSkill1Button();
+	ActionButton *getSkill2Button();
+	ActionButton *getSkill3Button();
+	ActionButton *getSkill4Button();
+	ActionButton *getSkill5Button();
+	ActionButton *getItem1Button();
+	ActionButton *getItem2Button();
+	ActionButton *getItem3Button();
+	ActionButton *getItem4Button();
+
+	CCLayer *getMiniLayer();
+};
+
 /* SelectLayer.h */
 class SelectLayer : public CCLayer {
 public:

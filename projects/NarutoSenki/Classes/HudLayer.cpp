@@ -2,6 +2,7 @@
 #include "GameLayer.h"
 #include "HudLayer.h"
 #include "MyUtils/CCShake.h"
+#include "Constants/UiFlowKeys.hpp"
 
 MiniIcon::MiniIcon()
 {
@@ -231,22 +232,8 @@ void HudLayer::initHeroInterface()
 	status_bar->setPosition(Vec2(0, winHeight - status_bar->getContentSize().height));
 	uiBatch->addChild(status_bar);
 
-	status_hpbar = Sprite::createWithSpriteFrameName("status_hpbar.png");
-	status_hpbar->setPosition(Vec2(53, winHeight - 54));
-	addChild(status_hpbar, 40);
-
-	status_hpMark = Sprite::createWithSpriteFrameName("status_hpMark.png");
-	status_hpMark->setAnchorPoint(Vec2(0, 0));
-	status_hpMark->setPosition(Vec2(54, winHeight - 105));
-	addChild(status_hpMark, 45);
-
-	Sprite *tmpSprite = Sprite::createWithSpriteFrameName("status_ckrbar.png");
-	status_expbar = ProgressTimer::create(tmpSprite);
-	status_expbar->setType(kCCProgressTimerTypeRadial);
-	status_expbar->setPercentage(0);
-	status_expbar->setReverseDirection(true);
-	status_expbar->setPosition(Vec2(54, winHeight - 54));
-	addChild(status_expbar, 50);
+	// HP bar, HP mark and XP bar (+ labels) are built by lua/ui/HudLayer.lua,
+	// see HudLayer_InitStatusBars below.
 	MenuItem *menu_button = MenuItemSprite::create(Sprite::createWithSpriteFrameName("minimap_bg.png"), nullptr, nullptr, this, menu_selector(HudLayer::pauseButtonClick));
 	menu_button->setAnchorPoint(Vec2(1, 1));
 	pauseNenu = Menu::create(menu_button, nullptr);
@@ -308,20 +295,12 @@ void HudLayer::initHeroInterface()
 	auto currCharName = currentPlayer->getName();
 	initGearButton(currCharName);
 
-	hpLabel = CCLabelBMFont::create(currentPlayer->getHP_Value().asString().c_str(), Fonts::Default);
-	hpLabel->setScale(0.35f);
-	hpLabel->setPosition(Vec2(0, winHeight - 54));
-	hpLabel->setAnchorPoint(Vec2(0, 0));
-
-	addChild(hpLabel, 5000);
-
-	int exp = currentPlayer->getEXP() - ((currentPlayer->getLV() - 1) * 500) / 500;
-	expLabel = CCLabelBMFont::create(format("{}%", exp).c_str(), Fonts::Default);
-	expLabel->setScale(0.35f);
-	expLabel->setPosition(Vec2(94, winHeight - 54));
-	expLabel->setAnchorPoint(Vec2(0.5f, 0));
-
-	addChild(expLabel, 5000);
+	// Lua owns the HP/XP bars and labels: it creates them and assigns
+	// status_hpbar / status_hpMark / status_expbar / hpLabel / expLabel.
+	lua_call_func_self(HudFlowKeys::kInitStatusBars, this, "HudLayer",
+					   (int)currentPlayer->getHP_Value().asInt(),
+					   (int)currentPlayer->getEXP(),
+					   (int)currentPlayer->getLV());
 
 	gameClock = CCLabelBMFont::create("00:00", Fonts::Default);
 	gameClock->setAnchorPoint(Vec2(0.5f, 0));
@@ -412,53 +391,15 @@ void HudLayer::initHeroInterface()
 	uiBatch->addChild(item4Button);
 	item4Button->setVisible(false);
 
+	// Position / scale / rotation of the buttons and the minimap layer are
+	// controlled from Lua (lua/ui/HudLayer.lua). Their behaviour stays here.
+	miniLayer = Layer::create();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	nAttackButton->setPosition(Vec2(winWidth - 60, 8));
-	skill1Button->setPosition(Vec2(winWidth - skill1Button->getContentSize().width - 64, 2));
-	skill2Button->setPosition(Vec2(winWidth - 95, 50));
-	skill3Button->setPosition(Vec2(winWidth - 44, 8 + nAttackButton->getContentSize().height + 8));
-	skill4Button->setPosition(Vec2(skill1Button->getPositionX() - skill4Button->getContentSize().width - 8, 2));
-	skill5Button->setPosition(Vec2(skill4Button->getPositionX() - skill5Button->getContentSize().width - 8, 2));
-
-	item1Button->setPosition(Vec2(8, skill3Button->getPositionY() + skill3Button->getContentSize().height));
-	item2Button->setPosition(Vec2(winWidth - 44, skill3Button->getPositionY() + skill3Button->getContentSize().height + 8));
-	if (skill5Button)
-		item3Button->setPosition(Vec2(skill5Button->getPositionX() - skill5Button->getContentSize().width - 8, 2));
-	else if (skill4Button)
-		item3Button->setPosition(Vec2(skill4Button->getPositionX() - skill4Button->getContentSize().width - 8, 2));
-	else
-		item3Button->setPosition(Vec2(skill1Button->getPositionX() - skill1Button->getContentSize().width - 8, 2));
-	item4Button->setPosition(Vec2(skill2Button->getPositionX() - skill2Button->getContentSize().width - 8, skill2Button->getPositionY()));
+	const bool isMobileLayout = true;
 #else
-	float width = skill1Button->getContentSize().width;
-
-	nAttackButton->setPosition(Vec2(winWidth + 100, -100));
-
-	skill1Button->setPosition(Vec2(winWidth / 2 - (width + 8) * 2, 2));
-	skill1Button->setScale(DESKTOP_UI_SCALE);
-	skill2Button->setPosition(Vec2(winWidth / 2 - width - 8, 2));
-	skill2Button->setScale(DESKTOP_UI_SCALE);
-	skill3Button->setPosition(Vec2(winWidth / 2, 2));
-	skill3Button->setScale(DESKTOP_UI_SCALE);
-	skill4Button->setPosition(Vec2(winWidth / 2 + width + 8, 2));
-	skill4Button->setScale(DESKTOP_UI_SCALE);
-	skill5Button->setPosition(Vec2(winWidth / 2 + (width + 8) * 2, 2));
-	skill5Button->setScale(DESKTOP_UI_SCALE);
-
-	item1Button->setScale(DESKTOP_UI_SCALE);
-	item2Button->setScale(DESKTOP_UI_SCALE);
-	item3Button->setScale(DESKTOP_UI_SCALE);
-	item4Button->setScale(DESKTOP_UI_SCALE);
-
-	// Ramen	Item
-	item1Button->setPosition(Vec2(8, 8 + nAttackButton->getContentSize().height + skill1Button->getContentSize().height));
-	// First 	Item (Speed Up & Stealth)
-	item3Button->setPosition(Vec2(winWidth - skill1Button->getContentSize().width - 64, 2));
-	// Second 	Item (変わり身の術)
-	item4Button->setPosition(Vec2(winWidth - 95, 50));
-	// Third 	Item (Trap)
-	item2Button->setPosition(Vec2(winWidth - 44, 8 + nAttackButton->getContentSize().height + 8));
+	const bool isMobileLayout = false;
 #endif
+	lua_call_func_self(HudFlowKeys::kLayoutControls, this, "HudLayer", isMobileLayout);
 
 	// Set mask
 	skill1Button->setMarkSprite("skill_freeze.png");
@@ -474,9 +415,7 @@ void HudLayer::initHeroInterface()
 
 	// init gear
 	updateGears();
-	miniLayer = Layer::create();
 	miniLayer->setAnchorPoint(Vec2(0, 0));
-	miniLayer->setPosition(Vec2(winWidth - 112, winHeight - 38));
 
 	for (auto tower : getGameLayer()->_TowerArray)
 	{
@@ -635,11 +574,8 @@ void HudLayer::updateGears()
 
 void HudLayer::setHPLose(float percent)
 {
-	RotateTo *ra = RotateTo::create(0.2f, -((1 - percent) * 180), -((1 - percent) * 180));
-	status_hpbar->runAction(ra);
-
 	uint32_t hp = getGameLayer()->currentPlayer->getHP();
-	hpLabel->setString(to_cstr(hp));
+	lua_call_func_self(HudFlowKeys::kSetHP, this, "HudLayer", percent, (int)hp);
 }
 
 void HudLayer::setCKRLose(bool isCRK2)
@@ -686,25 +622,8 @@ void HudLayer::setCKRLose(bool isCRK2)
 
 void HudLayer::setEXPLose()
 {
-	int exp = getGameLayer()->currentPlayer->getEXP();
-	int lvExp = (getGameLayer()->currentPlayer->getLV() - 1) * 500;
-	float Percent = (exp - lvExp) / 500.0f * 100;
-	if (Percent > 100)
-		Percent = 100;
-
-	// RotateTo* ra=RotateTo::create(0.2f,((1-Percent/100)*90),((1-Percent/100)*90));
-	// status_expbar->runAction(ra);
-	status_expbar->setPercentage((1 + Percent / 100) * 50);
-
-	if (exp >= 2500)
-	{
-		status_expbar->setPercentage(100);
-		expLabel->setString("Max");
-	}
-	else
-	{
-		expLabel->setString(format("{}%", (int)Percent).c_str());
-	}
+	auto player = getGameLayer()->currentPlayer;
+	lua_call_func_self(HudFlowKeys::kSetEXP, this, "HudLayer", (int)player->getEXP(), (int)player->getLV());
 }
 
 void HudLayer::setTowerState(int charId)

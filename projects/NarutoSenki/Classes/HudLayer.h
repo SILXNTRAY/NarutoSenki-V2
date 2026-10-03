@@ -145,6 +145,25 @@ public:
 	void updateSpecialSkillButtons();
 	void resetSkillButtons();
 
+	// ---- Lua accessors (see lua/ui/HudLayer.lua) ----
+	// Lua builds the HP/XP bars and hands them back through setStatusBars.
+	void setStatusBars(Sprite *hpbar, Sprite *hpMark, ProgressTimer *expbar, CCLabelBMFont *hp, CCLabelBMFont *exp)
+	{
+		status_hpbar = hpbar;
+		status_hpMark = hpMark;
+		status_expbar = expbar;
+		hpLabel = hp;
+		expLabel = exp;
+	}
+	ActionButton *getNAttackButton() { return nAttackButton; }
+	ActionButton *getSkill1Button() { return skill1Button; }
+	ActionButton *getSkill2Button() { return skill2Button; }
+	ActionButton *getSkill3Button() { return skill3Button; }
+	ActionButton *getSkill4Button() { return skill4Button; }
+	ActionButton *getSkill5Button() { return skill5Button; }
+	ActionButton *getItem1Button() { return item1Button; }
+	Layer *getMiniLayer() { return miniLayer; }
+
 	CREATE_FUNC(HudLayer);
 
 private:

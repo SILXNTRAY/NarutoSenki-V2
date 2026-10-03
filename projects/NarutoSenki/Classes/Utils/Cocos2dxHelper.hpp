@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include "../../../scripting/lua/cocos2dx_support/CCLuaEngine.h"
+#include "../../../scripting/lua/cocos2dx_support/LuaCocos2d.h"
 #include "Utils/CCDeprecated.h"
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC
@@ -81,9 +82,58 @@ static inline bool callGlobalNoArgs(const char *funcName, const char *context = 
 
 	return true;
 }
+
+static inline void pushArg(lua_State *L, bool v) { lua_pushboolean(L, v ? 1 : 0); }
+static inline void pushArg(lua_State *L, int v) { lua_pushinteger(L, v); }
+static inline void pushArg(lua_State *L, unsigned int v) { lua_pushnumber(L, (lua_Number)v); }
+static inline void pushArg(lua_State *L, float v) { lua_pushnumber(L, (lua_Number)v); }
+static inline void pushArg(lua_State *L, double v) { lua_pushnumber(L, (lua_Number)v); }
+static inline void pushArg(lua_State *L, const char *v) { lua_pushstring(L, v); }
+
+/**
+ * Call a Lua global function as `func(self, args...)`, where `self` is a
+ * C++ object registered with tolua under `selfType` (e.g. "HudLayer").
+ */
+template <typename T, typename... Args>
+static inline bool callGlobalWithSelf(const char *funcName, const char *context, T *self, const char *selfType, Args... args)
+{
+	if (!isReady())
+	{
+		CCLOG("[LuaBridge] Lua engine not ready when calling %s", funcName ? funcName : "<null>");
+		return false;
+	}
+
+	lua_getL;
+	if (!funcName || !hasGlobalFunction(L, funcName))
+	{
+		CCLOG("[LuaBridge] Lua global function not found: %s (context: %s)",
+			  funcName ? funcName : "<null>",
+			  context ? context : "none");
+		return false;
+	}
+
+	tolua_pushusertype(L, (void *)self, selfType);
+	(pushArg(L, args), ...);
+
+	if (lua_pcall(L, 1 + (int)sizeof...(Args), 0, 0) != LUA_OK)
+	{
+		const char *error = lua_tostring(L, -1);
+		CCLOG("[LuaBridge] Failed to call %s (context: %s), error: %s",
+			  funcName,
+			  context ? context : "none",
+			  error ? error : "<no error>");
+		lua_pop(L, 1);
+		return false;
+	}
+
+	return true;
+}
 } // namespace LuaBridge
 
 #define lua_call_func(func_name) LuaBridge::callGlobalNoArgs(func_name, __FUNCTION__)
+
+#define lua_call_func_self(func_name, self, self_type, ...) \
+	LuaBridge::callGlobalWithSelf(func_name, __FUNCTION__, self, self_type, ##__VA_ARGS__)
 
 #define lua_call_init_func lua_call_handler_auto
 
