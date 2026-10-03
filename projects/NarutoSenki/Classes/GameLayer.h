@@ -73,6 +73,7 @@ public:
 
 	bool _isAttackButtonRelease;
 	bool _hasSpawnedGuardian;
+	bool _enableGuardian = true;
 	// int _guardianNum;
 	vector<Flog *> _KonohaFlogArray;
 	vector<Flog *> _AkatsukiFlogArray;

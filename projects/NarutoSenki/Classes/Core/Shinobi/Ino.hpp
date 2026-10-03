@@ -7,20 +7,47 @@ class Ino : public Hero
 	{
 		CharacterBase::dead();
 
-		// TODO: Support Ino controlled by the player can control other characters
-		// if (isPlayer())
-		// {
-		// 	// Has controlled other hero
-		// 	if (getGameLayer()->currentPlayer != this)
-		// 	{
-		// 		auto other = getGameLayer()->currentPlayer;
-		// 		other->changeGroup();
-		// 		other->doAI();
+		// Ino died while her jutsu was active: possession ends immediately
+		// and control reverts to Ino's own (now dead) body - the human
+		// should see their own death/respawn, not keep piloting whatever
+		// they were possessing. Previously this handed currentPlayer to the
+		// possessed body instead, effectively letting the player keep
+		// playing as if Ino hadn't died at all.
+		unschedule(schedule_selector(Ino::resumeAction));
 
-		// 		getGameLayer()->currentPlayer = this;
-		// 		getGameLayer()->getHudLayer()->updateSkillButtons();
-		// 	}
-		// }
+		for (auto hero : getGameLayer()->_CharacterArray)
+		{
+			if (hero->_isControlled && hero->getController() == this)
+			{
+				hero->_isControlled = false;
+				hero->changeGroup();
+				hero->setController(nullptr);
+
+				if (hero->isPlayer())
+				{
+					hero->unschedule(schedule_selector(CharacterBase::setAI));
+					hero->_isAI = false;
+					getGameLayer()->getHudLayer()->_isAllButtonLocked = false;
+				}
+				else
+				{
+					hero->_isAI = true;
+					hero->doAI();
+				}
+			}
+		}
+
+		if (isPlayer())
+		{
+			// Hand control back to Ino's own body - she is dead, so this
+			// puts the human back on their real character's death/respawn
+			// flow instead of leaving them stuck on the possessed body.
+			getGameLayer()->currentPlayer = this;
+			getGameLayer()->controlChar = nullptr;
+			getGameLayer()->getHudLayer()->updateSkillButtons();
+		}
+
+		_isArmored = false;
 	}
 
 	void perform() override
@@ -171,33 +198,61 @@ class Ino : public Hero
 
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
-			if (hero->_isControlled)
+			if (hero->_isControlled && hero->getController() == this)
 			{
 				hero->_isControlled = false;
+
 				if (hero->isPlayer())
 				{
+					// The possessed body was the human's own player
+					// character (AI Ino possessed the player) - give
+					// control back to the human instead of leaving them
+					// AI-driven and locked out, which was the previous bug.
 					hero->_isAI = false;
-					hero->unschedule(schedule_selector(Ino::setAI));
+					hero->unschedule(schedule_selector(CharacterBase::setAI));
 					getGameLayer()->getHudLayer()->_isAllButtonLocked = false;
 				}
+				else
+				{
+					// Otherwise the possessed body reverts to being an
+					// ordinary AI-driven unit again - it was never actually
+					// switched back to AI before, which is why it kept
+					// fighting under manual control (and on the wrong team)
+					// forever.
+					hero->_isAI = true;
+					hero->doAI();
+				}
+
 				if (isPlayer())
 				{
-					// auto controlledHero = getGameLayer()->currentPlayer;
-					// controlledHero->_isAI = true;
-					// controlledHero->doAI();
-					// _isControlled = false;
+					// Restore control to Ino herself: this was previously
+					// left commented out, so a player possessing something
+					// with Ino would keep piloting the possessed body
+					// forever after the timer ran out, with no way back.
+					// She must go back to being player-driven (not AI), or
+					// perform() keeps ticking alongside human input and the
+					// two fight over her.
+					_isAI = false;
+					unschedule(schedule_selector(CharacterBase::setAI));
 
-					// getGameLayer()->currentPlayer = this;
+					getGameLayer()->currentPlayer = this;
 					getGameLayer()->controlChar = nullptr;
-					// getGameLayer()->getHudLayer()->updateSkillButtons();
+					getGameLayer()->getHudLayer()->_isAllButtonLocked = false;
+					getGameLayer()->getHudLayer()->updateSkillButtons();
 				}
-				if (_state != State::DEAD)
+
+				if (hero->getState() != State::DEAD)
 				{
-					idle();
+					hero->idle();
 				}
 				hero->changeGroup();
 				hero->setController(nullptr);
 			}
+		}
+
+		if (_state != State::DEAD)
+		{
+			idle();
 		}
 
 		_isArmored = false;
@@ -210,20 +265,34 @@ class Ino : public Hero
 
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
-			if (hero->_isControlled)
+			if (hero->_isControlled && hero->getController() == this)
 			{
 				hero->_isControlled = false;
 				hero->changeGroup();
+
 				if (hero->isPlayer())
 				{
-					hero->unschedule(schedule_selector(Ino::setAI));
+					hero->unschedule(schedule_selector(CharacterBase::setAI));
 					hero->_isAI = false;
 					getGameLayer()->getHudLayer()->_isAllButtonLocked = false;
 				}
+				else
+				{
+					hero->_isAI = true;
+					hero->doAI();
+				}
+
 				if (isPlayer())
 				{
+					_isAI = false;
+					unschedule(schedule_selector(CharacterBase::setAI));
+
+					getGameLayer()->currentPlayer = this;
 					getGameLayer()->controlChar = nullptr;
+					getGameLayer()->getHudLayer()->_isAllButtonLocked = false;
+					getGameLayer()->getHudLayer()->updateSkillButtons();
 				}
+
 				hero->setController(nullptr);
 			}
 		}

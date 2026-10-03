@@ -18,18 +18,41 @@ public:
 
 	void onInitHeros()
 	{
-		initHeros(1, 1);
+		Group playerGroup;
+		Group enemyGroup;
+		getRandomGroups(playerGroup, enemyGroup);
+		setPlayerTeamByGroup(playerGroup);
+
+		// Player hero: selected one, or random (flagged so scoring knows)
+		const char* playerHero = selectLayer->_playerSelect;
+		if (!playerHero)
+		{
+			gd.isRandomChar = true;
+			playerHero = getRandomHero();
+			selectLayer->_playerSelect = playerHero;
+		}
+
+		// Enemy hero: _com1Select is the enemy picked on the select screen,
+		// otherwise random (never the same as the player's hero).
+		const char* enemyHero = selectLayer->_com1Select
+			? selectLayer->_com1Select
+			: getRandomHeroExcept(playerHero);
+
+		clearHeroArray();
+		addHero(playerHero, Role::Player, playerGroup);
+		addHero(enemyHero, Role::Com, enemyGroup);
 	}
 
 	void onGameStart()
 	{
+		getGameLayer()->_enableGuardian = false;
 	}
 
 	void onGameOver()
 	{
 	}
 
-	void onCharacterInit(CharacterBase *c)
+	void onCharacterInit(CharacterBase* c)
 	{
 		if (!isAddCallback && !getGameLayer()->isHUDInit())
 		{
@@ -76,11 +99,11 @@ public:
 		}
 	}
 
-	void onCharacterDead(CharacterBase *c)
+	void onCharacterDead(CharacterBase* c)
 	{
 	}
 
-	void onCharacterReborn(CharacterBase *c)
+	void onCharacterReborn(CharacterBase* c)
 	{
 	}
 };

@@ -27,14 +27,14 @@ class Hero;
 
 class CharacterBase : public Sprite
 {
-friend class CommandSystem;
+	friend class CommandSystem;
 
-using ActionMap = Map<ActionFlag, FiniteTimeAction *>;
+	using ActionMap = Map<ActionFlag, FiniteTimeAction*>;
 
 public:
 	CharacterBase();
 
-	virtual void		setID(const string &name, Role role, Group group);
+	virtual void		setID(const string& name, Role role, Group group);
 	virtual void		setHPbar();
 	virtual void		changeHPbar();
 	virtual void		setShadows();
@@ -52,8 +52,8 @@ public:
 	PROP_UInt(_coin, Coin);
 
 
-	CharacterBase*			_slayer;
-	CharacterBase*			_sticker;
+	CharacterBase* _slayer;
+	CharacterBase* _sticker;
 	RefPtr<CharacterBase>	_mainTarget;
 
 	bool				isHurtingTower;
@@ -72,13 +72,13 @@ public:
 	uint32_t			_skillChangeBuffValue;
 
 
-	Sprite*				_heartEffect;
-	Effect*				_healBuffEffect;
-	Effect*				_powerBuffEffect;
-	Effect*				_skillBuffEffect;
-	Sprite*				_dehealBuffEffect;
-	Effect*				_healItemEffect;
-	Effect*				_speedItemEffect;
+	Sprite* _heartEffect;
+	Effect* _healBuffEffect;
+	Effect* _powerBuffEffect;
+	Effect* _skillBuffEffect;
+	Sprite* _dehealBuffEffect;
+	Effect* _healItemEffect;
+	Effect* _speedItemEffect;
 	float				_buffStartTime;
 	float				_debuffStartTime;
 	VPROP(int, _knockLength, KnockLength);
@@ -103,7 +103,7 @@ public:
 
 	PROP_Vector(vector<GearType>, _gearArray, GearArray);
 
-	bool				enableDead	 = true;
+	bool				enableDead = true;
 	bool				enableReborn = true;
 	int					changeCharId = -1; // NOTE: Support for random deathmatch mode
 
@@ -113,8 +113,8 @@ public:
 	bool				isBaseDanger;
 
 
-	HPBar*				_hpBar;
-	Sprite*				_shadow;
+	HPBar* _hpBar;
+	Sprite* _shadow;
 	float				_originY;
 	float				_backY;
 	float				_diretionY;
@@ -139,7 +139,7 @@ public:
 	bool				_isCanGear03;
 	bool				_isCanGear06;
 
-	VPROP(int,_walkSpeed,WalkSpeed);
+	VPROP(int, _walkSpeed, WalkSpeed);
 	int					_originSpeed;
 
 	PROP_UInt(_hp, HP);
@@ -158,7 +158,7 @@ public:
 	VPROP(CharacterBase*, _controller, Controller);
 	VPROP(CharacterBase*, _secmaster, SecMaster);
 
-	PROP_REF(string,_attackType,AttackType);
+	PROP_REF(string, _attackType, AttackType);
 	uint32_t		_attackValue;
 	int				_attackRangeX;
 	int				_attackRangeY;
@@ -167,69 +167,69 @@ public:
 	int				enemyCombatPoint;
 	int				friendCombatPoint;
 
-	PROP_UInt(_nAttackValue,NAttackValue);
-	PROP_REF(string,_nAttackType,NAttackType);
+	PROP_UInt(_nAttackValue, NAttackValue);
+	PROP_REF(string, _nAttackType, NAttackType);
 	int				_nAttackRangeX;
 	int				_nAttackRangeY;
 
-	PROP_UInt(_sAttackValue1,SAttackValue1);
-	PROP_REF(string,_sAttackType1,SAttackType1);
+	PROP_UInt(_sAttackValue1, SAttackValue1);
+	PROP_REF(string, _sAttackType1, SAttackType1);
 	int				_sAttackRangeX1;
 	int				_sAttackRangeY1;
 	uint32_t		_sAttackCD1;
 	bool			_sAttack1isDouble;
 	int				_sAttackCombatPoint1;
 
-	PROP_UInt(_sAttackValue2,SAttackValue2);
-	PROP_REF(string,_sAttackType2,SAttackType2);
+	PROP_UInt(_sAttackValue2, SAttackValue2);
+	PROP_REF(string, _sAttackType2, SAttackType2);
 	int				_sAttackRangeX2;
 	int				_sAttackRangeY2;
 	uint32_t		_sAttackCD2;
 	bool			_sAttack2isDouble;
 	int				_sAttackCombatPoint2;
 
-	PROP_UInt(_sAttackValue3,SAttackValue3);
-	PROP_REF(string,_sAttackType3,SAttackType3);
+	PROP_UInt(_sAttackValue3, SAttackValue3);
+	PROP_REF(string, _sAttackType3, SAttackType3);
 	int				_sAttackRangeX3;
 	int				_sAttackRangeY3;
 	uint32_t		_sAttackCD3;
 	bool			_sAttack3isDouble;
 	int				_sAttackCombatPoint3;
 
-	PROP_UInt(_sAttackValue4,SAttackValue4);
-	PROP_REF(string,_sAttackType4,SAttackType4);
+	PROP_UInt(_sAttackValue4, SAttackValue4);
+	PROP_REF(string, _sAttackType4, SAttackType4);
 	int				_sAttackRangeX4;
 	int				_sAttackRangeY4;
 	uint32_t		_sAttackCD4;
 	bool			_sAttack4isDouble;
 	int				_sAttackCombatPoint4;
 
-	PROP_UInt(_sAttackValue5,SAttackValue5);
-	PROP_REF(string,_sAttackType5,SAttackType5);
+	PROP_UInt(_sAttackValue5, SAttackValue5);
+	PROP_REF(string, _sAttackType5, SAttackType5);
 	int				_sAttackRangeX5;
 	int				_sAttackRangeY5;
 	uint32_t		_sAttackCD5;
 	int				_sAttackCombatPoint5;
 
-	PROP_UInt(_spcAttackValue1,SpcAttackValue1);
-	PROP_REF(string,_spcAttackType1,SpcAttack1Type);
+	PROP_UInt(_spcAttackValue1, SpcAttackValue1);
+	PROP_REF(string, _spcAttackType1, SpcAttack1Type);
 	int				_spcAttackRangeX1;
 	int				_spcAttackRangeY1;
 	uint32_t		_spcAttackCD1;
 
-	PROP_UInt(_spcAttackValue2,SpcAttackValue2);
-	PROP_REF(string,_spcAttackType2,SpcAttack2Type);
+	PROP_UInt(_spcAttackValue2, SpcAttackValue2);
+	PROP_REF(string, _spcAttackType2, SpcAttack2Type);
 	int				_spcAttackRangeX2;
 	int				_spcAttackRangeY2;
 	uint32_t		_spcAttackCD2;
 
-	PROP_UInt(_spcAttackValue3,SpcAttackValue3);
-	PROP_REF(string,_spcAttackType3,SpcAttack3Type);
+	PROP_UInt(_spcAttackValue3, SpcAttackValue3);
+	PROP_REF(string, _spcAttackType3, SpcAttack3Type);
 	int				_spcAttackRangeX3;
 	int				_spcAttackRangeY3;
 	uint32_t		_spcAttackCD3;
 
-	PROP_UInt(_tempAttackValue1,TempAttackValue1);
+	PROP_UInt(_tempAttackValue1, TempAttackValue1);
 
 
 	PROP_REF(string, _effectType, EffectType);
@@ -238,7 +238,7 @@ public:
 
 	int						_damageDisplayCount = 0;
 	uint32_t				damageEffectCount;
-	PROP_Vector(vector<CharacterBase *>, _monsterArray, MonsterArray);
+	PROP_Vector(vector<CharacterBase*>, _monsterArray, MonsterArray);
 
 	// movement
 	PROP(Vec2, _velocity, Velocity);
@@ -252,7 +252,7 @@ public:
 	PPROP_PTR(FiniteTimeAction, _knockDownAction, KnockDownAction);
 	PPROP_PTR(FiniteTimeAction, _airHurtAction, AirHurtAction);
 	PPROP_PTR(FiniteTimeAction, _floatAction, FloatAction);
-	PPROP_PTR(FiniteTimeAction, _deadAction, DeadAction); 
+	PPROP_PTR(FiniteTimeAction, _deadAction, DeadAction);
 
 	PPROP_PTR(FiniteTimeAction, _skill1Action, Skill1Action);
 	PPROP_PTR(FiniteTimeAction, _skill2Action, Skill2Action);
@@ -298,16 +298,16 @@ public:
 private:
 	template <typename T>
 	typename std::enable_if<std::is_base_of<CharacterBase, T>::value, void>::type
-	changeGroupBy(const vector<T *> &list);
+		changeGroupBy(const vector<T*>& list);
 public:
 	virtual void		resumeAction(float dt);
 	virtual void		setActionResume();
 	void				setActionResume2();
 	void				reCatched(float dt);
 
-	void				setShadow(SpriteFrame *frame);
-	void				enableShadow(Sprite *charN);
-	void				disableShadow(Sprite *charN);
+	void				setShadow(SpriteFrame* frame);
+	void				enableShadow(Sprite* charN);
+	void				disableShadow(Sprite* charN);
 
 	void				setItem(ABType type);
 	void				disableEffect();
@@ -333,7 +333,7 @@ public:
 	void				useGear(GearType type);
 
 	void				setCoinDisplay(int num);
-	void				removeCoinDisplay(Sprite *coinDisplay);
+	void				removeCoinDisplay(Sprite* coinDisplay);
 	void				addCoin(uint32_t num);
 	void				minusCoin(uint32_t num);
 
@@ -344,25 +344,25 @@ public:
 	bool				_isCanOugis1;
 	bool				_isCanOugis2;
 
-	CCArray*			idleArray;
-	CCArray*			walkArray;
-	CCArray*			hurtArray;
-	CCArray*			airHurtArray;
-	CCArray*			knockDownArray;
-	CCArray*			floatArray;
-	CCArray*			deadArray;
-	CCArray*			nattackArray;
-	CCArray*			skill1Array;
-	CCArray*			skill2Array;
-	CCArray*			skill3Array;
-	CCArray*			skill4Array;
-	CCArray*			skill5Array;
+	CCArray* idleArray;
+	CCArray* walkArray;
+	CCArray* hurtArray;
+	CCArray* airHurtArray;
+	CCArray* knockDownArray;
+	CCArray* floatArray;
+	CCArray* deadArray;
+	CCArray* nattackArray;
+	CCArray* skill1Array;
+	CCArray* skill2Array;
+	CCArray* skill3Array;
+	CCArray* skill4Array;
+	CCArray* skill5Array;
 
-	CCArray*			skillSPC1Array;
-	CCArray*			skillSPC2Array;
-	CCArray*			skillSPC3Array;
-	CCArray*			skillSPC4Array;
-	CCArray*			skillSPC5Array;
+	CCArray* skillSPC1Array;
+	CCArray* skillSPC2Array;
+	CCArray* skillSPC3Array;
+	CCArray* skillSPC4Array;
+	CCArray* skillSPC5Array;
 
 
 	virtual void		dealloc();
@@ -378,16 +378,16 @@ public:
 	virtual void		setRestore2(float dt);
 
 
-	void				readData(CCArray* tmpData, string &attackType, uint32_t &attackValue, int &attackRangeX, int &attackRangeY, uint32_t &cooldown, int &combatPoint);
-	FiniteTimeAction*	createAnimation(CCArray* ationArray, uint8_t fps, bool isLoop, bool isReturnToIdle);
-	FiniteTimeAction*	createAnimation(CCArray* arr, const ActionConstant::AnimationInfo &info) { return createAnimation(arr, info.fps, info.isLoop, info.isReturnToIdle); }
-	FiniteTimeAction*	createAnimIdle(CCArray* arr) { return createAnimation(arr, ActionConstant::Idle); }
-	FiniteTimeAction*	createAnimKnockdown(CCArray* arr) { return createAnimation(arr, ActionConstant::Knockdown); }
-	FiniteTimeAction*	createAnimRegular(CCArray* arr) { return createAnimation(arr, ActionConstant::Regular); }
-	FiniteTimeAction*	createAnimSkill(CCArray* arr) { return createAnimation(arr, ActionConstant::Skill); }
+	void				readData(CCArray* tmpData, string& attackType, uint32_t& attackValue, int& attackRangeX, int& attackRangeY, uint32_t& cooldown, int& combatPoint);
+	FiniteTimeAction* createAnimation(CCArray* ationArray, uint8_t fps, bool isLoop, bool isReturnToIdle);
+	FiniteTimeAction* createAnimation(CCArray* arr, const ActionConstant::AnimationInfo& info) { return createAnimation(arr, info.fps, info.isLoop, info.isReturnToIdle); }
+	FiniteTimeAction* createAnimIdle(CCArray* arr) { return createAnimation(arr, ActionConstant::Idle); }
+	FiniteTimeAction* createAnimKnockdown(CCArray* arr) { return createAnimation(arr, ActionConstant::Knockdown); }
+	FiniteTimeAction* createAnimRegular(CCArray* arr) { return createAnimation(arr, ActionConstant::Regular); }
+	FiniteTimeAction* createAnimSkill(CCArray* arr) { return createAnimation(arr, ActionConstant::Skill); }
 
-	void				setSound(const string &file);
-	void				setDSound(const string &file);
+	void				setSound(const string& file);
+	void				setDSound(const string& file);
 	void				setMove(int moveLength);
 	void				setCharge(int moveLength);
 	void				setChargeB(int moveLength);
@@ -396,32 +396,32 @@ public:
 	void				stopMove(float dt);
 	void				stopJump(int stopTime);
 	void				setCharFlip();
-	void				setAttackBox(const string &effectType);
+	void				setAttackBox(const string& effectType);
 	inline void			setDamage(CharacterBase* attacker);
-	void				setDamage(CharacterBase *attacker, const string &effectType, int attackValue, bool isFlipped);
+	void				setDamage(CharacterBase* attacker, const string& effectType, int attackValue, bool isFlipped);
 	void				setDamgeDisplay(int value, const char* font);
 
-	void				setSkillEffect(const string &type);
+	void				setSkillEffect(const string& type);
 	// void				setItemEffect(const string &type);
-	void				setDamgeEffect(const string &type);
+	void				setDamgeEffect(const string& type);
 	void				setMonAttack(int skillNum);
 	void				setTransform();
 	void				setOugis();
 
-	virtual Hero*		createClone(int cloneTime);
+	virtual Hero* createClone(int cloneTime);
 	void				setClone(int cloneTime);
-	void				setMon(const string &monName);
+	void				setMon(const string& monName);
 	void				setMonPer(float dt);
-	void				setBullet(const string &bulletName);
+	void				setBullet(const string& bulletName);
 	void				setBulletGroup(float dt);
-	void				setTrap(const string &trapName);
+	void				setTrap(const string& trapName);
 
 	void				removeAllClones();
 
 	void				setBuff(int buffValue);
-	void				setCommand(const string &cmd);
-	void				setBuffEffect(const string &type);
-	void				removeBuffEffect(const string &type);
+	void				setCommand(const string& cmd);
+	void				setBuffEffect(const string& type);
+	void				removeBuffEffect(const string& type);
 
 	void				disableBuff(float dt);
 	void				healBuff(float dt);
@@ -445,13 +445,13 @@ protected:
 	bool				findTargetEnemy(Role role, bool isTowerDected);
 	template <typename T>
 	typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
-	findEnemyBy(const vector<T *> &list, int searchRange, bool masterRange = false);
+		findEnemyBy(const vector<T*>& list, int searchRange, bool masterRange = false);
 	template <typename T>
 	typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
-	findEnemy2By(const vector<T *> &list);
+		findEnemy2By(const vector<T*>& list);
 	template <typename T>
 	typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
-	findTargetEnemyBy(const vector<T *> &list, bool isTowerDected);
+		findTargetEnemyBy(const vector<T*>& list, bool isTowerDected);
 	bool				checkBase();
 
 	bool				stepBack();
@@ -462,7 +462,7 @@ protected:
 
 	inline void			autoFlip(CharacterBase* attacker);
 
-	void				removeDamageDisplay(CCNode *damageDisplay);
+	void				removeDamageDisplay(CCNode* damageDisplay);
 
 public:
 	bool hasTempAttackValue1() { return getTempAttackValue1() > 0; }
@@ -520,6 +520,15 @@ public:
 	bool isCom() { return _role == Role::Com; }
 	bool isPlayer() { return _role == Role::Player; }
 	bool isPlayerOrCom() { return isPlayer() || isCom(); }
+	// True while this specific body is the one the human is actively
+	// piloting. Differs from isPlayer() (which checks the fixed spawn
+	// _role) whenever a possession (e.g. Ino's Shintenshin) has put the
+	// human in control of a body whose _role is not Role::Player - such as
+	// a possessed enemy. Action-readiness gates (skill-finish flag, forced
+	// idle state, attack unlocking) should key off this instead of
+	// isPlayer(), or a possessed non-Player body's skills silently refuse
+	// to fire even though its buttons are clickable.
+	bool isActivePlayerBody() { return getGameLayer()->currentPlayer == this; }
 	bool isFlog() { return _role == Role::Flog; }
 	bool isTower() { return _role == Role::Tower; }
 	bool isBullet() { return _role == Role::Bullet; }
@@ -541,11 +550,11 @@ public:
 	bool isAkatsukiGroup() { return _group == Group::Akatsuki; }
 	// monster extensions
 	bool hasMonsterArrayAny() { return !_monsterArray.empty(); }
-	void removeMon(CharacterBase *mo) {
+	void removeMon(CharacterBase* mo) {
 		if (hasMonsterArrayAny())
 			std::erase(_monsterArray, mo);
 	}
-	void removeAllMonAndCleanup(const string &name) {
+	void removeAllMonAndCleanup(const string& name) {
 		if (hasMonsterArrayAny()) {
 			for (auto mo : _monsterArray)
 			{
@@ -600,9 +609,9 @@ protected:
 		if (_isCanGear06)
 		{
 			if ((_state == State::FLOAT ||
-				 _state == State::AIRHURT ||
-				 _state == State::HURT ||
-				 _state == State::KNOCKDOWN) &&
+				_state == State::AIRHURT ||
+				_state == State::HURT ||
+				_state == State::KNOCKDOWN) &&
 				getHpPercent() < 0.5 && !_isArmored && !_isInvincible)
 			{
 				useGear(GearType::Gear06);
@@ -682,7 +691,7 @@ protected:
 			stepOn();
 		}
 	}
-	Vec2 getDirByMoveTo(CharacterBase *target) {
+	Vec2 getDirByMoveTo(CharacterBase* target) {
 		return (target->getPosition() - getPosition()).getNormalized();
 	}
 	Vec2 getDistanceToTarget() {
@@ -694,17 +703,17 @@ protected:
 		return _mainTarget->getPosition() - getPosition();
 	}
 
-/**
- * Callbacks
- */
+	/**
+	 * Callbacks
+	 */
 protected:
-	virtual bool onAcceptAttack(CharacterBase *attacker) { return true; }
+	virtual bool onAcceptAttack(CharacterBase* attacker) { return true; }
 	// Returns true will call CharacterBase::setDamage(attacker), false otherwise.
-	virtual bool onHit(CharacterBase *attacker) { return true; }
+	virtual bool onHit(CharacterBase* attacker) { return true; }
 	// Returns true will call CharacterBase::setDamage(attacker), false otherwise.
-	virtual bool onBulletHit(CharacterBase *attacker) { return true; }
+	virtual bool onBulletHit(CharacterBase* attacker) { return true; }
 
-	virtual void onSetTrap(const string &trapType) { }
+	virtual void onSetTrap(const string& trapType) {}
 
 	void clearActionData() {
 		_actionFlag = ActionFlag::None;

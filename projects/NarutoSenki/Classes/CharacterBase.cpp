@@ -146,7 +146,7 @@ CharacterBase::CharacterBase()
 	_affectedByTower = false;
 }
 
-void CharacterBase::setID(const string &name, Role role, Group group)
+void CharacterBase::setID(const string& name, Role role, Group group)
 {
 }
 
@@ -212,13 +212,13 @@ void CharacterBase::updateDataByLVOnly()
 	setNAttackValue(nAtkValue);
 }
 
-void CharacterBase::readData(CCArray *tmpData, string &attackType, uint32_t &attackValue, int &attackRangeX, int &attackRangeY, uint32_t &cooldown, int &combatPoint)
+void CharacterBase::readData(CCArray* tmpData, string& attackType, uint32_t& attackValue, int& attackRangeX, int& attackRangeY, uint32_t& cooldown, int& combatPoint)
 {
-	CCDictionary *tmpDict;
+	CCDictionary* tmpDict;
 
 	for (uint32_t i = 0; i < tmpData->count(); ++i)
 	{
-		tmpDict = (CCDictionary *)(tmpData->objectAtIndex(i));
+		tmpDict = (CCDictionary*)(tmpData->objectAtIndex(i));
 		switch (i)
 		{
 		case 0:
@@ -264,13 +264,13 @@ void CharacterBase::update(float dt)
 	if (_healItemEffect)
 	{
 		_healItemEffect->setPosition(Vec2(_isFlipped ? getContentSize().width / 2 + 16 : getContentSize().width / 2 - 16,
-										  _height));
+			_height));
 	}
 
 	if (_speedItemEffect)
 	{
 		_speedItemEffect->setPosition(Vec2(_isFlipped ? getContentSize().width / 2 + 16 : getContentSize().width / 2 - 16,
-										   _height));
+			_height));
 	}
 
 	/*if(_kaguraEffect){
@@ -359,7 +359,7 @@ void CharacterBase::update(float dt)
 		}
 
 		float posX = MIN(getGameLayer()->currentMap->getMapSize().width * getGameLayer()->currentMap->getTileSize().width,
-						 MAX(0, _desiredPosition.x));
+			MAX(0, _desiredPosition.x));
 
 		// map height		: 10
 		// backgroud height	: 4.5
@@ -389,9 +389,9 @@ void CharacterBase::updateHpBarPosition(float dt)
 	}
 }
 
-void CharacterBase::acceptAttack(Ref *object)
+void CharacterBase::acceptAttack(Ref* object)
 {
-	auto attacker = (CharacterBase *)object;
+	auto attacker = (CharacterBase*)object;
 	bool isCannotMiss = false;
 
 	if (!onAcceptAttack(attacker))
@@ -627,7 +627,7 @@ void CharacterBase::acceptAttack(Ref *object)
 							hurt();
 						}
 						else if (hitType == "c_hit" ||
-								 hitType == "bc_hit")
+							hitType == "bc_hit")
 						{
 							if (!_isArmored)
 							{
@@ -636,7 +636,7 @@ void CharacterBase::acceptAttack(Ref *object)
 
 							if (attacker->getName() == HeroEnum::Kakuzu && _sticker)
 							{
-								CharacterBase *stHero = _sticker;
+								CharacterBase* stHero = _sticker;
 								if (stHero->getName() == HeroEnum::Kakuzu && stHero->hearts <= 4)
 								{
 									attacker->hearts += 1;
@@ -667,7 +667,7 @@ void CharacterBase::acceptAttack(Ref *object)
 							}
 							else if (attacker->getName() == HeroEnum::Nagato && _sticker)
 							{
-								CharacterBase *stHero = _sticker;
+								CharacterBase* stHero = _sticker;
 								if (stHero->getName() == HeroEnum::Nagato && stHero->hearts <= 2)
 									attacker->hearts += 1;
 							}
@@ -689,12 +689,12 @@ void CharacterBase::acceptAttack(Ref *object)
 									if (attacker->getName() == SkillEnum::FakeMinato)
 									{
 										setPosition(Vec2(attacker->_master->_isFlipped ? attacker->_master->getPositionX() - 64 : attacker->_master->getPositionX() + 64,
-														 attacker->_master->getPositionY() + 2));
+											attacker->_master->getPositionY() + 2));
 									}
 									else
 									{
 										setPosition(Vec2(attacker->_master->_isFlipped ? attacker->_master->getPositionX() - 48 : attacker->_master->getPositionX() + 48,
-														 attacker->_master->getPositionY()));
+											attacker->_master->getPositionY()));
 									}
 
 									CCNotificationCenter::sharedNotificationCenter()->postNotification("updateMap", this);
@@ -734,8 +734,8 @@ void CharacterBase::acceptAttack(Ref *object)
 						{
 							if (_state != State::OATTACK ||
 								(_state == State::OATTACK &&
-								 (attacker->_state == State::O2ATTACK ||
-								  attacker->_state == State::OATTACK)))
+									(attacker->_state == State::O2ATTACK ||
+										attacker->_state == State::OATTACK)))
 							{
 								if (!_isArmored)
 								{
@@ -779,8 +779,8 @@ void CharacterBase::acceptAttack(Ref *object)
 						{
 							if (_state != State::OATTACK ||
 								(_state == State::OATTACK &&
-								 (attacker->_state == State::O2ATTACK ||
-								  attacker->_state == State::OATTACK)))
+									(attacker->_state == State::O2ATTACK ||
+										attacker->_state == State::OATTACK)))
 							{
 								if (attacker->_isCatchOne == false ||
 									attacker->getName() == SkillEnum::Shenwei)
@@ -823,7 +823,7 @@ void CharacterBase::acceptAttack(Ref *object)
 												}
 											}
 											else if (attacker->getName() == SkillEnum::QuanRen ||
-													 attacker->getName() == SkillEnum::KageBom)
+												attacker->getName() == SkillEnum::KageBom)
 											{
 												underAttack = hardHurt(3000, false, false, true, false);
 											}
@@ -836,7 +836,7 @@ void CharacterBase::acceptAttack(Ref *object)
 											}
 										}
 										else if (attacker->_master->getName() == HeroEnum::Itachi ||
-												 attacker->_master->getName() == HeroEnum::Chiyo)
+											attacker->_master->getName() == HeroEnum::Chiyo)
 										{
 											bool underAttack = false;
 
@@ -916,8 +916,8 @@ void CharacterBase::acceptAttack(Ref *object)
 							autoFlip(attacker);
 							if (_state != State::OATTACK ||
 								(_state == State::OATTACK &&
-								 (attacker->_state == State::O2ATTACK ||
-								  attacker->_state == State::OATTACK)))
+									(attacker->_state == State::O2ATTACK ||
+										attacker->_state == State::OATTACK)))
 							{
 								floatUP(64, true);
 							}
@@ -927,8 +927,8 @@ void CharacterBase::acceptAttack(Ref *object)
 							autoFlip(attacker);
 							if (_state != State::OATTACK ||
 								(_state == State::OATTACK &&
-								 (attacker->_state == State::O2ATTACK ||
-								  attacker->_state == State::OATTACK)))
+									(attacker->_state == State::O2ATTACK ||
+										attacker->_state == State::OATTACK)))
 							{
 								floatUP(128, true);
 							}
@@ -939,8 +939,8 @@ void CharacterBase::acceptAttack(Ref *object)
 
 							if (_state != State::OATTACK ||
 								(_state == State::OATTACK &&
-								 (attacker->_state == State::O2ATTACK ||
-								  attacker->_state == State::OATTACK)))
+									(attacker->_state == State::O2ATTACK ||
+										attacker->_state == State::OATTACK)))
 							{
 								floatUP(16, false);
 							}
@@ -963,22 +963,22 @@ void CharacterBase::acceptAttack(Ref *object)
 	}
 }
 
-FiniteTimeAction *CharacterBase::createAnimation(CCArray *ationArray, uint8_t fps, bool isLoop, bool isReturnToIdle)
+FiniteTimeAction* CharacterBase::createAnimation(CCArray* ationArray, uint8_t fps, bool isLoop, bool isReturnToIdle)
 {
 	if (ationArray == nullptr || ationArray->count() == 0)
 		return nullptr;
 
-	Vector<SpriteFrame *> spriteFrames;
-	Vector<FiniteTimeAction *> list;
-	Animation *tempAnimation;
-	FiniteTimeAction *tempAction;
-	FiniteTimeAction *seq;
-	Ref *tObject;
+	Vector<SpriteFrame*> spriteFrames;
+	Vector<FiniteTimeAction*> list;
+	Animation* tempAnimation;
+	FiniteTimeAction* tempAction;
+	FiniteTimeAction* seq;
+	Ref* tObject;
 
 	CCARRAY_FOREACH(ationArray, tObject)
 	{
-		auto dic = (CCDictionary *)tObject;
-		CCDictElement *ele = nullptr;
+		auto dic = (CCDictionary*)tObject;
+		CCDictElement* ele = nullptr;
 
 		CCDICT_FOREACH(dic, ele)
 		{
@@ -1188,7 +1188,7 @@ void CharacterBase::setCharFlip()
 	}
 }
 
-void CharacterBase::setShadow(SpriteFrame *frame)
+void CharacterBase::setShadow(SpriteFrame* frame)
 {
 	auto charN = Sprite::createWithSpriteFrame(frame);
 	charN->setVisible(false);
@@ -1212,7 +1212,7 @@ void CharacterBase::setShadow(SpriteFrame *frame)
 	getGameLayer()->addChild(charN, -getPositionY() - 1);
 }
 
-void CharacterBase::enableShadow(Sprite *charN)
+void CharacterBase::enableShadow(Sprite* charN)
 {
 	charN->setVisible(true);
 	auto delay = DelayTime::create(0.1f);
@@ -1221,7 +1221,7 @@ void CharacterBase::enableShadow(Sprite *charN)
 	charN->runAction(seq);
 }
 
-void CharacterBase::disableShadow(Sprite *charN)
+void CharacterBase::disableShadow(Sprite* charN)
 {
 	charN->stopAllActions();
 	charN->removeFromParent();
@@ -1235,9 +1235,9 @@ void CharacterBase::setOugis()
 CCRect CharacterBase::setHalfBox()
 {
 	CCRect halfbox = CCRect(_isFlipped ? getPositionX() - getContentSize().width / 2 : getPositionX(),
-						getPositionY() + getContentSize().height / 2,
-						getContentSize().width / 2,
-						getContentSize().height / 2);
+		getPositionY() + getContentSize().height / 2,
+		getContentSize().width / 2,
+		getContentSize().height / 2);
 	return halfbox;
 }
 
@@ -1253,12 +1253,12 @@ void CharacterBase::disableHpBar(float dt)
 		_hpBar->setVisible(false);
 }
 
-void CharacterBase::setDamage(CharacterBase *attacker)
+void CharacterBase::setDamage(CharacterBase* attacker)
 {
 	setDamage(attacker, attacker->_effectType, attacker->_attackValue, _isFlipped);
 }
 
-void CharacterBase::setDamage(CharacterBase *attacker, const string &effectType, int attackValue, bool isFlipped)
+void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType, int attackValue, bool isFlipped)
 {
 	if (isTower())
 	{
@@ -1273,7 +1273,7 @@ void CharacterBase::setDamage(CharacterBase *attacker, const string &effectType,
 	uint32_t realValue;
 
 	_slayer = attacker;
-	CharacterBase *currentAttacker;
+	CharacterBase* currentAttacker;
 	if (attacker->_master)
 		currentAttacker = attacker->_master;
 	else
@@ -1301,8 +1301,8 @@ void CharacterBase::setDamage(CharacterBase *attacker, const string &effectType,
 			realValue = attackValue + criticalValue;
 		}
 		else if ((attacker->_master ||
-				  attacker->_state == State::NATTACK) &&
-				 attacker->hasArmorBroken)
+			attacker->_state == State::NATTACK) &&
+			attacker->hasArmorBroken)
 		{
 			realValue = attackValue + criticalValue;
 		}
@@ -1428,7 +1428,7 @@ void CharacterBase::setDamage(CharacterBase *attacker, const string &effectType,
 	}
 
 	if (isPlayer() || (isNotTower() &&
-					   abs((getPosition() - getGameLayer()->currentPlayer->getPosition()).x) < winSize.width / 2))
+		abs((getPosition() - getGameLayer()->currentPlayer->getPosition()).x) < winSize.width / 2))
 	{
 		// create damage value display
 		bool _isDisplay = false;
@@ -1470,9 +1470,9 @@ void CharacterBase::setDamage(CharacterBase *attacker, const string &effectType,
 
 void CharacterBase::setCoinDisplay(int num)
 {
-	Sprite *coinDisplay = Sprite::create();
+	Sprite* coinDisplay = Sprite::create();
 
-	Sprite *coinSprite = Sprite::createWithSpriteFrameName("coin");
+	Sprite* coinSprite = Sprite::createWithSpriteFrameName("coin");
 	coinSprite->setPosition(Vec2(14, 0));
 	coinDisplay->addChild(coinSprite);
 
@@ -1492,12 +1492,12 @@ void CharacterBase::setCoinDisplay(int num)
 	coinDisplay->runAction(seq);
 }
 
-void CharacterBase::removeCoinDisplay(Sprite *coinDisplay)
+void CharacterBase::removeCoinDisplay(Sprite* coinDisplay)
 {
 	coinDisplay->removeFromParent();
 }
 
-void CharacterBase::setDamgeDisplay(int value, const char *font)
+void CharacterBase::setDamgeDisplay(int value, const char* font)
 {
 	if (_damageDisplayCount < 6)
 	{
@@ -1528,7 +1528,7 @@ void CharacterBase::setDamgeDisplay(int value, const char *font)
 	}
 }
 
-void CharacterBase::removeDamageDisplay(CCNode *damageDisplay)
+void CharacterBase::removeDamageDisplay(CCNode* damageDisplay)
 {
 	if (damageDisplay)
 	{
@@ -1541,7 +1541,7 @@ void CharacterBase::removeDamageDisplay(CCNode *damageDisplay)
 	}
 }
 
-void CharacterBase::setDamgeEffect(const string &type)
+void CharacterBase::setDamgeEffect(const string& type)
 {
 	if (isPlayer() || abs((getPosition() - getGameLayer()->currentPlayer->getPosition()).x) < winSize.width / 2)
 	{
@@ -1549,12 +1549,12 @@ void CharacterBase::setDamgeEffect(const string &type)
 		{
 			if (isNotFlog())
 			{
-				Effect *ef = Effect::create(type, this);
+				Effect* ef = Effect::create(type, this);
 				getGameLayer()->damageEffectBatch->addChild(ef, 5000);
 			}
 			else
 			{
-				Effect *ef = Effect::create(type, this);
+				Effect* ef = Effect::create(type, this);
 				getGameLayer()->damageEffectBatch->addChild(ef);
 			}
 
@@ -1563,12 +1563,12 @@ void CharacterBase::setDamgeEffect(const string &type)
 	}
 }
 
-void CharacterBase::setSkillEffect(const string &type)
+void CharacterBase::setSkillEffect(const string& type)
 {
 	if (isPlayer() ||
 		abs((getPosition() - getGameLayer()->currentPlayer->getPosition()).x) < winSize.width / 2)
 	{
-		Effect *ef = Effect::create(type, this);
+		Effect* ef = Effect::create(type, this);
 		if (type == "Bagua" ||
 			type == "Kujiyose")
 		{
@@ -1629,7 +1629,7 @@ void CharacterBase::setItem(ABType type)
 		{
 			_healItemEffect = Effect::create("hp_restore", this);
 			_healItemEffect->setPosition(Vec2(_isFlipped ? getContentSize().width / 2 + 16 : getContentSize().width / 2 - 16,
-											  _height));
+				_height));
 			addChild(_healItemEffect);
 			//_isHealing=true;
 		}
@@ -1882,7 +1882,7 @@ void CharacterBase::setRestore(float dt)
 
 		_healItemEffect = Effect::create("hp_restore", this);
 		_healItemEffect->setPosition(Vec2(_isFlipped ? getContentSize().width / 2 + 16 : getContentSize().width / 2 - 16,
-										  _height));
+			_height));
 		addChild(_healItemEffect);
 	}
 }
@@ -1922,7 +1922,7 @@ void CharacterBase::disableEffect()
 	}
 }
 
-void CharacterBase::setSound(const string &file)
+void CharacterBase::setSound(const string& file)
 {
 	if (UserDefault::sharedUserDefault()->getBoolForKey("isVoice"))
 	{
@@ -1948,7 +1948,7 @@ void CharacterBase::setSound(const string &file)
 	}
 }
 
-void CharacterBase::setDSound(const string &file)
+void CharacterBase::setDSound(const string& file)
 {
 	if (UserDefault::sharedUserDefault()->getBoolForKey("isVoice"))
 	{
@@ -1974,7 +1974,7 @@ void CharacterBase::setDSound(const string &file)
 	}
 }
 
-void CharacterBase::setAttackBox(const string &effectType)
+void CharacterBase::setAttackBox(const string& effectType)
 {
 	_effectType = effectType;
 
@@ -2020,12 +2020,14 @@ void CharacterBase::setAttackBox(const string &effectType)
 
 	CCNotificationCenter::sharedNotificationCenter()->postNotification("acceptAttack", this);
 
-	if (isPlayer())
+	// isActivePlayerBody(): a possessed enemy is Role::Com, but while a human
+	// is piloting it, it must follow the same tap/hold rules as a normal player.
+	if (isPlayer() || isActivePlayerBody())
 	{
 		if ((_state == State::OATTACK || _state == State::O2ATTACK) && _isHitOne == true && !getGameLayer()->_isShacking)
 		{
 			getGameLayer()->_isShacking = true;
-			Scene *f = Director::sharedDirector()->getRunningScene();
+			Scene* f = Director::sharedDirector()->getRunningScene();
 			auto call = CallFunc::create(std::bind(&CharacterBase::disableShack, this));
 			f->runAction(newSequence(CCShake::create(0.05f, 12), call));
 		}
@@ -2041,7 +2043,7 @@ void CharacterBase::getSticker(float dt)
 {
 	for (auto hero : getGameLayer()->_CharacterArray)
 	{
-		CharacterBase *tempSticker = nullptr;
+		CharacterBase* tempSticker = nullptr;
 		if (hero->_sticker)
 		{
 			tempSticker = hero->_sticker;
@@ -2078,7 +2080,7 @@ void CharacterBase::setMove(int moveLength)
 	if (getPositionX() > getGameLayer()->currentMap->getTileSize().width &&
 		getPositionX() < (getGameLayer()->currentMap->getMapSize().width - 1) * getGameLayer()->currentMap->getTileSize().width)
 	{
-		ActionInterval *mv;
+		ActionInterval* mv;
 		if (_state == State::HURT)
 		{
 			if (!_knockDirection)
@@ -2146,14 +2148,14 @@ void CharacterBase::setChargeB(int moveLength)
 	else
 	{
 		float delay = (_state == State::OATTACK || _state == State::O2ATTACK)
-						  ? 0.4f
-						  : 0.1f;
+			? 0.4f
+			: 0.1f;
 		_moveAction = MoveBy::create(delay, Vec2(_isFlipped ? -moveLength * kSpeedBase : moveLength * kSpeedBase, 0));
 		runAction(_moveAction);
 	}
 }
 
-void CharacterBase::setCommand(const string &cmd)
+void CharacterBase::setCommand(const string& cmd)
 {
 	CommandSystem::invoke(cmd, this);
 }
@@ -2169,9 +2171,9 @@ void CharacterBase::setBuff(int buffValue)
 		setBuffEffect("hBuff");
 	}
 	else if (_attackType == "sBuff" ||
-			 _attackType == "rsBuff" ||
-			 _attackType == "hsBuff" ||
-			 _attackType == "dcBuff")
+		_attackType == "rsBuff" ||
+		_attackType == "hsBuff" ||
+		_attackType == "dcBuff")
 	{
 		_skillUPBuffValue = buffValue;
 		scheduleOnce(schedule_selector(CharacterBase::disableBuff), buffStayTime);
@@ -2243,8 +2245,8 @@ void CharacterBase::setBuff(int buffValue)
 			}
 		}
 		else if ((getName() == HeroEnum::ImmortalSasuke ||
-				  getName() == HeroEnum::Sasuke) &&
-				 _skillChangeBuffValue == 18)
+			getName() == HeroEnum::Sasuke) &&
+			_skillChangeBuffValue == 18)
 		{
 			unschedule(schedule_selector(CharacterBase::resumeAction));
 			unschedule(schedule_selector(CharacterBase::disableBuff));
@@ -2320,7 +2322,7 @@ void CharacterBase::setBuff(int buffValue)
 		scheduleOnce(schedule_selector(CharacterBase::disableBuff), buffStayTime);
 	}
 	else if (_attackType == "GroupHeal" ||
-			 _attackType == "GroupBuff")
+		_attackType == "GroupBuff")
 	{
 		if (_healBuffValue)
 			_healBuffValue += buffValue;
@@ -2330,11 +2332,11 @@ void CharacterBase::setBuff(int buffValue)
 		schedule(schedule_selector(CharacterBase::healBuff), 1);
 	}
 
-	if (isPlayer())
+	if (isPlayer() || isActivePlayerBody())
 		getGameLayer()->getHudLayer()->setBuffDisplay(_attackType.c_str(), buffStayTime);
 }
 
-void CharacterBase::setBuffEffect(const string &type)
+void CharacterBase::setBuffEffect(const string& type)
 {
 	if (_skillBuffEffect)
 	{
@@ -2360,9 +2362,9 @@ void CharacterBase::setBuffEffect(const string &type)
 		addChild(_skillBuffEffect);
 	}
 	else if (type == "tBuff" ||
-			 type == "dcBuff" ||
-			 type == "jdBuff" ||
-			 type == "bmBuff")
+		type == "dcBuff" ||
+		type == "jdBuff" ||
+		type == "bmBuff")
 	{
 		_skillBuffEffect = Effect::create(type, this);
 		addChild(_skillBuffEffect);
@@ -2379,7 +2381,7 @@ void CharacterBase::setBuffEffect(const string &type)
 	}
 }
 
-void CharacterBase::removeBuffEffect(const string &type)
+void CharacterBase::removeBuffEffect(const string& type)
 {
 	if (type == "hBuff" && _healBuffEffect)
 	{
@@ -2517,7 +2519,7 @@ void CharacterBase::healBuff(float dt)
 
 					if (hero->_isVisable)
 					{
-						Effect *tmpEffect = Effect::create("Kagura", hero);
+						Effect* tmpEffect = Effect::create("Kagura", hero);
 						if (hero->isPlayer())
 						{
 							tmpEffect->setOpacity(150);
@@ -2544,7 +2546,7 @@ void CharacterBase::healBuff(float dt)
 
 					if (hero->_isVisable)
 					{
-						Effect *tmpEffect = Effect::create("Hupo", hero);
+						Effect* tmpEffect = Effect::create("Hupo", hero);
 						if (hero->isPlayer())
 						{
 							tmpEffect->setOpacity(150);
@@ -2559,8 +2561,8 @@ void CharacterBase::healBuff(float dt)
 	else if (getName() == SummonEnum::Slug)
 	{
 		auto list = isAkatsukiGroup()
-						? getGameLayer()->_AkatsukiFlogArray
-						: getGameLayer()->_KonohaFlogArray;
+			? getGameLayer()->_AkatsukiFlogArray
+			: getGameLayer()->_KonohaFlogArray;
 		for (auto flog : list)
 		{
 			if (getGroup() == flog->getGroup() && flog->_state != State::DEAD)
@@ -2576,7 +2578,7 @@ void CharacterBase::healBuff(float dt)
 		}
 	}
 	else if (getName() == HeroEnum::Sakura ||
-			 getName() == HeroEnum::Tsunade)
+		getName() == HeroEnum::Tsunade)
 	{
 		increaseHpAndUpdateUI(_healBuffValue);
 	}
@@ -2749,7 +2751,7 @@ void CharacterBase::stopJump(int stopTime)
 	}
 }
 
-void CharacterBase::setBullet(const string &bulletName)
+void CharacterBase::setBullet(const string& bulletName)
 {
 	auto bullet = Bullet::create();
 	bullet->setID(bulletName, Role::Bullet, _group);
@@ -2768,7 +2770,7 @@ void CharacterBase::setBullet(const string &bulletName)
 	{
 		bullet->setScale(0.8f);
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32),
-								 getPositionY() + 52));
+			getPositionY() + 52));
 		bullet->attack(NAttack);
 		bullet->setMove(192, 2.0f, false);
 	}
@@ -2776,7 +2778,7 @@ void CharacterBase::setBullet(const string &bulletName)
 	{
 		bullet->setScale(0.8f);
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -68 : 68),
-								 getPositionY() + 42));
+			getPositionY() + 42));
 		bullet->attack(NAttack);
 		bullet->setMove(192, 2.0f, false);
 	}
@@ -2784,7 +2786,7 @@ void CharacterBase::setBullet(const string &bulletName)
 	{
 		bullet->setScale(0.8f);
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -76 : 76),
-								 getPositionY() + getHeight() / 2));
+			getPositionY() + getHeight() / 2));
 		if (_skillUPBuffValue)
 			bullet->setNAttackValue(bullet->getNAttackValue() + _skillUPBuffValue);
 
@@ -2793,29 +2795,29 @@ void CharacterBase::setBullet(const string &bulletName)
 		bullet->setEaseIn(224, 5.0f);
 	}
 	else if (bulletName == "FlyKnife" ||
-			 bulletName == "TentenSRK")
+		bulletName == "TentenSRK")
 	{
 		bullet->setScale(0.8f);
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32),
-								 getPositionY() + getHeight() / 2));
+			getPositionY() + getHeight() / 2));
 
 		bullet->setEaseIn(224, 2.0f);
 		bullet->attack(NAttack);
 	}
 	else if (bulletName == ProjectileEnum::HiraishinKunai ||
-			 bulletName == ProjectileEnum::Shintenshin)
+		bulletName == ProjectileEnum::Shintenshin)
 	{
 		if (bulletName == ProjectileEnum::HiraishinKunai)
 		{
 			bullet->setScale(0.8f);
 			bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -42 : 42),
-									 getPositionY() + getHeight() / 2));
+				getPositionY() + getHeight() / 2));
 		}
 		else
 		{
 			bullet->setAnchorPoint(Vec2(0.5f, 0));
 			bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -42 : 42),
-									 getPositionY()));
+				getPositionY()));
 		}
 
 		bullet->_originY = getPositionY();
@@ -2826,7 +2828,7 @@ void CharacterBase::setBullet(const string &bulletName)
 	else
 	{
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32),
-								 getPositionY() + getContentSize().height / 2));
+			getPositionY() + getContentSize().height / 2));
 
 		bullet->attack(NAttack);
 		bullet->setMove(192, 2.0f, false);
@@ -2873,14 +2875,14 @@ void CharacterBase::setBulletGroup(float dt)
 	}
 }
 
-Hero *CharacterBase::createClone(int cloneTime)
+Hero* CharacterBase::createClone(int cloneTime)
 {
 	return nullptr;
 }
 
 void CharacterBase::setClone(int cloneTime)
 {
-	Hero *clone = createClone(cloneTime);
+	Hero* clone = createClone(cloneTime);
 	if (clone == nullptr)
 	{
 		CCLOG("Current character %s can not create clone", getName().c_str());
@@ -2961,7 +2963,7 @@ void CharacterBase::removeClone(float dt)
 
 void CharacterBase::removeAllClones()
 {
-	auto &unitArray = getGameLayer()->_CharacterArray;
+	auto& unitArray = getGameLayer()->_CharacterArray;
 	for (auto c : unitArray)
 	{
 		if (c->getMaster() == this)
@@ -2971,7 +2973,7 @@ void CharacterBase::removeAllClones()
 	}
 }
 
-void CharacterBase::setMon(const string &monName)
+void CharacterBase::setMon(const string& monName)
 {
 	float monsterStayTime = _attackRangeY;
 
@@ -3040,7 +3042,7 @@ void CharacterBase::setMon(const string &monName)
 		monster->attack(NAttack);
 	}
 	else if (monName == "Crash" ||
-			 monName == "Crash2")
+		monName == "Crash2")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32), _originY ? _originY : getPositionY()));
 		monster->setAnchorPoint(Vec2(0.5, 0.25f));
@@ -3082,7 +3084,7 @@ void CharacterBase::setMon(const string &monName)
 		monster->doAI();
 	}
 	else if (monName == "PaperRain" ||
-			 monName == "Steam")
+		monName == "Steam")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 16 : getPositionX() + 16, _originY));
 		_monsterArray.push_back(monster);
@@ -3095,8 +3097,8 @@ void CharacterBase::setMon(const string &monName)
 		monster->attack(NAttack);
 	}
 	else if (monName == "Tuji" ||
-			 monName == "Tuji2" ||
-			 monName == "Suiji")
+		monName == "Tuji2" ||
+		monName == "Suiji")
 	{
 		monster->setPositionY(getPositionY() - 24);
 		monster->setPositionX(getPositionX() + (_isFlipped ? -64 : 64));
@@ -3110,8 +3112,8 @@ void CharacterBase::setMon(const string &monName)
 		monster->attack(NAttack);
 	}
 	else if (monName == "Jibaku" ||
-			 monName == "JibakuEX" ||
-			 monName == "Shenwei")
+		monName == "JibakuEX" ||
+		monName == "Shenwei")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -96 : 96), getPositionY()));
 		_monsterArray.push_back(monster);
@@ -3145,35 +3147,35 @@ void CharacterBase::setMon(const string &monName)
 		monster->setDirectMove(156, 2.0f, false);
 	}
 	else if (monName == "Chameleon" ||
-			 monName == "Naraka" ||
-			 monName == "Roar" ||
-			 monName == "Smoke" ||
-			 monName == "BannShou" ||
-			 monName == "Bull" ||
-			 monName == "Raintiger")
+		monName == "Naraka" ||
+		monName == "Roar" ||
+		monName == "Smoke" ||
+		monName == "BannShou" ||
+		monName == "Bull" ||
+		monName == "Raintiger")
 	{
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
 	else if (monName == "SuiRyuDan" ||
-			 monName == "DotonPillar" ||
-			 monName == "Yataikuzu" ||
-			 monName == "Yominuma" ||
-			 monName == "Dogs" ||
-			 monName == "SandHand" ||
-			 monName == "KageFeng" ||
-			 monName == "Sanbao" ||
-			 monName == "SandBall" ||
-			 monName == "Sabaku" ||
-			 monName == "SandWave" ||
-			 monName == "Tsukuyomi" ||
-			 monName == "Shark")
+		monName == "DotonPillar" ||
+		monName == "Yataikuzu" ||
+		monName == "Yominuma" ||
+		monName == "Dogs" ||
+		monName == "SandHand" ||
+		monName == "KageFeng" ||
+		monName == "Sanbao" ||
+		monName == "SandBall" ||
+		monName == "Sabaku" ||
+		monName == "SandWave" ||
+		monName == "Tsukuyomi" ||
+		monName == "Shark")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -48 : 48), getPositionY() - 4));
 		monster->attack(NAttack);
 	}
 	else if (monName == "Suijin" ||
-			 monName == "BugPillar")
+		monName == "BugPillar")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -64 : 64), getPositionY() + 1));
 		monster->attack(NAttack);
@@ -3231,7 +3233,7 @@ void CharacterBase::setMon(const string &monName)
 		monster->attack(NAttack);
 	}
 	else if (monName == "ItachiSusano" ||
-			 monName == "SasukeSusano")
+		monName == "SasukeSusano")
 	{
 		_monsterArray.push_back(monster);
 	}
@@ -3264,7 +3266,7 @@ void CharacterBase::setMon(const string &monName)
 		monster->setDirectMove(128, 2.0f, false);
 	}
 	else if (monName == "FutonSRK2" ||
-			 monName == "FutonSRK")
+		monName == "FutonSRK")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -48 : 48), getPositionY()));
 
@@ -3309,8 +3311,8 @@ void CharacterBase::setMon(const string &monName)
 		monster->setEaseIn(224, 3.0f);
 	}
 	else if (monName == "WaterBullet" ||
-			 monName == "BoneBullet" ||
-			 monName == "WaterBom")
+		monName == "BoneBullet" ||
+		monName == "WaterBom")
 	{
 		monster->attack(NAttack);
 		monster->setEaseIn(224, 1.0f);
@@ -3330,9 +3332,9 @@ void CharacterBase::setMon(const string &monName)
 		monster->setEaseIn(224, 1.0f);
 	}
 	else if (monName == "InkBird" ||
-			 monName == "FakeTobirama" ||
-			 monName == "TamaBomb" ||
-			 monName == "Shenwei2")
+		monName == "FakeTobirama" ||
+		monName == "TamaBomb" ||
+		monName == "Shenwei2")
 	{
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
@@ -3358,7 +3360,7 @@ void CharacterBase::setMon(const string &monName)
 		addChild(monster, -1000);
 	}
 	else if (monName == "CircleMark" ||
-			 monName == "Yominuma")
+		monName == "Yominuma")
 	{
 		getGameLayer()->addChild(monster, -5000);
 	}
@@ -3395,7 +3397,7 @@ void CharacterBase::setMonPer(float dt)
 	getGameLayer()->addChild(monster, -monster->getPositionY());
 }
 
-void CharacterBase::setTrap(const string &trapName)
+void CharacterBase::setTrap(const string& trapName)
 {
 	if (trapName == "Amaterasu")
 	{
@@ -3570,7 +3572,7 @@ void CharacterBase::setMonAttack(int skillNum)
 				}
 			}
 			else if (getName() == HeroEnum::Itachi ||
-					 getName() == HeroEnum::ImmortalSasuke)
+				getName() == HeroEnum::ImmortalSasuke)
 			{
 				if (_state == State::NATTACK)
 				{
@@ -3650,7 +3652,7 @@ float CharacterBase::getHpPercent()
 
 void CharacterBase::attack(ABType type)
 {
-	if (isPlayer() && type == NAttack)
+	if (isActivePlayerBody() && type == NAttack)
 	{
 		if (!getGameLayer()->getSkillFinish() && !_isOnlySkillLocked)
 			return;
@@ -3666,12 +3668,12 @@ void CharacterBase::attack(ABType type)
 		nAttack();
 		break;
 	case SKILL1:
-		if (isPlayer())
-		{
-			if (_isControlled)
-				getGameLayer()->getHudLayer()->skill1Button->click();
-		}
-
+		// This used to re-enter skill1Button->click() whenever a possessed
+		// Role::Player body pressed a skill - that re-click fired the button's
+		// own press/cooldown visual a second time even when the character was
+		// not actually allowed to act (e.g. AI-Ino possessing the player), so
+		// the UI showed the skill as used when it hadn't fired. sAttack()
+		// below is all that's needed to actually cast the skill.
 		_attackValue = getSAttackValue1();
 		_attackType = _sAttackType1;
 		_attackRangeX = _sAttackRangeX1;
@@ -3679,12 +3681,6 @@ void CharacterBase::attack(ABType type)
 		sAttack(SKILL1);
 		break;
 	case SKILL2:
-		if (isPlayer())
-		{
-			if (_isControlled)
-				getGameLayer()->getHudLayer()->skill2Button->click();
-		}
-
 		_attackValue = getSAttackValue2();
 		_attackType = _sAttackType2;
 		_attackRangeX = _sAttackRangeX2;
@@ -3692,12 +3688,6 @@ void CharacterBase::attack(ABType type)
 		sAttack(SKILL2);
 		break;
 	case SKILL3:
-		if (isPlayer())
-		{
-			if (_isControlled)
-				getGameLayer()->getHudLayer()->skill3Button->click();
-		}
-
 		_attackValue = getSAttackValue3();
 		_attackType = _sAttackType3;
 		_attackRangeX = _sAttackRangeX3;
@@ -3705,7 +3695,12 @@ void CharacterBase::attack(ABType type)
 		sAttack(SKILL3);
 		break;
 	case OUGIS1:
-		if (isNotPlayer() || _isAI)
+		// The HUD button already charged CKR to currentPlayer, so a body the
+		// human is piloting (e.g. a possessed enemy) must not be charged a
+		// second time here. AI-driven bodies (including your own character
+		// while an AI Ino has possessed it) never go through the HUD button,
+		// so they still have to be charged here.
+		if ((isNotPlayer() || _isAI) && !(isActivePlayerBody() && !_isAI))
 		{
 			uint32_t ckr = getCKR();
 			if (ckr >= 15000)
@@ -3730,7 +3725,7 @@ void CharacterBase::attack(ABType type)
 		oAttack(OUGIS1);
 		break;
 	case OUGIS2:
-		if (isNotPlayer() || _isAI)
+		if ((isNotPlayer() || _isAI) && !(isActivePlayerBody() && !_isAI))
 		{
 			uint32_t ckr2 = getCKR2();
 			if (ckr2 >= 25000)
@@ -3765,7 +3760,7 @@ void CharacterBase::nAttack()
 	{
 		if (!_isAllAttackLocked || _isOnlySkillLocked)
 		{
-			if (isPlayer())
+			if (isActivePlayerBody())
 			{
 				getGameLayer()->setSkillFinish(false);
 			}
@@ -3809,7 +3804,7 @@ void CharacterBase::sAttack(ABType type)
 			if (_isCanSkill1)
 			{
 				_state = State::SATTACK;
-				if (isPlayer())
+				if (isActivePlayerBody())
 				{
 					getGameLayer()->setSkillFinish(false);
 				}
@@ -3823,7 +3818,7 @@ void CharacterBase::sAttack(ABType type)
 			if (_isCanSkill2)
 			{
 				_state = State::SATTACK;
-				if (isPlayer())
+				if (isActivePlayerBody())
 				{
 					getGameLayer()->setSkillFinish(false);
 				}
@@ -3839,7 +3834,7 @@ void CharacterBase::sAttack(ABType type)
 			if (_isCanSkill3)
 			{
 				_state = State::SATTACK;
-				if (isPlayer())
+				if (isActivePlayerBody())
 				{
 					getGameLayer()->setSkillFinish(false);
 				}
@@ -3859,7 +3854,7 @@ void CharacterBase::oAttack(ABType type)
 {
 	if (_state == State::IDLE || _state == State::WALK || _state == State::NATTACK)
 	{
-		if (isPlayer())
+		if (isActivePlayerBody())
 		{
 			getGameLayer()->setSkillFinish(false);
 		}
@@ -3927,7 +3922,7 @@ void CharacterBase::idle()
 
 		unschedule(schedule_selector(CharacterBase::stopMove));
 
-		bool _isPlayer = isPlayer();
+		bool _isPlayer = isActivePlayerBody();
 
 		if (_isPlayer)
 		{
@@ -3957,18 +3952,22 @@ void CharacterBase::idle()
 
 void CharacterBase::walk(Vec2 direction)
 {
-	if (_state == State::IDLE || _state == State::WALK || (_state == State::NATTACK && isNotPlayer()))
+	// Only truly AI-driven non-player bodies may walk out of a basic attack;
+	// a possessed body the human is piloting must finish/hold it like a player.
+	const bool isAiRoleBody = isNotPlayer() && !isActivePlayerBody();
+
+	if (_state == State::IDLE || _state == State::WALK || (_state == State::NATTACK && isAiRoleBody))
 	{
 		isHurtingTower = false;
 
 		if (_state == State::NATTACK &&
 			_isOnlySkillLocked &&
 			(getName() == HeroEnum::Suigetsu ||
-			 getName() == HeroEnum::Jugo ||
-			 getName() == HeroEnum::Hiruzen ||
-			 getName() == HeroEnum::Kisame))
+				getName() == HeroEnum::Jugo ||
+				getName() == HeroEnum::Hiruzen ||
+				getName() == HeroEnum::Kisame))
 		{
-			if (isNotPlayer())
+			if (isAiRoleBody)
 			{
 				return;
 			}
@@ -4157,7 +4156,7 @@ bool CharacterBase::hardHurt(int delayTime, bool isHurtAction, bool isCatch, boo
 		_state = State::HURT;
 		stopAllActions();
 
-		Vector<FiniteTimeAction *> list;
+		Vector<FiniteTimeAction*> list;
 		if (isHurtAction)
 		{
 			list.pushBack(_hurtAction);
@@ -4181,7 +4180,7 @@ bool CharacterBase::hardHurt(int delayTime, bool isHurtAction, bool isCatch, boo
 					CCMessageBox(path.c_str(), "Not found hard hurt frame");
 			}
 
-			Vector<SpriteFrame *> spriteFrames;
+			Vector<SpriteFrame*> spriteFrames;
 			spriteFrames.pushBack(frame);
 			auto tempAnimation = Animation::createWithSpriteFrames(spriteFrames, 0.1f);
 			auto tempAction = Animate::create(tempAnimation);
@@ -4250,7 +4249,7 @@ void CharacterBase::absorb(Vec2 position, bool isImmediate)
 		}
 		_state = State::HURT;
 
-		Vector<FiniteTimeAction *> list;
+		Vector<FiniteTimeAction*> list;
 		if (isImmediate)
 		{
 			stopAllActions();
@@ -4335,7 +4334,7 @@ void CharacterBase::floatUP(float floatHeight, bool isCancelSkill)
 		float posX = getPositionX();
 		float posY = getPositionY();
 		_originY = posY;
-		ActionInterval *_floatAwayAction;
+		ActionInterval* _floatAwayAction;
 
 		if (floatHeight == 64)
 			_floatAwayAction = JumpTo::create(0.8f, Vec2(posX + (_isFlipped ? 64 : -64), posY), 64, 1);
@@ -4551,7 +4550,7 @@ void CharacterBase::checkActionFinish(float dt)
 		unschedule(schedule_selector(CharacterBase::checkActionFinish));
 		stopAllActions();
 
-		Vector<FiniteTimeAction *> list;
+		Vector<FiniteTimeAction*> list;
 		auto fadeOut = FadeOut::create(0.5f);
 		auto call = CallFunc::create(std::bind(&CharacterBase::dealloc, this));
 		if (_deadAction)
@@ -4611,7 +4610,7 @@ bool CharacterBase::findEnemy(Role role, int searchRange, bool masterRange)
 template <typename T>
 typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
 // template find ememy
-CharacterBase::findEnemyBy(const vector<T *> &list, int searchRange, bool masterRange)
+CharacterBase::findEnemyBy(const vector<T*>& list, int searchRange, bool masterRange)
 {
 	float distance;
 	float curDistance = 0;
@@ -4702,7 +4701,7 @@ bool CharacterBase::findEnemy2(Role role)
 template <typename T>
 typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
 // template find ememy 2
-CharacterBase::findEnemy2By(const vector<T *> &list)
+CharacterBase::findEnemy2By(const vector<T*>& list)
 {
 	float distance;
 	float curDistance = 0;
@@ -4743,8 +4742,8 @@ CharacterBase::findEnemy2By(const vector<T *> &list)
 						if (target->isNotGuardian())
 						{
 							friendCombatPoint += baseSkillCombatPoint + target->getHP() +
-												 (target->getCKR() / 15000) * target->_sAttackCombatPoint4 +
-												 (target->getCKR2() / 25000) * target->_sAttackCombatPoint5;
+								(target->getCKR() / 15000) * target->_sAttackCombatPoint4 +
+								(target->getCKR2() / 25000) * target->_sAttackCombatPoint5;
 						}
 					}
 				}
@@ -4753,8 +4752,8 @@ CharacterBase::findEnemy2By(const vector<T *> &list)
 					if (target->isNotGuardian())
 					{
 						enemyCombatPoint += baseSkillCombatPoint + target->getHP() +
-											(target->getCKR() / 15000) * target->_sAttackCombatPoint4 +
-											(target->getCKR2() / 25000) * target->_sAttackCombatPoint5;
+							(target->getCKR() / 15000) * target->_sAttackCombatPoint4 +
+							(target->getCKR2() / 25000) * target->_sAttackCombatPoint5;
 					}
 
 					if (!target->_isInvincible && (target->getPositionX() >= getGameLayer()->currentMap->getTileSize().width * 3 && target->getPositionX() <= (getGameLayer()->currentMap->getMapSize().width - 3) * getGameLayer()->currentMap->getTileSize().width))
@@ -4798,7 +4797,7 @@ bool CharacterBase::findTargetEnemy(Role role, bool isTowerDected)
 
 template <typename T>
 typename std::enable_if<std::is_base_of<CharacterBase, T>::value, bool>::type
-CharacterBase::findTargetEnemyBy(const vector<T *> &list, bool isTowerDected)
+CharacterBase::findTargetEnemyBy(const vector<T*>& list, bool isTowerDected)
 {
 	float curDistance = 0;
 	Vec2 sp;
@@ -4813,8 +4812,8 @@ CharacterBase::findTargetEnemyBy(const vector<T *> &list, bool isTowerDected)
 		{
 			// float gardZone
 			bool found = getGameLayer()->playerGroup == Group::Konoha
-							 ? target->getPositionX() >= 81 * 32
-							 : target->getPositionX() <= 14 * 32;
+				? target->getPositionX() >= 81 * 32
+				: target->getPositionX() <= 14 * 32;
 			if (found)
 			{
 				findSome = true;
@@ -4871,9 +4870,9 @@ bool CharacterBase::checkBase()
 		}
 	}
 
-	auto &flogArray = isAkatsukiGroup()
-						  ? getGameLayer()->_KonohaFlogArray
-						  : getGameLayer()->_AkatsukiFlogArray;
+	auto& flogArray = isAkatsukiGroup()
+		? getGameLayer()->_KonohaFlogArray
+		: getGameLayer()->_AkatsukiFlogArray;
 	for (auto target : flogArray)
 	{
 		if (target->_state == State::DEAD)
@@ -5136,7 +5135,7 @@ void CharacterBase::changeGroup()
 
 template <typename T>
 typename std::enable_if<std::is_base_of<CharacterBase, T>::value, void>::type
-CharacterBase::changeGroupBy(const vector<T *> &list)
+CharacterBase::changeGroupBy(const vector<T*>& list)
 {
 	for (auto target : list)
 	{
@@ -5161,7 +5160,7 @@ CharacterBase::changeGroupBy(const vector<T *> &list)
 	}
 }
 
-void CharacterBase::autoFlip(CharacterBase *attacker)
+void CharacterBase::autoFlip(CharacterBase* attacker)
 {
 	if (_isFlipped == attacker->_isFlipped)
 	{
@@ -5212,7 +5211,7 @@ void CharacterBase::increaseAllCkrs(uint32_t value, bool enableLv2, bool enableL
 		if (ckr >= 15000)
 			_isCanOugis1 = true;
 
-		if (isPlayer())
+		if (isPlayer() || isActivePlayerBody())
 			getGameLayer()->setCKRLose(false);
 	}
 
@@ -5224,7 +5223,7 @@ void CharacterBase::increaseAllCkrs(uint32_t value, bool enableLv2, bool enableL
 		if (ckr2 >= 25000)
 			_isCanOugis2 = true;
 
-		if (isPlayer())
+		if (isPlayer() || isActivePlayerBody())
 			getGameLayer()->setCKRLose(true);
 	}
 }

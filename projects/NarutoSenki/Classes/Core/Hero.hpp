@@ -8,8 +8,8 @@ class Hero : public CharacterBase
 	friend class CommandSystem;
 
 private:
-	Sprite *rebornSprite = nullptr;
-	CCLabelBMFont *rebornLabel = nullptr;
+	Sprite* rebornSprite = nullptr;
+	CCLabelBMFont* rebornLabel = nullptr;
 	// Hero *proxy = nullptr;
 
 public:
@@ -49,7 +49,7 @@ public:
 		return true;
 	}
 
-	virtual void setID(const string &name, Role role, Group group)
+	virtual void setID(const string& name, Role role, Group group)
 	{
 		clearActionData();
 		setRole(role);
@@ -74,13 +74,13 @@ public:
 				}
 			}
 		}
-		CCArray *animationArray = CCArray::create();
+		CCArray* animationArray = CCArray::create();
 		KTools::readXMLToArray(fpath, animationArray);
 
 		// init
-		CCArray *tmpAction = (CCArray *)(animationArray->objectAtIndex(0));
-		CCArray *tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
-		idleArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		CCArray* tmpAction = (CCArray*)(animationArray->objectAtIndex(0));
+		CCArray* tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
+		idleArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		idleArray->retain();
 
 		string unitName;
@@ -97,8 +97,6 @@ public:
 			setMaxHPValue(maxHP, false);
 			setHPValue(maxHP, false);
 		}
-		setCKR(0);
-		setCKR2(0);
 		setHeight(tmpHeight);
 		setWalkSpeed(tmpSpeed);
 		_originSpeed = tmpSpeed;
@@ -106,63 +104,63 @@ public:
 		setKillNum(0);
 
 		// init WalkFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(1));
-		walkArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(1));
+		walkArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		walkArray->retain();
 
 		// init HurtFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(2));
-		hurtArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(2));
+		hurtArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		hurtArray->retain();
 
 		// init AirHurtFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(3));
-		airHurtArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(3));
+		airHurtArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		airHurtArray->retain();
 
 		// init KnockDownFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(4));
-		knockDownArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(4));
+		knockDownArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		knockDownArray->retain();
 
 		// init FloatFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(5));
-		floatArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(5));
+		floatArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		floatArray->retain();
 
 		// init DeadFrame
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(6));
-		deadArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(6));
+		deadArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		deadArray->retain();
 
 		// init nAttack data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(7));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(7));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 
 		uint32_t tmpValue;
 		uint32_t tmpCD;
 		readData(tmpData, _nAttackType, tmpValue, _nAttackRangeX, _nAttackRangeY, tmpCD, tmpCombatPoint);
 		setNAttackValue(tmpValue);
 
-		nattackArray = (CCArray *)(tmpAction->objectAtIndex(1));
+		nattackArray = (CCArray*)(tmpAction->objectAtIndex(1));
 		nattackArray->retain();
 
 		// init skill1 data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(8));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(8));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 
 		readData(tmpData, _sAttackType1, tmpValue, _sAttackRangeX1, _sAttackRangeY1, _sAttackCD1, _sAttackCombatPoint1);
 		setSAttackValue1(tmpValue);
 
-		skill1Array = (CCArray *)(tmpAction->objectAtIndex(1));
+		skill1Array = (CCArray*)(tmpAction->objectAtIndex(1));
 		skill1Array->retain();
 
 		// init skill2 data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(9));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(9));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 		readData(tmpData, _sAttackType2, tmpValue, _sAttackRangeX2, _sAttackRangeY2, _sAttackCD2, _sAttackCombatPoint2);
 		setSAttackValue2(tmpValue);
-		skill2Array = (CCArray *)(tmpAction->objectAtIndex(1));
+		skill2Array = (CCArray*)(tmpAction->objectAtIndex(1));
 		skill2Array->retain();
 
 		if (name == "Kakashi")
@@ -174,71 +172,71 @@ public:
 		}
 
 		// init skill3 data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(10));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(10));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 		readData(tmpData, _sAttackType3, tmpValue, _sAttackRangeX3, _sAttackRangeY3, _sAttackCD3, _sAttackCombatPoint3);
 		setSAttackValue3(tmpValue);
-		skill3Array = (CCArray *)(tmpAction->objectAtIndex(1));
+		skill3Array = (CCArray*)(tmpAction->objectAtIndex(1));
 		skill3Array->retain();
 
 		// init skill4 data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(11));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(11));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 		readData(tmpData, _sAttackType4, tmpValue, _sAttackRangeX4, _sAttackRangeY4, _sAttackCD4, _sAttackCombatPoint4);
 		setSAttackValue4(tmpValue);
-		skill4Array = (CCArray *)(tmpAction->objectAtIndex(1));
+		skill4Array = (CCArray*)(tmpAction->objectAtIndex(1));
 		skill4Array->retain();
 
 		// init skill5 data & Frame Array
-		tmpAction = (CCArray *)(animationArray->objectAtIndex(12));
-		tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+		tmpAction = (CCArray*)(animationArray->objectAtIndex(12));
+		tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 		readData(tmpData, _sAttackType5, tmpValue, _sAttackRangeX5, _sAttackRangeY5, _sAttackCD5, _sAttackCombatPoint5);
 		setSAttackValue5(tmpValue);
-		skill5Array = (CCArray *)(tmpAction->objectAtIndex(1));
+		skill5Array = (CCArray*)(tmpAction->objectAtIndex(1));
 		skill5Array->retain();
 
 		// initial specal animations
 		while (1)
 		{
 			CC_BREAK_IF(animationArray->count() <= 15);
-			tmpAction = (CCArray *)(animationArray->objectAtIndex(15));
-			skillSPC5Array = (CCArray *)(tmpAction->objectAtIndex(1));
+			tmpAction = (CCArray*)(animationArray->objectAtIndex(15));
+			skillSPC5Array = (CCArray*)(tmpAction->objectAtIndex(1));
 			skillSPC5Array->retain();
 
 			CC_BREAK_IF(animationArray->count() <= 16);
-			tmpAction = (CCArray *)(animationArray->objectAtIndex(16));
-			skillSPC4Array = (CCArray *)(tmpAction->objectAtIndex(1));
+			tmpAction = (CCArray*)(animationArray->objectAtIndex(16));
+			skillSPC4Array = (CCArray*)(tmpAction->objectAtIndex(1));
 			skillSPC4Array->retain();
 
 			CC_BREAK_IF(animationArray->count() <= 17);
-			tmpAction = (CCArray *)(animationArray->objectAtIndex(17));
-			tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+			tmpAction = (CCArray*)(animationArray->objectAtIndex(17));
+			tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 			readData(tmpData, _spcAttackType1, tmpValue, _spcAttackRangeX1, _spcAttackRangeY1, _spcAttackCD1, tmpCombatPoint);
 			if (!_spcAttackType1.empty())
 			{
-				skillSPC1Array = (CCArray *)(tmpAction->objectAtIndex(1));
+				skillSPC1Array = (CCArray*)(tmpAction->objectAtIndex(1));
 				setSpcAttackValue1(tmpValue);
 				skillSPC1Array->retain();
 			}
 
 			CC_BREAK_IF(animationArray->count() <= 18);
-			tmpAction = (CCArray *)(animationArray->objectAtIndex(18));
-			tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+			tmpAction = (CCArray*)(animationArray->objectAtIndex(18));
+			tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 			readData(tmpData, _spcAttackType2, tmpValue, _spcAttackRangeX2, _spcAttackRangeY2, _spcAttackCD2, tmpCombatPoint);
 			if (!_spcAttackType2.empty())
 			{
-				skillSPC2Array = (CCArray *)(tmpAction->objectAtIndex(1));
+				skillSPC2Array = (CCArray*)(tmpAction->objectAtIndex(1));
 				setSpcAttackValue2(tmpValue);
 				skillSPC2Array->retain();
 			}
 
 			CC_BREAK_IF(animationArray->count() <= 19);
-			tmpAction = (CCArray *)(animationArray->objectAtIndex(19));
-			tmpData = (CCArray *)(tmpAction->objectAtIndex(0));
+			tmpAction = (CCArray*)(animationArray->objectAtIndex(19));
+			tmpData = (CCArray*)(tmpAction->objectAtIndex(0));
 			readData(tmpData, _spcAttackType3, tmpValue, _spcAttackRangeX3, _spcAttackRangeY3, _spcAttackCD3, tmpCombatPoint);
 			if (!_spcAttackType3.empty())
 			{
-				skillSPC3Array = (CCArray *)(tmpAction->objectAtIndex(1));
+				skillSPC3Array = (CCArray*)(tmpAction->objectAtIndex(1));
 				setSpcAttackValue3(tmpValue);
 				skillSPC3Array->retain();
 			}
@@ -489,7 +487,7 @@ public:
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (auto heroMo = dynamic_cast<Hero *>(mo))
+				if (auto heroMo = dynamic_cast<Hero*>(mo))
 				{
 					heroMo->dealloc();
 				}
@@ -534,7 +532,7 @@ public:
 			if (!rebornSprite)
 			{
 				rebornSprite = Sprite::create();
-				Sprite *skullSpirte = Sprite::createWithSpriteFrameName("skull.png");
+				Sprite* skullSpirte = Sprite::createWithSpriteFrameName("skull.png");
 				skullSpirte->setPosition(Vec2(0, 0));
 				rebornSprite->addChild(skullSpirte);
 
@@ -581,11 +579,11 @@ public:
 	virtual bool isEnableSkill05() { return true; }
 
 	template <typename THero>
-	static typename std::enable_if<std::is_base_of<Hero, THero>::value, THero *>::type
-	// typename enable_if<!is_same<Hero, THero>::value && is_base_of<Hero, THero>::value, THero *>::type
-	create(const string &name, Role role, Group group)
+	static typename std::enable_if<std::is_base_of<Hero, THero>::value, THero*>::type
+		// typename enable_if<!is_same<Hero, THero>::value && is_base_of<Hero, THero>::value, THero *>::type
+		create(const string& name, Role role, Group group)
 	{
-		THero *hero = new THero();
+		THero* hero = new THero();
 		if (hero->init())
 		{
 			hero->setID(name, role, group);
@@ -601,28 +599,28 @@ public:
 	}
 
 	template <typename THero>
-	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero *>::type
-	createHero(const string &name, Role role) { return create<THero>(name, role, getGroup()); }
+	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero*>::type
+		createHero(const string& name, Role role) { return create<THero>(name, role, getGroup()); }
 
 	template <typename THero>
-	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero *>::type
-	createCloneHero(const string &name) { return createHero<THero>(name, Role::Clone); }
+	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero*>::type
+		createCloneHero(const string& name) { return createHero<THero>(name, Role::Clone); }
 
 	template <typename THero>
-	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero *>::type
-	createKugutsuHero(const string &name) { return createHero<THero>(name, Role::Kugutsu); }
+	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero*>::type
+		createKugutsuHero(const string& name) { return createHero<THero>(name, Role::Kugutsu); }
 
 	template <typename THero>
-	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero *>::type
-	createSummonHero(const string &name) { return createHero<THero>(name, Role::Summon); }
+	typename std::enable_if<std::is_base_of<Hero, THero>::value, THero*>::type
+		createSummonHero(const string& name) { return createHero<THero>(name, Role::Summon); }
 
-/** Macros */
-// eg.
-//
-// yourHero.hpp
-//
-// setAIHandler(yourHero::perform);						// Default	handler
-// setAIHandler(yourHero::yourAIHandlerFunctionName);	// Custom	handler
+	/** Macros */
+	// eg.
+	//
+	// yourHero.hpp
+	//
+	// setAIHandler(yourHero::perform);						// Default	handler
+	// setAIHandler(yourHero::yourAIHandlerFunctionName);	// Custom	handler
 #define setAIHandler(funcName) aiHandler = std::bind(&funcName, this)
 
 	/** Character Macros */

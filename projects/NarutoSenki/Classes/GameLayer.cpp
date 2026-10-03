@@ -11,10 +11,10 @@
 #include "Systems/SpawnSystem.hpp"
 #include "Systems/SessionState.hpp"
 
-GameLayer *_gLayer = nullptr;
+GameLayer* _gLayer = nullptr;
 bool _isFullScreen = false;
 
-void BattleRuntimeSystem::onGameStart(GameLayer *layer, bool skipInitFlogs, float flogSpawnDuration) const
+void BattleRuntimeSystem::onGameStart(GameLayer* layer, bool skipInitFlogs, float flogSpawnDuration) const
 {
 	if (!layer)
 		return;
@@ -40,7 +40,7 @@ void BattleRuntimeSystem::onGameStart(GameLayer *layer, bool skipInitFlogs, floa
 	}
 }
 
-void BattleRuntimeSystem::updateGameTime(GameLayer *layer) const
+void BattleRuntimeSystem::updateGameTime(GameLayer* layer) const
 {
 	if (!layer)
 		return;
@@ -56,7 +56,7 @@ void BattleRuntimeSystem::updateGameTime(GameLayer *layer) const
 	layer->setTotalTime(layer->getTotalTime() + 1);
 }
 
-void BattleRuntimeSystem::updateViewPoint(GameLayer *layer) const
+void BattleRuntimeSystem::updateViewPoint(GameLayer* layer) const
 {
 	if (!layer || !layer->currentPlayer)
 		return;
@@ -76,7 +76,7 @@ void BattleRuntimeSystem::updateViewPoint(GameLayer *layer) const
 	layer->setPosition(Vec2(winSize.width / 2, y) - Vec2(x, y));
 }
 
-void SpawnSystem::initMatchUnits(GameLayer *layer) const
+void SpawnSystem::initMatchUnits(GameLayer* layer) const
 {
 	if (!layer)
 		return;
@@ -146,7 +146,7 @@ bool GameLayer::init()
 	setTouchEnabled(true);
 
 	_gLayer = this;
-	const auto &gd = getGameModeHandler()->gd;
+	const auto& gd = getGameModeHandler()->gd;
 	_enableGear = gd.enableGear;
 	_isHardCoreGame = gd.isHardCore;
 	_isRandomChar = gd.isRandomChar;
@@ -190,7 +190,7 @@ void GameLayer::onExit()
 	}
 }
 
-void GameLayer::onHUDInitialized(const OnHUDInitializedCallback &callback)
+void GameLayer::onHUDInitialized(const OnHUDInitializedCallback& callback)
 {
 	callbackssList.push_back(callback);
 }
@@ -216,6 +216,8 @@ void GameLayer::initTileMap()
 
 void GameLayer::initGard()
 {
+	if (!_enableGuardian)
+		return;
 	setRand();
 	int index = random(2);
 	auto guardianName = index == 0 ? GuardianEnum::Roshi : GuardianEnum::Han;
@@ -268,19 +270,19 @@ void GameLayer::initHeros()
 
 	_isOugis2Game = true;
 
-	TMXObjectGroup *group = currentMap->objectGroupNamed("object");
+	TMXObjectGroup* group = currentMap->objectGroupNamed("object");
 	if (group == nullptr)
 	{
 		CCMessageBox("Map is missing the 'object' layer", "[Error] Bad map");
 		return;
 	}
-	CCArray *objectArray = group->getObjects();
+	CCArray* objectArray = group->getObjects();
 
 	// 4v4 spawn layout
 	if (is4V4Mode)
 	{
-		auto &hero1 = herosDataVector.at(0);
-		auto &hero5 = herosDataVector.at(4);
+		auto& hero1 = herosDataVector.at(0);
+		auto& hero5 = herosDataVector.at(4);
 
 		hero1.setSpawnPoint(getCustomSpawnPoint(hero1));
 		addHero(hero1, 1);
@@ -290,7 +292,7 @@ void GameLayer::initHeros()
 	}
 
 	int i = 0;
-	for (auto &data : herosDataVector)
+	for (auto& data : herosDataVector)
 	{
 		if (data.isInit)
 			continue;
@@ -307,10 +309,10 @@ void GameLayer::initHeros()
 				mapPos -= MapPosCount;
 		}
 
-		Ref *mapObject = objectArray->objectAtIndex(mapPos);
-		auto mapdict = (CCDictionary *)mapObject;
-		int x = ((CCString *)mapdict->objectForKey("x"))->intValue();
-		int y = ((CCString *)mapdict->objectForKey("y"))->intValue();
+		Ref* mapObject = objectArray->objectAtIndex(mapPos);
+		auto mapdict = (CCDictionary*)mapObject;
+		int x = ((CCString*)mapdict->objectForKey("x"))->intValue();
+		int y = ((CCString*)mapdict->objectForKey("y"))->intValue();
 		data.setSpawnPoint(Vec2(x, y));
 
 		if (is4V4Mode)
@@ -335,12 +337,12 @@ void GameLayer::initHeros()
 	scheduleOnce(schedule_selector(GameLayer::playGameOpeningAnimation), 0.5f);
 }
 
-Hero *GameLayer::addHero(const HeroData &data, int charId)
+Hero* GameLayer::addHero(const HeroData& data, int charId)
 {
 	return addHero(data.name, data.role, data.group, data.spawnPoint, charId);
 }
 
-Hero *GameLayer::addHero(const string &name, Role role, Group group, Vec2 spawnPoint, int charId)
+Hero* GameLayer::addHero(const string& name, Role role, Group group, Vec2 spawnPoint, int charId)
 {
 	auto hero = Provider::create(name, role, group);
 	if (hero->isPlayer())
@@ -402,7 +404,7 @@ void GameLayer::addFlog(float dt)
 	auto AkatsukiFlogName = aName;
 
 	int i;
-	Flog *flog;
+	Flog* flog;
 	float mainPosY;
 	for (i = 0; i < kFlogCount; i++)
 	{
@@ -443,24 +445,24 @@ void GameLayer::initTower()
 {
 	addSprites(format("Unit/Tower/Tower{}.plist", mapId));
 
-	TMXObjectGroup *metaGroup = currentMap->objectGroupNamed("meta");
-	CCArray *metaArray = metaGroup->getObjects();
-	Ref *pObject;
+	TMXObjectGroup* metaGroup = currentMap->objectGroupNamed("meta");
+	CCArray* metaArray = metaGroup->getObjects();
+	Ref* pObject;
 	int i = 0;
 
 	CCARRAY_FOREACH(metaArray, pObject)
 	{
-		auto dict = (CCDictionary *)pObject;
+		auto dict = (CCDictionary*)pObject;
 
-		int metaX = ((CCString *)dict->objectForKey("x"))->intValue();
-		int metaY = ((CCString *)dict->objectForKey("y"))->intValue();
+		int metaX = ((CCString*)dict->objectForKey("x"))->intValue();
+		int metaY = ((CCString*)dict->objectForKey("y"))->intValue();
 
-		int metaWidth = ((CCString *)dict->objectForKey("width"))->intValue();
-		int metaHeight = ((CCString *)dict->objectForKey("height"))->intValue();
+		int metaWidth = ((CCString*)dict->objectForKey("width"))->intValue();
+		int metaHeight = ((CCString*)dict->objectForKey("height"))->intValue();
 
-		auto name = ((CCString *)dict->objectForKey("name"))->m_sString;
+		auto name = ((CCString*)dict->objectForKey("name"))->m_sString;
 
-		Tower *tower = Tower::create();
+		Tower* tower = Tower::create();
 		char towerName[7] = "abcdef";
 		strncpy(towerName, name.c_str(), 6);
 		if (is_same(towerName, kGroupKonoha))
@@ -546,7 +548,7 @@ void GameLayer::setCKRLose(bool isCRK2)
 	_hudLayer->setCKRLose(isCRK2);
 }
 
-void GameLayer::setReport(const string &slayer, const string &dead, uint32_t killNum)
+void GameLayer::setReport(const string& slayer, const string& dead, uint32_t killNum)
 {
 	_hudLayer->setReport(slayer, dead, killNum);
 }
@@ -556,7 +558,7 @@ void GameLayer::resetStatusBar()
 	_hudLayer->status_hpbar->setRotation(0);
 }
 
-void GameLayer::setCoin(const char *value)
+void GameLayer::setCoin(const char* value)
 {
 	_hudLayer->setCoin(value);
 }
@@ -669,6 +671,13 @@ void GameLayer::clearDoubleClick()
 
 void GameLayer::JoyStickRelease()
 {
+	// While the human is possessed (Ino, etc.), _isAllButtonLocked is set on
+	// the HUD to keep them from acting - the action buttons already respect
+	// this (see ActionButton::ccTouchBegan/click), but the joystick never
+	// did, so movement input kept fighting the AI for control of the body.
+	if (_hudLayer->_isAllButtonLocked)
+		return;
+
 	if (currentPlayer->getState() == State::WALK)
 	{
 		currentPlayer->idle();
@@ -677,6 +686,9 @@ void GameLayer::JoyStickRelease()
 
 void GameLayer::JoyStickUpdate(Vec2 direction)
 {
+	if (_hudLayer->_isAllButtonLocked)
+		return;
+
 	if (!ougisChar)
 	{
 		// CCLOG("x:%f,y:%f",direction.x,direction.y);
@@ -717,18 +729,18 @@ void GameLayer::onPause()
 		return;
 
 	_isPause = true;
-	RenderTexture *snapshoot = RenderTexture::create(winSize.width, winSize.height);
-	Scene *f = Director::sharedDirector()->getRunningScene();
-	Ref *pObject = f->getChildren()->objectAtIndex(0);
-	BGLayer *bg = (BGLayer *)pObject;
+	RenderTexture* snapshoot = RenderTexture::create(winSize.width, winSize.height);
+	Scene* f = Director::sharedDirector()->getRunningScene();
+	Ref* pObject = f->getChildren()->objectAtIndex(0);
+	BGLayer* bg = (BGLayer*)pObject;
 	snapshoot->begin();
 	bg->visit();
 
 	visit();
 	snapshoot->end();
 
-	Scene *pscene = Scene::create();
-	PauseLayer *layer = PauseLayer::create(snapshoot);
+	Scene* pscene = Scene::create();
+	PauseLayer* layer = PauseLayer::create(snapshoot);
 	pscene->addChild(layer);
 	Director::sharedDirector()->pushScene(pscene);
 }
@@ -759,18 +771,18 @@ void GameLayer::onGear()
 		return;
 	_isGear = true;
 
-	RenderTexture *snapshoot = RenderTexture::create(winSize.width, winSize.height);
-	Scene *f = Director::sharedDirector()->getRunningScene();
-	Ref *pObject = f->getChildren()->objectAtIndex(0);
-	BGLayer *bg = (BGLayer *)pObject;
+	RenderTexture* snapshoot = RenderTexture::create(winSize.width, winSize.height);
+	Scene* f = Director::sharedDirector()->getRunningScene();
+	Ref* pObject = f->getChildren()->objectAtIndex(0);
+	BGLayer* bg = (BGLayer*)pObject;
 	snapshoot->begin();
 	bg->visit();
 
 	visit();
 	snapshoot->end();
 
-	Scene *pscene = Scene::create();
-	GearLayer *layer = GearLayer::create(snapshoot);
+	Scene* pscene = Scene::create();
+	GearLayer* layer = GearLayer::create(snapshoot);
 	_gearLayer = layer;
 	layer->updatePlayerGear();
 	pscene->addChild(layer);
@@ -792,10 +804,10 @@ void GameLayer::onGameOver(bool isWin)
 		Director::sharedDirector()->popScene();
 	}
 
-	RenderTexture *snapshoot = RenderTexture::create(winSize.width, winSize.height);
-	Scene *f = Director::sharedDirector()->getRunningScene();
-	Ref *pObject = f->getChildren()->objectAtIndex(0);
-	BGLayer *bg = (BGLayer *)pObject;
+	RenderTexture* snapshoot = RenderTexture::create(winSize.width, winSize.height);
+	Scene* f = Director::sharedDirector()->getRunningScene();
+	Ref* pObject = f->getChildren()->objectAtIndex(0);
+	BGLayer* bg = (BGLayer*)pObject;
 	snapshoot->begin();
 	bg->visit();
 	visit();
@@ -803,8 +815,8 @@ void GameLayer::onGameOver(bool isWin)
 
 	getGameModeHandler()->Internal_GameOver();
 
-	Scene *pscene = Scene::create();
-	GameOver *layer = GameOver::create(snapshoot);
+	Scene* pscene = Scene::create();
+	GameOver* layer = GameOver::create(snapshoot);
 	layer->setWin(isWin);
 	pscene->addChild(layer);
 	Director::sharedDirector()->pushScene(pscene);
@@ -814,11 +826,11 @@ void GameLayer::onLeft()
 {
 	CCNotificationCenter::sharedNotificationCenter()->purgeNotificationCenter();
 
-	CCArray *childArray = getChildren();
-	Ref *pObject;
+	CCArray* childArray = getChildren();
+	Ref* pObject;
 	CCARRAY_FOREACH(childArray, pObject)
 	{
-		auto ac = (Node *)pObject;
+		auto ac = (Node*)pObject;
 		ac->unscheduleUpdate();
 		ac->unscheduleAllSelectors();
 	}
@@ -883,17 +895,17 @@ void GameLayer::checkBackgroundMusic(float dt)
 	}
 }
 
-void GameLayer::setOugis(CharacterBase *sender)
+void GameLayer::setOugis(CharacterBase* sender)
 {
 	if (!_hudLayer->ougisLayer)
 	{
 		ougisChar = sender;
 
-		CCArray *childArray = getChildren();
-		Ref *pObject;
+		CCArray* childArray = getChildren();
+		Ref* pObject;
 		CCARRAY_FOREACH(childArray, pObject)
 		{
-			auto object = (Node *)pObject;
+			auto object = (Node*)pObject;
 			object->pauseSchedulerAndActions();
 		}
 		pauseSchedulerAndActions();
@@ -917,11 +929,11 @@ void GameLayer::setOugis(CharacterBase *sender)
 void GameLayer::removeOugis()
 {
 	ougisChar->setZOrder(-ougisChar->getPositionY());
-	CCArray *childArray = getChildren();
-	Ref *pObject;
+	CCArray* childArray = getChildren();
+	Ref* pObject;
 	CCARRAY_FOREACH(childArray, pObject)
 	{
-		auto object = (Node *)pObject;
+		auto object = (Node*)pObject;
 		object->resumeSchedulerAndActions();
 	}
 	resumeSchedulerAndActions();
@@ -973,25 +985,25 @@ void GameLayer::invokeAllCallbacks()
 	isHUDInitialized = true;
 	if (callbackssList.size() > 0)
 	{
-		for (auto &callback : callbackssList)
+		for (auto& callback : callbackssList)
 			callback();
 		callbackssList.clear();
 	}
 }
 
-Vec2 GameLayer::getCustomSpawnPoint(HeroData &data)
+Vec2 GameLayer::getCustomSpawnPoint(HeroData& data)
 {
 	data.isInit = true;
 	return data.group == Group::Konoha ? Vec2(432, 80) : Vec2(2608, 80);
 }
 
-void GameLayer::clearAllFlogsMainTarget(CharacterBase *target)
+void GameLayer::clearAllFlogsMainTarget(CharacterBase* target)
 {
 	UnitEx::clearMainTarget(target, _KonohaFlogArray);
 	UnitEx::clearMainTarget(target, _AkatsukiFlogArray);
 }
 
-void GameLayer::clearAllUnitsMainTarget(CharacterBase *target)
+void GameLayer::clearAllUnitsMainTarget(CharacterBase* target)
 {
 	clearAllFlogsMainTarget(target);
 	UnitEx::clearMainTarget(target, _AkatsukiFlogArray);
@@ -1051,6 +1063,10 @@ void GameLayer::clearAllUnitsMainTarget(CharacterBase *target)
 			horizontal = (isPressed(KEY_D) ? 1 : -1) + (isPressed(KEY_A) ? -1 : 1); \
 			horizontal = abs(horizontal) > 1 ? horizontal / 2 : horizontal;         \
 		}                                                                           \
+		if (_gLayer->_hudLayer->_isAllButtonLocked)                                 \
+		{                                                                           \
+			break;                                                                   \
+		}                                                                           \
 		if (horizontal != 0 || vertical != 0)                                       \
 		{                                                                           \
 			if (!_gLayer->ougisChar)                                                \
@@ -1091,7 +1107,7 @@ bool GameLayer::checkHasAnyMovement()
 }
 
 /** NOTE: Impl key listener */
-void GameLayer::keyEventHandle(GLFWwindow *window, int key, int scancode, int keyState, int mods)
+void GameLayer::keyEventHandle(GLFWwindow* window, int key, int scancode, int keyState, int mods)
 {
 	// NOTE: only attack button can hold
 	//  Other keys is only click
@@ -1172,8 +1188,8 @@ void GameLayer::keyEventHandle(GLFWwindow *window, int key, int scancode, int ke
 	case KEY_0:
 	case KEY_KP_0:
 		break;
-	/* Item buttons */
-	// Item 1 & Purchase
+		/* Item buttons */
+		// Item 1 & Purchase
 	case KEY_B:
 		if (keyState)
 		{
@@ -1183,12 +1199,12 @@ void GameLayer::keyEventHandle(GLFWwindow *window, int key, int scancode, int ke
 				_gLayer->_hudLayer->getItem3Button()->click();
 		}
 		break;
-	// Item 2
+		// Item 2
 	case KEY_N:
 		if (keyState)
 			_gLayer->_hudLayer->getItem4Button()->click();
 		break;
-	// Item 3
+		// Item 3
 	case KEY_M:
 		if (keyState)
 			_gLayer->_hudLayer->getItem2Button()->click();
@@ -1317,6 +1333,10 @@ static bool s_macKeyState[256] = {};
 			horizontal = (isPressed(KEY_D) ? 1 : -1) + (isPressed(KEY_A) ? -1 : 1); \
 			horizontal = abs(horizontal) > 1 ? horizontal / 2 : horizontal;        \
 		}                                                                           \
+		if (_gLayer->_hudLayer->_isAllButtonLocked)                                 \
+		{                                                                           \
+			break;                                                                   \
+		}                                                                           \
 		if (horizontal != 0 || vertical != 0)                                       \
 		{                                                                           \
 			if (!_gLayer->ougisChar)                                                \
@@ -1379,11 +1399,11 @@ void GameLayer::keyEventHandle(int key, int keyState)
 			_gLayer->_hudLayer->skill3Button->click();
 		break;
 	case KEY_1: case KEY_KP_1:
-		if (_gLayer->_isGear && keyState) { auto &gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size()>=1 && gb.at(0)) gb.at(0)->click(); } break;
+		if (_gLayer->_isGear && keyState) { auto& gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size() >= 1 && gb.at(0)) gb.at(0)->click(); } break;
 	case KEY_2: case KEY_KP_2:
-		if (_gLayer->_isGear && keyState) { auto &gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size()>=2 && gb.at(1)) gb.at(1)->click(); } break;
+		if (_gLayer->_isGear && keyState) { auto& gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size() >= 2 && gb.at(1)) gb.at(1)->click(); } break;
 	case KEY_3: case KEY_KP_3:
-		if (_gLayer->_isGear && keyState) { auto &gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size()>=3 && gb.at(2)) gb.at(2)->click(); } break;
+		if (_gLayer->_isGear && keyState) { auto& gb = _gLayer->_gearLayer->_screwLayer->getGearBtnArray(); if (gb.size() >= 3 && gb.at(2)) gb.at(2)->click(); } break;
 	case KEY_B:
 		if (keyState) { if (_gLayer->_isGear) _gLayer->_gearLayer->confirmPurchase(); else _gLayer->_hudLayer->getItem3Button()->click(); } break;
 	case KEY_N:
