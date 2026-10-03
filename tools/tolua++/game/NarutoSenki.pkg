@@ -27,12 +27,34 @@ public:
 	static const char *getPlatform();
 };
 
-/* StartMenu.h */
+/* StartMenu.h
+ * Created by C++. Touch handling, button actions and scene changes stay in C++;
+ * lua/ui/StartMenu.lua builds the decoration and lays out / animates the
+ * controls through the accessors below.
+ * NOTE: only methods are declared (see the HudLayer note below).
+ */
+class MenuButton : public CCSprite {
+public:
+	// MenuSlot value (Upper = 0, Top = 1, Lower = 2, Hidden = 3)
+	int getSlotIndex();
+
+	void playSound();
+};
+
 class StartMenu : public CCLayer {
 public:
 	static StartMenu* create();
 
 	void setCheats(int cheats);
+
+	int getMenuButtonCount();
+	MenuButton *getMenuButton(int index);
+	CCSprite *getMenuText();
+	CCMenuItem *getNewsButton();
+	CCMenuItem *getLoginButton();
+	CCNode *getNoticeBg();
+	CCNode *getNoticeClipper();
+	CCNode *getNoticeLabel();
 };
 
 /* LoadLayer.h */

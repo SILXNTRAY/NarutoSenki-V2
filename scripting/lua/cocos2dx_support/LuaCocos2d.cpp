@@ -616,9 +616,10 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"CCShakyTiles3D");
  tolua_usertype(tolua_S,"CCNode");
  tolua_usertype(tolua_S,"CCClippingNode");
+ tolua_usertype(tolua_S,"KTools");
  tolua_usertype(tolua_S,"CCBezierTo");
  tolua_usertype(tolua_S,"CCDeccelAmplitude");
- tolua_usertype(tolua_S,"KTools");
+ tolua_usertype(tolua_S,"MenuButton");
  tolua_usertype(tolua_S,"CharacterBase");
  tolua_usertype(tolua_S,"CCComponent");
  tolua_usertype(tolua_S,"CCTableView");
@@ -66945,6 +66946,69 @@ static int tolua_Cocos2d_GameScene_getPlatform00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getSlotIndex of class  MenuButton */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_MenuButton_getSlotIndex00
+static int tolua_Cocos2d_MenuButton_getSlotIndex00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"MenuButton",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  MenuButton* self = (MenuButton*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSlotIndex'", NULL);
+#endif
+  {
+   int tolua_ret = (int)  self->getSlotIndex();
+   tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSlotIndex'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: playSound of class  MenuButton */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_MenuButton_playSound00
+static int tolua_Cocos2d_MenuButton_playSound00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"MenuButton",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  MenuButton* self = (MenuButton*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'playSound'", NULL);
+#endif
+  {
+   self->playSound();
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'playSound'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: create of class  StartMenu */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_create00
 static int tolua_Cocos2d_StartMenu_create00(lua_State* tolua_S)
@@ -67001,6 +67065,276 @@ static int tolua_Cocos2d_StartMenu_setCheats00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'setCheats'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getMenuButtonCount of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getMenuButtonCount00
+static int tolua_Cocos2d_StartMenu_getMenuButtonCount00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMenuButtonCount'", NULL);
+#endif
+  {
+   int tolua_ret = (int)  self->getMenuButtonCount();
+   tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMenuButtonCount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getMenuButton of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getMenuButton00
+static int tolua_Cocos2d_StartMenu_getMenuButton00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+  int index = ((int)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMenuButton'", NULL);
+#endif
+  {
+   MenuButton* tolua_ret = (MenuButton*)  self->getMenuButton(index);
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"MenuButton");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMenuButton'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getMenuText of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getMenuText00
+static int tolua_Cocos2d_StartMenu_getMenuText00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMenuText'", NULL);
+#endif
+  {
+   CCSprite* tolua_ret = (CCSprite*)  self->getMenuText();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMenuText'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNewsButton of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getNewsButton00
+static int tolua_Cocos2d_StartMenu_getNewsButton00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNewsButton'", NULL);
+#endif
+  {
+   CCMenuItem* tolua_ret = (CCMenuItem*)  self->getNewsButton();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCMenuItem");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNewsButton'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getLoginButton of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getLoginButton00
+static int tolua_Cocos2d_StartMenu_getLoginButton00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getLoginButton'", NULL);
+#endif
+  {
+   CCMenuItem* tolua_ret = (CCMenuItem*)  self->getLoginButton();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCMenuItem");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getLoginButton'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNoticeBg of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getNoticeBg00
+static int tolua_Cocos2d_StartMenu_getNoticeBg00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNoticeBg'", NULL);
+#endif
+  {
+   CCNode* tolua_ret = (CCNode*)  self->getNoticeBg();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCNode");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNoticeBg'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNoticeClipper of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getNoticeClipper00
+static int tolua_Cocos2d_StartMenu_getNoticeClipper00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNoticeClipper'", NULL);
+#endif
+  {
+   CCNode* tolua_ret = (CCNode*)  self->getNoticeClipper();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCNode");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNoticeClipper'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNoticeLabel of class  StartMenu */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_StartMenu_getNoticeLabel00
+static int tolua_Cocos2d_StartMenu_getNoticeLabel00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"StartMenu",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  StartMenu* self = (StartMenu*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNoticeLabel'", NULL);
+#endif
+  {
+   CCNode* tolua_ret = (CCNode*)  self->getNoticeLabel();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCNode");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNoticeLabel'.",&tolua_err);
  return 0;
 #endif
 }
@@ -72430,10 +72764,23 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"create",tolua_Cocos2d_GameScene_create00);
    tolua_function(tolua_S,"getPlatform",tolua_Cocos2d_GameScene_getPlatform00);
   tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"MenuButton","MenuButton","CCSprite",NULL);
+  tolua_beginmodule(tolua_S,"MenuButton");
+   tolua_function(tolua_S,"getSlotIndex",tolua_Cocos2d_MenuButton_getSlotIndex00);
+   tolua_function(tolua_S,"playSound",tolua_Cocos2d_MenuButton_playSound00);
+  tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"StartMenu","StartMenu","CCLayer",NULL);
   tolua_beginmodule(tolua_S,"StartMenu");
    tolua_function(tolua_S,"create",tolua_Cocos2d_StartMenu_create00);
    tolua_function(tolua_S,"setCheats",tolua_Cocos2d_StartMenu_setCheats00);
+   tolua_function(tolua_S,"getMenuButtonCount",tolua_Cocos2d_StartMenu_getMenuButtonCount00);
+   tolua_function(tolua_S,"getMenuButton",tolua_Cocos2d_StartMenu_getMenuButton00);
+   tolua_function(tolua_S,"getMenuText",tolua_Cocos2d_StartMenu_getMenuText00);
+   tolua_function(tolua_S,"getNewsButton",tolua_Cocos2d_StartMenu_getNewsButton00);
+   tolua_function(tolua_S,"getLoginButton",tolua_Cocos2d_StartMenu_getLoginButton00);
+   tolua_function(tolua_S,"getNoticeBg",tolua_Cocos2d_StartMenu_getNoticeBg00);
+   tolua_function(tolua_S,"getNoticeClipper",tolua_Cocos2d_StartMenu_getNoticeClipper00);
+   tolua_function(tolua_S,"getNoticeLabel",tolua_Cocos2d_StartMenu_getNoticeLabel00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"LoadLayer","LoadLayer","CCLayer",NULL);
   tolua_beginmodule(tolua_S,"LoadLayer");

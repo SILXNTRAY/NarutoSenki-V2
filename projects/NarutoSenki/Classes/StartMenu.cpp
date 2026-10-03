@@ -1,4 +1,5 @@
 #include "StartMenu.h"
+#include "Constants/UiFlowKeys.hpp"
 
 GameMode s_GameMode = GameMode::Classic;
 std::array<std::unique_ptr<IGameModeHandler>, GameMode::__Internal_Max_Length> s_ModeHandlers = {
@@ -115,7 +116,7 @@ void MenuButton::ccTouchMoved(Touch *touch, Event *event)
 
 void MenuButton::ccTouchEnded(Touch *touch, Event *event)
 {
-	if (_isTop && !_startMenu->isDrag)
+	if (_slot == MenuSlot::Top && !_startMenu->isDrag)
 	{
 		switch (_type)
 		{
@@ -147,7 +148,7 @@ void MenuButton::ccTouchEnded(Touch *touch, Event *event)
 	{
 		SimpleAudioEngine::sharedEngine()->playEffect(SELECT_SOUND);
 		prePosY = 0;
-		_startMenu->scrollMenu(getPositionY());
+		_startMenu->scrollMenu(this);
 		_startMenu->isDrag = false;
 	}
 }
@@ -202,7 +203,10 @@ StartMenu::StartMenu()
 	hardCoreLayer = nullptr;
 	notice_layer = nullptr;
 	noticeLabel = nullptr;
+	news_btn = nullptr;
 	login_btn = nullptr;
+	noticeBg = nullptr;
+	noticeClipper = nullptr;
 }
 
 bool StartMenu::init()
@@ -213,151 +217,58 @@ bool StartMenu::init()
 	addSprites("Result.plist");
 	addSprites("NamePlate.plist");
 
-	// Vec2 origin = Director::sharedDirector()->getVisibleOrigin();
+	// Static decoration (ground, clouds, menu bars, title, version label and the
+	// avatar fade) is built and animated by lua/ui/StartMenu.lua.
+	lua_call_func_self(StartMenuFlowKeys::kInitDecor, this, "StartMenu", VERSION_CODE);
 
-	// Sprite* bgSprite = Sprite::create("red_bg.png");
-	////pSprite->setPosition(Vec2(winSize.width/2 + origin.x, winSize.height/2 + origin.y));
-	// FULL_SCREEN_SPRITE(bgSprite);
-	// bgSprite->setAnchorPoint(Vec2(0,0));
-	// bgSprite->setPosition(Vec2(0,0));
-	// addChild(bgSprite, -5);
-
-	// produce groud
-	Sprite *gold_left = Sprite::createWithSpriteFrameName("gold_left.png");
-	gold_left->setAnchorPoint(Vec2(0, 0));
-	gold_left->setPosition(Vec2(0, 20));
-	addChild(gold_left, 1);
-
-	Sprite *gold_right = Sprite::createWithSpriteFrameName("gold_right.png");
-	gold_right->setAnchorPoint(Vec2(0, 1));
-	gold_right->setPosition(Vec2(winSize.width - gold_right->getContentSize().width - 20, winSize.height - 20));
-	addChild(gold_right, 1);
-
-	// produce the cloud
-	Sprite *cloud_left = Sprite::createWithSpriteFrameName("cloud.png");
-	cloud_left->setPosition(Vec2(0, 15));
-	cloud_left->setFlipX(true);
-	cloud_left->setFlipY(true);
-	cloud_left->setAnchorPoint(Vec2(0, 0));
-	addChild(cloud_left, 1);
-
-	auto cmv1 = MoveBy::create(1, Vec2(-15, 0));
-	auto cseq1 = RepeatForever::create(newSequence(cmv1, cmv1->reverse()));
-	cloud_left->runAction(cseq1);
-
-	Sprite *cloud_right = Sprite::createWithSpriteFrameName("cloud.png");
-	cloud_right->setPosition(Vec2(winSize.width - cloud_right->getContentSize().width,
-								  winSize.height - (cloud_right->getContentSize().height + 15)));
-	cloud_right->setAnchorPoint(Vec2(0, 0));
-	addChild(cloud_right, 1);
-
-	auto cmv2 = MoveBy::create(1, Vec2(15, 0));
-	auto cseq2 = RepeatForever::create(newSequence(cmv2, cmv2->reverse()));
-	cloud_right->runAction(cseq2);
-
-	// produce the menu_bar
-	Sprite *menu_bar_b = Sprite::create("menu_bar2.png");
-	menu_bar_b->setAnchorPoint(Vec2(0, 0));
-	FULL_SCREEN_SPRITE(menu_bar_b);
-	addChild(menu_bar_b, 2);
-
-	Sprite *menu_bar_t = Sprite::create("menu_bar3.png");
-	menu_bar_t->setAnchorPoint(Vec2(0, 0));
-	menu_bar_t->setPosition(Vec2(0, winSize.height - menu_bar_t->getContentSize().height));
-	FULL_SCREEN_SPRITE(menu_bar_t);
-	addChild(menu_bar_t, 2);
-
-	Sprite *startmenu_title = Sprite::createWithSpriteFrameName("startmenu_title.png");
-	startmenu_title->setAnchorPoint(Vec2(0, 0));
-	startmenu_title->setPosition(Vec2(2, winSize.height - startmenu_title->getContentSize().height - 2));
-	addChild(startmenu_title, 3);
-
-	// produce the menu button
+	// The carousel buttons keep their touch handling here. Their slot is the
+	// logical state; Lua turns a slot into position / scale / visibility and
+	// animates the moves between slots (see scrollMenu).
 	auto gamemode_btn = MenuButton::create("menu01.png");
 	gamemode_btn->setDelegate(this);
 	gamemode_btn->setBtnType(MenuButtonType::Custom);
-	gamemode_btn->setScale(0.5f);
-	gamemode_btn->setPositionY(_pos03);
+	gamemode_btn->_slot = MenuSlot::Upper;
 	_menuArray.push_back(gamemode_btn);
 
 	auto credits_btn = MenuButton::create("menu04.png");
 	credits_btn->setDelegate(this);
 	credits_btn->setBtnType(MenuButtonType::Credits);
-	credits_btn->setScale(0.5f);
-	credits_btn->setVisible(false);
-	credits_btn->_isBottom = true;
-	credits_btn->setPositionY(_pos02);
+	credits_btn->_slot = MenuSlot::Hidden;
 	_menuArray.push_back(credits_btn);
 
 	auto training_btn = MenuButton::create("menu02.png");
 	training_btn->setDelegate(this);
 	training_btn->setBtnType(MenuButtonType::Training);
-	training_btn->_isTop = true;
-	training_btn->setPositionY(_pos02);
+	training_btn->_slot = MenuSlot::Top;
 	_menuArray.push_back(training_btn);
 
 	auto exit_btn = MenuButton::create("menu03.png");
 	exit_btn->setDelegate(this);
 	exit_btn->setBtnType(MenuButtonType::Exit);
-	exit_btn->setScale(0.5f);
-	exit_btn->setPositionY(_pos01);
+	exit_btn->_slot = MenuSlot::Lower;
 	_menuArray.push_back(exit_btn);
 
 	menuText = Sprite::createWithSpriteFrameName("menu02_text.png");
-	menuText->setAnchorPoint(Vec2(0, 0));
-	menuText->setPosition(Vec2(10, 2));
 	addChild(menuText, 5);
 
 	for (auto menu : _menuArray)
 	{
-		menu->setPositionX(105);
 		addChild(menu, 2);
 	}
-	auto versionLabel = CCLabelBMFont::create(VERSION_CODE, Fonts::Default);
-	versionLabel->setScale(0.3f);
-	versionLabel->setPosition(winSize.width - 25, 10);
-	addChild(versionLabel, 5);
 
-	Sprite *avator = Sprite::createWithSpriteFrameName("avator1.png");
-	avator->setAnchorPoint(Vec2(0, 0));
-	avator->setOpacity(0);
-	avator->setPosition(Vec2(winSize.width - avator->getContentSize().width, 19));
-	addChild(avator, 1);
-
-	Vector<SpriteFrame *> frames;
-	Vector<FiniteTimeAction *> list;
-	int i = 0;
-	while (++i < 5)
-	{
-		auto frame = getSpriteFrame("avator{}.png", i);
-		frames.pushBack(frame);
-		auto tempAnimation = Animation::createWithSpriteFrames(frames, 0.1f);
-		auto tempAction = Animate::create(tempAnimation);
-		list.pushBack(tempAction);
-		auto fadeIn = FadeIn::create(0.8f);
-		auto delay = DelayTime::create(1.0f);
-		auto fadeOut = FadeOut::create(0.5f);
-		list.pushBack(fadeIn);
-		list.pushBack(delay);
-		list.pushBack(fadeOut);
-	}
-
-	avator->runAction(RepeatForever::create(Sequence::create(list)));
-	MenuItem *news_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("news_btn.png"), nullptr, this, menu_selector(StartMenu::onNewsBtn));
+	news_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("news_btn.png"), nullptr, this, menu_selector(StartMenu::onNewsBtn));
 	Menu *menu = Menu::create(news_btn, nullptr);
-	news_btn->setAnchorPoint(Vec2(0, 0.5f));
-	menu->setPosition(15, winSize.height - 50);
 	addChild(menu, 5);
 
 	setNotice();
 
 	login_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("login_btn.png"), nullptr, this, menu_selector(StartMenu::onLoginBtn));
 	Menu *menu2 = Menu::create(login_btn, nullptr);
-	login_btn->setAnchorPoint(Vec2(1, 0.5f));
-	menu2->setPosition(winSize.width - 15, winSize.height - 50);
 	addChild(menu2, 5);
 
-	scheduleUpdate();
+	// Lua positions everything above (buttons per slot, menu text, news / login
+	// buttons, notice bar) and starts the notice marquee.
+	lua_call_func_self(StartMenuFlowKeys::kLayoutControls, this, "StartMenu");
 
 	return true;
 }
@@ -388,36 +299,18 @@ void StartMenu::onLoginBtn(Ref *sender)
 	return;
 }
 
-void StartMenu::update(float dt)
-{
-	if(!noticeLabel){
-		return;
-	}
-
-	float currentX = noticeLabel->getPositionX();
-	//float contentX = getContentSize().width;
-	float lableX = noticeLabel->getContentSize().width;
-
-
-	if(noticeLabel->getPositionX()>=-lableX){
-		noticeLabel->setPositionX(noticeLabel->getPositionX()-0.6f);
-	}	
-	else{
-		noticeLabel->setPositionX(190);
-	}
-}
-
 void StartMenu::setNotice()
 {
+	// Builds the notice bar. Positions and the marquee scroll are handled by
+	// lua/ui/StartMenu.lua (StartMenu_LayoutControls).
 	if (!notice_layer)
 	{
 		notice_layer = Layer::create();
-		Sprite *notice_bg = Sprite::createWithSpriteFrameName("notice_bg.png");
-		notice_bg->setAnchorPoint(Vec2(0, 0));
-		notice_bg->setPosition(Vec2(15, 228));
-		notice_layer->addChild(notice_bg);
+		noticeBg = Sprite::createWithSpriteFrameName("notice_bg.png");
+		notice_layer->addChild(noticeBg);
 
 		ClippingNode *clipper = ClippingNode::create();
+		noticeClipper = clipper;
 		Node *stencil = Sprite::createWithSpriteFrameName("notice_mask.png");
 		stencil->setAnchorPoint(Vec2(0, 0));
 		clipper->setStencil(stencil);
@@ -426,9 +319,7 @@ void StartMenu::setNotice()
 		auto reply = ((CCString *)strings->objectForKey("Notice"))->m_sString.c_str();
 
 		noticeLabel = CCLabelTTF::create(reply, FONT_NAME, 12);
-		noticeLabel->setAnchorPoint(Vec2(0, 0));
 		clipper->addChild(noticeLabel);
-		clipper->setPosition(Vec2(35, 228));
 
 		notice_layer->addChild(clipper);
 
@@ -532,106 +423,31 @@ void StartMenu::onCreditsCallBack()
 	Director::sharedDirector()->replaceScene(TransitionFade::create(1.25f, creditsScene));
 }
 
-void StartMenu::scrollMenu(int posY)
+void StartMenu::scrollMenu(MenuButton *touched)
 {
-	if (posY > _pos02 || (isDrag && isClockwise))
+	// Tapping the button above the active one (or dragging downwards) scrolls
+	// forward, everything else scrolls backward.
+	const bool forward = touched->_slot == MenuSlot::Upper || (isDrag && isClockwise);
+
+	// Slots are ordered Upper, Top, Lower, Hidden: forward moves each button one
+	// slot down that list, backward one slot up (both wrap around).
+	const int slotCount = 4;
+	const int step = forward ? 1 : slotCount - 1;
+
+	for (auto menu : _menuArray)
 	{
-		for (auto menu : _menuArray)
-		{
-			if (menu->getPositionY() == _pos01)
-			{
-				auto spn = MoveTo::create(0.5, Vec2(105, _pos02));
-				reorderChild(menu, 1);
-				menu->_isBottom = true;
-				auto fo = FadeOut::create(0.3f);
-				auto seq = Spawn::createWithTwoActions(spn, fo);
-				menu->runAction(seq);
-			}
-			else if (menu->getPositionY() == _pos03)
-			{
-				auto spn = Spawn::createWithTwoActions(
-					MoveTo::create(0.5, Vec2(105, _pos02)),
-					ScaleTo::create(0.5, 1));
-				reorderChild(menu, 3);
-				menu->_isTop = true;
+		const MenuSlot from = menu->_slot;
+		const MenuSlot to = (MenuSlot)(((int)from + step) % slotCount);
+		menu->_slot = to;
 
-				auto call = CallFunc::create(std::bind(&MenuButton::playSound, menu));
-				auto seq = newSequence(spn, call);
-				menu->runAction(seq);
-			}
-			else if (menu->getPositionY() == _pos02 && menu->_isBottom)
-			{
-				auto spn = MoveTo::create(0.5, Vec2(105, _pos03));
-				reorderChild(menu, 1);
-				menu->setVisible(true);
-				auto fi = FadeIn::create(0.3f);
-				auto seq = Spawn::createWithTwoActions(spn, fi);
-				menu->_isBottom = false;
-				menu->runAction(seq);
-			}
-			else if (menu->getPositionY() == _pos02 && !menu->_isBottom)
-			{
-				auto spn = Spawn::createWithTwoActions(
-					MoveTo::create(0.5, Vec2(105, _pos01)),
-					ScaleTo::create(0.5, 0.5));
-				reorderChild(menu, 1);
-				menu->_isTop = false;
-				menu->runAction(spn);
-			}
-		}
-	}
-	else
-	{
-		for (auto menu : _menuArray)
-		{
-			if (menu->getPositionY() == _pos01)
-			{
-				auto spn = Spawn::createWithTwoActions(
-					MoveTo::create(0.5, Vec2(105, _pos02)),
-					ScaleTo::create(0.5, 1));
-				reorderChild(menu, 3);
-				menu->_isTop = true;
-
-				auto call = CallFunc::create(std::bind(&MenuButton::playSound, menu));
-				auto seq = newSequence(spn, call);
-				menu->runAction(seq);
-			}
-			else if (menu->getPositionY() == _pos03)
-			{
-				auto spn = MoveTo::create(0.5, Vec2(105, _pos02));
-				reorderChild(menu, 1);
-				menu->_isBottom = true;
-				auto fo = FadeOut::create(0.3f);
-				auto seq = Spawn::createWithTwoActions(spn, fo);
-				menu->runAction(seq);
-			}
-			else if (menu->getPositionY() == _pos02 && menu->_isBottom)
-			{
-				auto spn = MoveTo::create(0.5, Vec2(105, _pos01));
-				reorderChild(menu, 2);
-				menu->setVisible(true);
-				auto fi = FadeIn::create(0.3f);
-				auto seq = Spawn::createWithTwoActions(spn, fi);
-				menu->_isBottom = false;
-				menu->runAction(seq);
-			}
-
-			else if (menu->getPositionY() == _pos02 && !menu->_isBottom)
-			{
-				auto spn = Spawn::createWithTwoActions(
-					MoveTo::create(0.5, Vec2(105, _pos03)),
-					ScaleTo::create(0.5, 0.5));
-				reorderChild(menu, 2);
-				menu->_isTop = false;
-				menu->runAction(spn);
-			}
-		}
+		// Lua moves / scales / fades the button and re-orders it.
+		lua_call_func_self(StartMenuFlowKeys::kMoveButton, menu, "MenuButton", (int)from, (int)to);
 	}
 
 	string src;
 	for (auto menu : _menuArray)
 	{
-		if (menu->_isTop)
+		if (menu->_slot == MenuSlot::Top)
 		{
 			switch (menu->getBtnType())
 			{
