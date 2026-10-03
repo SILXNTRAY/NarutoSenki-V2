@@ -33,7 +33,8 @@ require 'ui.SelectButton'
 
 require 'ui.StartMenu'
 
-require 'ui.CreditLayer'
+require 'ui.CreditsLayer'
 require 'ui.SelectLayer'
 require 'ui.SkillLayer'
+require 'ui.GearLayer'
 require 'ui.HudLayer'

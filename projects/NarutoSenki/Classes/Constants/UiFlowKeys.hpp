@@ -28,3 +28,25 @@ static constexpr const char *kLayoutControls = "StartMenu_LayoutControls";
 // (MenuButton, fromSlot, toSlot) - animates one carousel button from one slot to the next. Slot values: MenuSlot in StartMenu.h.
 static constexpr const char *kMoveButton = "StartMenu_MoveButton";
 } // namespace StartMenuFlowKeys
+
+// Lua globals implemented in lua/ui/CreditsLayer.lua (credits screen, fully Lua).
+namespace CreditsFlowKeys
+{
+// (CreditsLayer) - builds the whole screen: background, clouds, bars, title, credit sheets, return button, music.
+static constexpr const char *kInit = "CreditsLayer_Init";
+} // namespace CreditsFlowKeys
+
+// Lua globals implemented in lua/ui/GearLayer.lua (in-game gear shop).
+// First argument is the object named in the comment.
+namespace GearFlowKeys
+{
+// (GearLayer) - builds the dimmer / shop panel and lays out every control C++ created (bars, menus, clipper, scroll list).
+static constexpr const char *kLayoutControls = "GearLayer_LayoutControls";
+// (GearLayer) - positions the row of gears the player already owns.
+static constexpr const char *kLayoutCurrentGears = "GearLayer_LayoutCurrentGears";
+// (GearLayer, gearType, updateBigIcon) - shows the detail card (and optionally the big icon) of a gear.
+static constexpr const char *kShowDetail = "GearLayer_ShowGearDetail";
+// (GearButton, gearType, buttonType, isBuyed, slot) - builds the icon / "sold out" overlay and places the button.
+// buttonType values: GearButtonType in GearLayer.h (Buy = 0, Sell = 1).
+static constexpr const char *kDecorateButton = "GearLayer_DecorateButton";
+} // namespace GearFlowKeys

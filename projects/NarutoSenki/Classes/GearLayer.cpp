@@ -2,6 +2,7 @@
 #include "GameLayer.h"
 #include "HudLayer.h"
 #include "Core/Hero.hpp"
+#include "Constants/UiFlowKeys.hpp"
 
 /*----------------------
 init GearButton ;
@@ -42,31 +43,15 @@ bool GearButton::containsTouchLocation(Touch *touch)
 	return getRect().containsPoint(convertTouchToNodeSpace(touch));
 }
 
-void GearButton::setBtnType(GearType type, GearButtonType btnType, bool isBuyed)
+void GearButton::setBtnType(GearType type, GearButtonType btnType, bool isBuyed, int slot)
 {
 	_gearType = type;
 	_btnType = btnType;
+	_isBuyed = isBuyed;
 
-	if (_btnType == GearButtonType::Buy)
-	{
-		Sprite *gearIcon = Sprite::createWithSpriteFrameName(format("gear_{:02d}.png", (int)_gearType).c_str());
-		gearIcon->setPosition(Vec2(20, 30));
-		addChild(gearIcon);
-	}
-	else
-	{
-		Sprite *gearIcon = Sprite::createWithSpriteFrameName(format("gear_{:02d}.png", (int)_gearType).c_str());
-		gearIcon->setScale(0.75f);
-		addChild(gearIcon);
-	}
-
-	if (isBuyed)
-	{
-		_isBuyed = true;
-		soIcon = Sprite::createWithSpriteFrameName("gear_so.png");
-		soIcon->setPosition(Vec2(getContentSize().width / 2, getContentSize().height / 2));
-		addChild(soIcon);
-	}
+	// Lua builds the gear icon and the "sold out" overlay and places the
+	// button (lua/ui/GearLayer.lua).
+	lua_call_func_self(GearFlowKeys::kDecorateButton, this, "GearButton", (int)_gearType, (int)_btnType, isBuyed, slot);
 }
 
 GearType GearButton::getBtnType()
@@ -86,19 +71,13 @@ void GearButton::click()
 		_delegate->currentGear = _gearType;
 	}
 
-	auto frame = getSpriteFrame("gearDetail_{:02d}.png", (int)_gearType);
-	_delegate->gearDetail->setDisplayFrame(frame);
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-	auto icon = getSpriteFrame("gear_{:02d}.png", (int)_gearType);
-	_delegate->gearBigIcon->setDisplayFrame(icon);
-#endif
+	_delegate->showGearDetail(_gearType, true);
 }
 
 bool GearButton::ccTouchBegan(Touch *touch, Event *event)
 {
 	// touch area
-	if (!containsTouchLocation(touch) || soIcon)
+	if (!containsTouchLocation(touch) || _isBuyed)
 	{
 		return false;
 	}
@@ -178,19 +157,19 @@ void ScrewLayer::ccTouchMoved(Touch *touch, Event *event)
 			setPositionY(getPositionY() + distanceY);
 		}
 
-		if ((screwBar->getPositionY() > 90 || distanceY < 0) && screwBar->getPositionY() <= 122)
+		if ((screwBar->getPositionY() > _barMinY || distanceY < 0) && screwBar->getPositionY() <= _barMaxY)
 		{
 			screwBar->setPositionY(screwBar->getPositionY() - distanceY);
 		}
 
-		if (screwBar->getPositionY() > 122)
+		if (screwBar->getPositionY() > _barMaxY)
 		{
-			screwBar->setPositionY(122);
+			screwBar->setPositionY(_barMaxY);
 		}
 
-		if (screwBar->getPositionY() < 90)
+		if (screwBar->getPositionY() < _barMinY)
 		{
-			screwBar->setPositionY(90);
+			screwBar->setPositionY(_barMinY);
 		}
 
 		prePosY = curPoint.y;
@@ -208,19 +187,19 @@ void ScrewLayer::ccTouchEnded(Touch *touch, Event *event)
 		setPositionY(totalRow * 65);
 	}
 
-	if (getPositionY() < 76)
+	if (getPositionY() < _listMinY)
 	{
-		setPositionY(76);
+		setPositionY(_listMinY);
 	}
 
-	if (screwBar->getPositionY() > 122)
+	if (screwBar->getPositionY() > _barMaxY)
 	{
-		screwBar->setPositionY(122);
+		screwBar->setPositionY(_barMaxY);
 	}
 
-	if (screwBar->getPositionY() < 90)
+	if (screwBar->getPositionY() < _barMinY)
 	{
-		screwBar->setPositionY(90);
+		screwBar->setPositionY(_barMinY);
 	}
 }
 
@@ -239,71 +218,65 @@ bool GearLayer::init(RenderTexture *snapshoot)
 
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
+	// Everything below keeps its behaviour in C++ (purchase, selection, scrolling).
+	// Lua builds the dimmer and the shop panel and decides where each control
+	// goes (see GearLayer_LayoutControls in lua/ui/GearLayer.lua).
+
+	// frozen screenshot of the game behind the shop
 	Texture2D *bgTexture = snapshoot->getSprite()->getTexture();
-	Sprite *bg = Sprite::createWithTexture(bgTexture);
-	bg->setAnchorPoint(Vec2(0, 0));
-	bg->setFlipY(true);
-	addChild(bg, 0);
-
-	Layer *blend = LayerColor::create(ccc4(0, 0, 0, 150), winSize.width, winSize.height);
-	addChild(blend, 1);
-
-	Layer *gears_layer = Layer::create();
-
-	gears_bg = Sprite::createWithSpriteFrameName("gears_bg.png");
-	gears_bg->setPosition(Vec2(winSize.width / 2, winSize.height / 2 - 12));
-	gears_layer->addChild(gears_bg, 1);
+	_snapshotBg = Sprite::createWithTexture(bgTexture);
+	_snapshotBg->setFlipY(true);
+	addChild(_snapshotBg, 0);
 
 	coinLabel = CCLabelBMFont::create("0", Fonts::Arial);
-	coinLabel->setAnchorPoint(Vec2(0, 0));
-	coinLabel->setPosition(Vec2(gears_bg->getPositionX() + 2, 58));
-	gears_layer->addChild(coinLabel, 2);
-
-	addChild(gears_layer, 10);
+	addChild(coinLabel, 12);
 
 	ClippingNode *clipper = ClippingNode::create();
 	Node *stencil = Sprite::createWithSpriteFrameName("screwMask.png");
 	stencil->setAnchorPoint(Vec2(0, 0));
 	clipper->setStencil(stencil);
+	_clipper = clipper;
 
 	_screwLayer = ScrewLayer::create();
-	_screwLayer->setAnchorPoint(Vec2(0, 0));
-	_screwLayer->setPositionY(76);
 	_screwLayer->gearNum = 9;
 
 	_screwLayer->screwBar = Sprite::createWithSpriteFrameName("screwBar.png");
-	_screwLayer->screwBar->setAnchorPoint(Vec2(0.5f, 0));
-	_screwLayer->screwBar->setPosition(Vec2(gears_bg->getPositionX() + 25, 126));
 	addChild(_screwLayer->screwBar, 600);
 
 	gearDetail = Sprite::createWithSpriteFrameName("gearDetail_00.png");
-	gearDetail->setAnchorPoint(Vec2(0.5f, 1));
-	gearDetail->setPosition(Vec2(gears_bg->getPositionX() + gears_bg->getContentSize().width / 2 - 54, 210));
 	addChild(gearDetail, 600);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 	gearBigIcon = Sprite::createWithSpriteFrameName("gear_00.png");
-	gearBigIcon->setAnchorPoint(Vec2(0.5f, 0));
-	gearBigIcon->setPosition(Vec2(gears_bg->getPositionX() + gears_bg->getContentSize().width / 2 - 54, 90));
 	addChild(gearBigIcon, 600);
 #endif
 
 	MenuItem *buy_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("gearBuy_btn.png"),
 											   Sprite::createWithSpriteFrameName("gearBuy_btn2.png"), this, menu_selector(GearLayer::onGearBuy));
-	Menu *gearMenu = Menu::create(buy_btn, nullptr);
-	gearMenu->setPosition(Vec2(gears_bg->getPositionX() + 78, 65));
-	addChild(gearMenu, 600);
-	clipper->setPosition(Vec2(gears_bg->getPositionX() - gears_bg->getContentSize().width / 2 + 4, 85));
+	_buyMenu = Menu::create(buy_btn, nullptr);
+	addChild(_buyMenu, 600);
+
 	clipper->addChild(_screwLayer);
 	addChild(clipper, 600);
 
 	MenuItem *btm_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("close_btn1.png"),
 											   Sprite::createWithSpriteFrameName("close_btn2.png"), this, menu_selector(GearLayer::onResume));
-	Menu *overMenu = Menu::create(btm_btn, nullptr);
-	overMenu->setPosition(Vec2(winSize.width / 2 + gears_bg->getContentSize().width / 2 - 12, winSize.height / 2 + gears_bg->getContentSize().height / 2 - 20));
-	addChild(overMenu, 600);
+	_closeMenu = Menu::create(btm_btn, nullptr);
+	addChild(_closeMenu, 600);
+
+	lua_call_func_self(GearFlowKeys::kLayoutControls, this, "GearLayer");
 
 	return true;
+}
+
+Sprite *GearLayer::getScrewBar()
+{
+	return _screwLayer ? _screwLayer->screwBar : nullptr;
+}
+
+void GearLayer::showGearDetail(GearType type, bool updateBigIcon)
+{
+	lua_call_func_self(GearFlowKeys::kShowDetail, this, "GearLayer", (int)type, updateBigIcon);
 }
 
 void GearLayer::confirmPurchase()
@@ -342,19 +315,17 @@ void GearLayer::updatePlayerGear()
 		if (currentGear_layer != nullptr)
 			currentGear_layer->removeFromParent();
 		currentGear_layer = Layer::create();
-		currentGear_layer->setAnchorPoint(Vec2(0, 0));
 		int i = 0;
 		for (auto gear : getGameLayer()->currentPlayer->getGearArray())
 		{
 			GearButton *btn = GearButton::create("");
-			btn->setBtnType(gear, GearButtonType::Sell, false);
-			btn->setPositionX(13 + i * 34);
+			btn->setBtnType(gear, GearButtonType::Sell, false, i);
 			btn->setDelegate(this);
 			currentGear_layer->addChild(btn);
 			i++;
 		}
-		currentGear_layer->setPosition(Vec2(gears_bg->getPositionX() - gears_bg->getContentSize().width / 2 + 8, 64));
 		addChild(currentGear_layer, 800);
+		lua_call_func_self(GearFlowKeys::kLayoutCurrentGears, this, "GearLayer");
 	}
 
 	coinLabel->setString(to_cstr(getGameLayer()->currentPlayer->getCoin()));
@@ -398,13 +369,10 @@ void GearLayer::updateGearList()
 		if (currentGear == GearType::None && !isBuyed)
 		{
 			currentGear = GearType(i);
-			auto frame = getSpriteFrame("gearDetail_{:02d}.png", i);
-			gearDetail->setDisplayFrame(frame);
+			showGearDetail(currentGear, false);
 		}
 
-		btn->setPosition(Vec2(6 + column * 46, -row * 60));
-		btn->setAnchorPoint(Vec2(0, 0));
-		btn->setBtnType(GearType(i), GearButtonType::Buy, isBuyed);
+		btn->setBtnType(GearType(i), GearButtonType::Buy, isBuyed, i);
 		btn->setDelegate(this);
 
 		gearBtns.push_back(btn);

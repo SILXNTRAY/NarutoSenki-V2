@@ -575,6 +575,7 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"CCFlipX");
  tolua_usertype(tolua_S,"CCActionManager");
  tolua_usertype(tolua_S,"CCTransitionSlideInT");
+ tolua_usertype(tolua_S,"CreditsLayer");
  tolua_usertype(tolua_S,"CCCatmullRomTo");
  tolua_usertype(tolua_S,"CCEaseBounceIn");
  tolua_usertype(tolua_S,"CCTransitionSceneOriented");
@@ -609,14 +610,17 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"CCTintTo");
  tolua_usertype(tolua_S,"CCRGBAProtocol");
  tolua_usertype(tolua_S,"LoadLayer");
+ tolua_usertype(tolua_S,"GearButton");
  tolua_usertype(tolua_S,"CCTransitionCrossFade");
  tolua_usertype(tolua_S,"CCActionEase");
  tolua_usertype(tolua_S,"CCParallaxNode");
  tolua_usertype(tolua_S,"CCRotateTo");
  tolua_usertype(tolua_S,"CCShakyTiles3D");
- tolua_usertype(tolua_S,"CCNode");
  tolua_usertype(tolua_S,"CCClippingNode");
+ tolua_usertype(tolua_S,"CCNode");
  tolua_usertype(tolua_S,"KTools");
+ tolua_usertype(tolua_S,"GearLayer");
+ tolua_usertype(tolua_S,"ScrewLayer");
  tolua_usertype(tolua_S,"CCBezierTo");
  tolua_usertype(tolua_S,"CCDeccelAmplitude");
  tolua_usertype(tolua_S,"MenuButton");
@@ -67340,6 +67344,381 @@ static int tolua_Cocos2d_StartMenu_getNoticeLabel00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setScrollLimits of class  ScrewLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_ScrewLayer_setScrollLimits00
+static int tolua_Cocos2d_ScrewLayer_setScrollLimits00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"ScrewLayer",0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,5,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  ScrewLayer* self = (ScrewLayer*)  tolua_tousertype(tolua_S,1,0);
+  float barMinY = ((float)  tolua_tonumber(tolua_S,2,0));
+  float barMaxY = ((float)  tolua_tonumber(tolua_S,3,0));
+  float listMinY = ((float)  tolua_tonumber(tolua_S,4,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setScrollLimits'", NULL);
+#endif
+  {
+   self->setScrollLimits(barMinY,barMaxY,listMinY);
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setScrollLimits'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getSnapshotBg of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getSnapshotBg00
+static int tolua_Cocos2d_GearLayer_getSnapshotBg00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSnapshotBg'", NULL);
+#endif
+  {
+   CCSprite* tolua_ret = (CCSprite*)  self->getSnapshotBg();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getSnapshotBg'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getCoinLabel of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getCoinLabel00
+static int tolua_Cocos2d_GearLayer_getCoinLabel00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCoinLabel'", NULL);
+#endif
+  {
+   CCLabelBMFont* tolua_ret = (CCLabelBMFont*)  self->getCoinLabel();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCLabelBMFont");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getCoinLabel'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getScrewBar of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getScrewBar00
+static int tolua_Cocos2d_GearLayer_getScrewBar00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getScrewBar'", NULL);
+#endif
+  {
+   CCSprite* tolua_ret = (CCSprite*)  self->getScrewBar();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getScrewBar'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getGearDetail of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getGearDetail00
+static int tolua_Cocos2d_GearLayer_getGearDetail00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getGearDetail'", NULL);
+#endif
+  {
+   CCSprite* tolua_ret = (CCSprite*)  self->getGearDetail();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getGearDetail'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getGearBigIcon of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getGearBigIcon00
+static int tolua_Cocos2d_GearLayer_getGearBigIcon00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getGearBigIcon'", NULL);
+#endif
+  {
+   CCSprite* tolua_ret = (CCSprite*)  self->getGearBigIcon();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getGearBigIcon'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getBuyMenu of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getBuyMenu00
+static int tolua_Cocos2d_GearLayer_getBuyMenu00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getBuyMenu'", NULL);
+#endif
+  {
+   CCMenu* tolua_ret = (CCMenu*)  self->getBuyMenu();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCMenu");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBuyMenu'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getCloseMenu of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getCloseMenu00
+static int tolua_Cocos2d_GearLayer_getCloseMenu00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCloseMenu'", NULL);
+#endif
+  {
+   CCMenu* tolua_ret = (CCMenu*)  self->getCloseMenu();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCMenu");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getCloseMenu'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getClipper of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getClipper00
+static int tolua_Cocos2d_GearLayer_getClipper00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getClipper'", NULL);
+#endif
+  {
+   CCNode* tolua_ret = (CCNode*)  self->getClipper();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCNode");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getClipper'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getScrewLayer of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getScrewLayer00
+static int tolua_Cocos2d_GearLayer_getScrewLayer00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getScrewLayer'", NULL);
+#endif
+  {
+   ScrewLayer* tolua_ret = (ScrewLayer*)  self->getScrewLayer();
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"ScrewLayer");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getScrewLayer'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getCurrentGearLayer of class  GearLayer */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_GearLayer_getCurrentGearLayer00
+static int tolua_Cocos2d_GearLayer_getCurrentGearLayer00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"GearLayer",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  GearLayer* self = (GearLayer*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCurrentGearLayer'", NULL);
+#endif
+  {
+   CCLayer* tolua_ret = (CCLayer*)  self->getCurrentGearLayer();
+    int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
+    int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
+    toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCLayer");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getCurrentGearLayer'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: create of class  LoadLayer */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_LoadLayer_create00
 static int tolua_Cocos2d_LoadLayer_create00(lua_State* tolua_S)
@@ -72781,6 +73160,29 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getNoticeBg",tolua_Cocos2d_StartMenu_getNoticeBg00);
    tolua_function(tolua_S,"getNoticeClipper",tolua_Cocos2d_StartMenu_getNoticeClipper00);
    tolua_function(tolua_S,"getNoticeLabel",tolua_Cocos2d_StartMenu_getNoticeLabel00);
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"CreditsLayer","CreditsLayer","CCLayer",NULL);
+  tolua_beginmodule(tolua_S,"CreditsLayer");
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"GearButton","GearButton","CCSprite",NULL);
+  tolua_beginmodule(tolua_S,"GearButton");
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"ScrewLayer","ScrewLayer","CCLayer",NULL);
+  tolua_beginmodule(tolua_S,"ScrewLayer");
+   tolua_function(tolua_S,"setScrollLimits",tolua_Cocos2d_ScrewLayer_setScrollLimits00);
+  tolua_endmodule(tolua_S);
+  tolua_cclass(tolua_S,"GearLayer","GearLayer","CCLayer",NULL);
+  tolua_beginmodule(tolua_S,"GearLayer");
+   tolua_function(tolua_S,"getSnapshotBg",tolua_Cocos2d_GearLayer_getSnapshotBg00);
+   tolua_function(tolua_S,"getCoinLabel",tolua_Cocos2d_GearLayer_getCoinLabel00);
+   tolua_function(tolua_S,"getScrewBar",tolua_Cocos2d_GearLayer_getScrewBar00);
+   tolua_function(tolua_S,"getGearDetail",tolua_Cocos2d_GearLayer_getGearDetail00);
+   tolua_function(tolua_S,"getGearBigIcon",tolua_Cocos2d_GearLayer_getGearBigIcon00);
+   tolua_function(tolua_S,"getBuyMenu",tolua_Cocos2d_GearLayer_getBuyMenu00);
+   tolua_function(tolua_S,"getCloseMenu",tolua_Cocos2d_GearLayer_getCloseMenu00);
+   tolua_function(tolua_S,"getClipper",tolua_Cocos2d_GearLayer_getClipper00);
+   tolua_function(tolua_S,"getScrewLayer",tolua_Cocos2d_GearLayer_getScrewLayer00);
+   tolua_function(tolua_S,"getCurrentGearLayer",tolua_Cocos2d_GearLayer_getCurrentGearLayer00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"LoadLayer","LoadLayer","CCLayer",NULL);
   tolua_beginmodule(tolua_S,"LoadLayer");

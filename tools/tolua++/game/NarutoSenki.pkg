@@ -57,6 +57,45 @@ public:
 	CCNode *getNoticeLabel();
 };
 
+/* CreditsLayer.h
+ * Fully Lua: lua/ui/CreditsLayer.lua builds the whole screen from
+ * CreditsLayer_Init(layer). C++ only owns the engine lifecycle (back key).
+ */
+class CreditsLayer : public CCLayer {
+public:
+};
+
+/* GearLayer.h
+ * Created by C++ (GameLayer::onGear). Purchases, selection, touch handling and
+ * the scroll list stay in C++; lua/ui/GearLayer.lua lays out the C++-driven
+ * controls through the getters below, decorates the gear buttons and switches
+ * the detail card.
+ * NOTE: only methods are declared (see the HudLayer note below).
+ */
+class GearButton : public CCSprite {
+public:
+};
+
+class ScrewLayer : public CCLayer {
+public:
+	void setScrollLimits(float barMinY, float barMaxY, float listMinY);
+};
+
+class GearLayer : public CCLayer {
+public:
+	CCSprite *getSnapshotBg();
+	CCLabelBMFont *getCoinLabel();
+	CCSprite *getScrewBar();
+	CCSprite *getGearDetail();
+	// nil on mobile builds
+	CCSprite *getGearBigIcon();
+	CCMenu *getBuyMenu();
+	CCMenu *getCloseMenu();
+	CCNode *getClipper();
+	ScrewLayer *getScrewLayer();
+	CCLayer *getCurrentGearLayer();
+};
+
 /* LoadLayer.h */
 class LoadLayer : public CCLayer {
 public:
