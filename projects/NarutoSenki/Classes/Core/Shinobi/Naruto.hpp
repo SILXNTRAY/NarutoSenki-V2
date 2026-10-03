@@ -7,34 +7,34 @@
 
 class Naruto : public Hero
 {
-	void setID(const string &name, Role role, Group group) override
+	void setID(const string& name, Role role, Group group) override
 	{
 		Hero::setID(name, role, group);
 
 		match_char_exp3(HeroEnum::Naruto, setAIHandler(Naruto::perform),
-						HeroEnum::SageNaruto, setAIHandler(Naruto::perform_SageNaruto),
-						HeroEnum::RikudoNaruto, setAIHandler(Naruto::perform_RikudoNaruto));
+			HeroEnum::SageNaruto, setAIHandler(Naruto::perform_SageNaruto),
+			HeroEnum::RikudoNaruto, setAIHandler(Naruto::perform_RikudoNaruto));
 	}
 
 	void changeAction() override
 	{
 		match_char_exp3(HeroEnum::Naruto, changeAction_Naruto(),
-						HeroEnum::SageNaruto, changeAction_SageNaruto(),
-						HeroEnum::RikudoNaruto, changeAction_RikudoNaruto());
+			HeroEnum::SageNaruto, changeAction_SageNaruto(),
+			HeroEnum::RikudoNaruto, changeAction_RikudoNaruto());
 	}
 
 	void resumeAction(float dt) override
 	{
 		match_char_exp3(HeroEnum::Naruto, resumeAction_Naruto(dt),
-						HeroEnum::SageNaruto, resumeAction_SageNaruto(dt),
-						HeroEnum::RikudoNaruto, resumeAction_RikudoNaruto(dt));
+			HeroEnum::SageNaruto, resumeAction_SageNaruto(dt),
+			HeroEnum::RikudoNaruto, resumeAction_RikudoNaruto(dt));
 	}
 
-	Hero *createClone(int cloneTime) override
+	Hero* createClone(int cloneTime) override
 	{
 		match_char_exp3(HeroEnum::Naruto, return createClone_Naruto(cloneTime),
-						HeroEnum::SageNaruto, return createClone_SageNaruto(cloneTime),
-						HeroEnum::RikudoNaruto, return createClone_RikudoNaruto(cloneTime));
+			HeroEnum::SageNaruto, return createClone_SageNaruto(cloneTime),
+			HeroEnum::RikudoNaruto, return createClone_RikudoNaruto(cloneTime));
 		return nullptr;
 	}
 
@@ -220,7 +220,7 @@ class Naruto : public Hero
 		CharacterBase::resumeAction(dt);
 	}
 
-	inline Hero *createClone_Naruto(int cloneTime)
+	inline Hero* createClone_Naruto(int cloneTime)
 	{
 		auto clone = createCloneHero<NarutoClone>(getName());
 		return clone;
@@ -394,7 +394,7 @@ class Naruto : public Hero
 		CharacterBase::resumeAction(dt);
 	}
 
-	inline Hero *createClone_SageNaruto(int cloneTime)
+	inline Hero* createClone_SageNaruto(int cloneTime)
 	{
 		auto clone = createCloneHero<SageNarutoClone>(getName());
 		clone->setSkill1Action(clone->createAnimation(clone->skillSPC1Array, 10, false, true));
@@ -578,14 +578,25 @@ class Naruto : public Hero
 		CharacterBase::resumeAction(dt);
 	}
 
-	inline Hero *createClone_RikudoNaruto(int cloneTime)
+	inline Hero* createClone_RikudoNaruto(int cloneTime)
 	{
-		auto clone = createCloneHero<Kurama>(SummonEnum::Kurama);
-		clone->setDEF(5000);
-		clone->_isArmored = true;
-		clone->setWalkSpeed(320);
-		clone->_originSpeed = 320;
-		clone->hasArmorBroken = true;
+		// cloneTime distinguishes which skill triggered setClone():
+		// skill02's animation data passes cloneTime=10 (a normal shadow
+		// clone) while skill05's passes cloneTime=9 (Kurama avatar). This
+		// used to always summon Kurama regardless of cloneTime, so SKILL2
+		// incorrectly produced a Kurama clone instead of a normal one.
+		if (cloneTime == 9)
+		{
+			auto clone = createCloneHero<Kurama>(SummonEnum::Kurama);
+			clone->setDEF(5000);
+			clone->_isArmored = true;
+			clone->setWalkSpeed(320);
+			clone->_originSpeed = 320;
+			clone->hasArmorBroken = true;
+			return clone;
+		}
+
+		auto clone = createCloneHero<RikudoNarutoClone>(getName());
 		return clone;
 	}
 
