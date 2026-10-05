@@ -1,6 +1,7 @@
 #include "KTools.h"
 #include "MyUtils/CMD5Checksum.h"
 #include "Utils/Cocos2dxHelper.hpp"
+#include "Core/CustomRegistry.hpp"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "../../../cocos2dx/platform/android/jni/JniHelper.h"
 #endif
@@ -195,6 +196,63 @@ void KTools::initTableInDB()
 				CCLOG("exec sql %s failed with mgs: %s", sql.c_str(), errorMsg);
 				sqlite3_close(pDB);
 				return;
+			}
+		}
+	}
+
+	// The seed above only runs on an empty table. Give every hero that has no row yet
+	// one too: stock heroes added after the first run and custom characters (lua/class/custom.lua).
+	{
+		vector<string> wanted(kHeroList, kHeroList + kHeroNum);
+		for (auto &name : Custom::Registry::get().recordNames())
+			wanted.push_back(name);
+
+		// Names are stored scrambled with a different key per row, so compare decoded
+		unordered_set<string> existing;
+		char **rows = nullptr;
+		int rowCount = 0;
+		int colCount = 0;
+		if (sqlite3_get_table(pDB, "select name from CharRecord", &rows, &rowCount, &colCount, nullptr) == SQLITE_OK)
+		{
+			for (int i = 1; i <= rowCount; i++)
+			{
+				string stored = rows[i] ? rows[i] : "";
+				if (stored.empty())
+					continue;
+				decode(stored);
+				existing.insert(stored);
+			}
+			sqlite3_free_table(rows);
+
+			for (const auto &heroName : wanted)
+			{
+				if (existing.count(heroName))
+					continue;
+
+				string name = heroName;
+				int key = rand() % 50 + 40;
+				encode(name, key);
+
+				string column1DB = "0";
+				key = rand() % 60 + 40;
+				encode(column1DB, key);
+
+				string column2DB = "0";
+				key = rand() % 60 + 40;
+				encode(column2DB, key);
+
+				string column3DB = "";
+				key = rand() % 60 + 40;
+				encode(column3DB, key);
+
+				char *insertError = nullptr;
+				sql = format("insert into  CharRecord values('{}','{}','{}','{}')", name, column1DB, column2DB, column3DB);
+				sqlite3_exec(pDB, sql.c_str(), nullptr, nullptr, &insertError);
+				if (insertError != nullptr)
+				{
+					CCLOG("[Custom] could not add record row for %s: %s", heroName.c_str(), insertError);
+					sqlite3_free(insertError);
+				}
 			}
 		}
 	}
@@ -458,8 +516,8 @@ void KTools::saveSQLite(const char *table, const char *relatedColumn, const char
 
 int KTools::readWinNumFromSQL(const char *heroName)
 {
-	auto winNum = readSQLite("CharRecord", "name", heroName, "column1").c_str();
-	return to_int(winNum);
+	auto winNum = readSQLite("CharRecord", "name", heroName, "column1");
+	return to_int(winNum.c_str());
 }
 
 int KTools::readCoinFromSQL()

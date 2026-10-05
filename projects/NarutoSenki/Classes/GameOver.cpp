@@ -2,6 +2,7 @@
 #include "GameLayer.h"
 #include "Core/Hero.hpp"
 #include "GameMode/GameModeImpl.h"
+#include "Core/CustomRegistry.hpp"
 
 GameOver::GameOver()
 {
@@ -388,6 +389,11 @@ void GameOver::listResult()
 			else if (currPlayer->getName() == HeroEnum::Nagato)
 				resultChar = HeroEnum::Pain;
 
+			// Custom forms (ns.Transform) are recorded under their base form, like the stock ones above
+			string customBaseName = Custom::Registry::get().baseOf(currPlayer->getName());
+			if (customBaseName != currPlayer->getName())
+				resultChar = customBaseName.c_str();
+
 			if (_isWin)
 			{
 				int winNum = KTools::readWinNumFromSQL(resultChar);
@@ -428,14 +434,15 @@ void GameOver::listResult()
 
 						if (hero->getGroup() == currPlayer->getGroup())
 						{
-							int winNum2 = KTools::readWinNumFromSQL(hero->getName().c_str());
+							string allyRecordName = Custom::Registry::get().baseOf(hero->getName());
+							int winNum2 = KTools::readWinNumFromSQL(allyRecordName.c_str());
 							if (resultScore >= 140)
 								winNum2 += 2;
 							else
 								winNum2 += 1;
 
 							auto realWin2 = std::to_string(winNum2);
-							KTools::saveSQLite("CharRecord", "name", hero->getName().c_str(), "column1", realWin2, false);
+							KTools::saveSQLite("CharRecord", "name", allyRecordName.c_str(), "column1", realWin2, false);
 						}
 					}
 				}
