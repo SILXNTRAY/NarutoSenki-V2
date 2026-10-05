@@ -535,7 +535,7 @@ class Naruto : public Hero
 		setWalkAction(createAnimation(skillSPC2Array, 10, true, false));
 		setNAttackAction(createAnimation(skillSPC3Array, 10, false, true));
 
-		if (getName() == HeroEnum::RikudoNaruto)
+		if (getGimmickName() == HeroEnum::RikudoNaruto)
 		{
 			setTempAttackValue1(getNAttackValue());
 			setNAttackValue(560);

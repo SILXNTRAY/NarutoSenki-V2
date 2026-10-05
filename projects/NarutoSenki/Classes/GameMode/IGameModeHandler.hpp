@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Hero.hpp"
+#include "Core/CustomRegistry.hpp"
 #include "GameLayer.h"
 #include "LoadLayer.h"
 #include "SelectLayer.h"
@@ -248,18 +249,18 @@ protected:
 
 		// init com heros
 		vector<string> realHeroVector;
-		for (size_t i = 0; i < kHeroNum; i++)
+		for (const char *poolHero : getHeroPool())
 		{
-			if (is_same(selectLayer->_playerSelect, kHeroList[i]))
+			if (is_same(selectLayer->_playerSelect, poolHero))
 				continue;
-			if (selectLayer->_com1Select && is_same(selectLayer->_com1Select, kHeroList[i]))
+			if (selectLayer->_com1Select && is_same(selectLayer->_com1Select, poolHero))
 				continue;
-			if (selectLayer->_com2Select && is_same(selectLayer->_com2Select, kHeroList[i]))
+			if (selectLayer->_com2Select && is_same(selectLayer->_com2Select, poolHero))
 				continue;
-			if (selectLayer->_com3Select && is_same(selectLayer->_com3Select, kHeroList[i]))
+			if (selectLayer->_com3Select && is_same(selectLayer->_com3Select, poolHero))
 				continue;
 
-			realHeroVector.push_back(kHeroList[i]);
+			realHeroVector.push_back(poolHero);
 		}
 
 		string hero;
@@ -319,39 +320,58 @@ protected:
 	 * Static Utils
 	 */
 
+	/**
+	 * Every hero the random pickers can choose: the stock list plus the custom
+	 * characters that are allowed in random rosters (lua/class/custom.lua).
+	 * The pointers stay valid: stock names are literals, custom names are owned by the registry.
+	 */
+	static inline vector<const char *> getHeroPool()
+	{
+		vector<const char *> pool(kHeroList, kHeroList + kHeroNum);
+		for (const auto &name : Custom::Registry::get().randomHeroNames())
+			pool.push_back(name.c_str());
+		return pool;
+	}
+
 	static inline const char *getRandomHero()
 	{
+		auto pool = getHeroPool();
+		size_t poolSize = pool.size();
 		setRand();
-		return kHeroList[random(kHeroNum)];
+		return pool[random(poolSize)];
 	}
 
 	static inline const char *getRandomHeroExcept(const char *except)
 	{
+		auto pool = getHeroPool();
+		size_t poolSize = pool.size();
 		if (except)
 		{
 			setRand();
-			int i = random(kHeroNum);
-			while (is_same(kHeroList[i], except))
-				i = random(kHeroNum);
-			return kHeroList[i];
+			int i = random(poolSize);
+			while (is_same(pool[i], except))
+				i = random(poolSize);
+			return pool[i];
 		}
 		else
 		{
-			return kHeroList[random(kHeroNum)];
+			return pool[random(poolSize)];
 		}
 	}
 
 	static inline const char *getRandomHeroExceptAll(const vector<string> &excepts, const char *defaultChar = "Naruto")
 	{
+		auto pool = getHeroPool();
+		size_t poolSize = pool.size();
 		auto _begin = excepts.begin();
 		auto _end = excepts.end();
 		int idx;
-		for (size_t i = 0; i < kHeroNum * 2; i++) // Max loops is kHeroNum * 2
+		for (size_t i = 0; i < poolSize * 2; i++) // Max loops is poolSize * 2
 		{
 			setRand();
-			idx = random(kHeroNum);
-			if (std::find(_begin, _end, kHeroList[idx]) == _end)
-				return kHeroList[idx];
+			idx = random(poolSize);
+			if (std::find(_begin, _end, pool[idx]) == _end)
+				return pool[idx];
 		}
 		return defaultChar;
 	}

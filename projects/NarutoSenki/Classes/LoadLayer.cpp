@@ -1,5 +1,6 @@
 #include "LoadLayer.h"
 #include "GameMode/GameModeImpl.h"
+#include "Core/CustomRegistry.hpp"
 
 LoadLayer::LoadLayer()
 {
@@ -207,6 +208,13 @@ void LoadLayer::perloadCharIMG(const string &name)
 	{
 		addSprites(mk_kuchiyose_plist("Akamaru"));
 	}
+
+	// Custom content (lua/class/custom.lua): extra plists, later forms and linked summons
+	auto& custom = Custom::Registry::get();
+	for (const auto &path : custom.extraPlistsOf(name))
+		addSprites(path);
+	for (const auto &form : custom.formsOf(name))
+		KTools::prepareFileOGG(form);
 }
 
 void LoadLayer::unloadCharIMG(CharacterBase *c)
@@ -278,6 +286,17 @@ void LoadLayer::unloadCharIMG(CharacterBase *c)
 		removeSprites(mk_ninja_plist("AsuraPath"));
 		removeSprites(mk_ninja_plist("NarakaPath"));
 	}
+
+	// Custom content (lua/class/custom.lua). The character may be in a later form
+	// right now, so everything is resolved from the base form of its chain.
+	auto& custom = Custom::Registry::get();
+	auto base = custom.baseOf(name);
+	if (base != name)
+		removeSprites(format("Unit/Ninja/{}/{}.plist", base, base));
+	for (const auto &path : custom.extraPlistsOf(base))
+		removeSprites(path);
+	for (const auto &form : custom.formsOf(base))
+		KTools::prepareFileOGG(form, true);
 }
 
 void LoadLayer::unloadAllCharsIMG(const vector<Hero *> &players)

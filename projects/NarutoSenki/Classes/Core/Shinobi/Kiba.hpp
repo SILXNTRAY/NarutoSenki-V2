@@ -166,7 +166,7 @@ class Kiba : public Hero
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == SummonEnum::Akamaru)
+				if (mo->getGimmickName() == SummonEnum::Akamaru)
 				{
 					mo->attack(SKILL2);
 				}

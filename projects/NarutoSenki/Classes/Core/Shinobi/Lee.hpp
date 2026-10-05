@@ -88,7 +88,7 @@ class Lee : public Hero
 		if (isNotPlayer())
 			return;
 
-		if (getName() == HeroEnum::Lee)
+		if (getGimmickName() == HeroEnum::Lee)
 		{
 			// NOTE: See `Kakuzu::changeHPbar()`
 			if (_exp >= 500 && _level == 1 + 1)

@@ -35,3 +35,6 @@ ns.CharactersLayout = {
         -- _None,			_None,			_None,			_None,      --[[ Right ]] _None,		_None,		    _None,
     -- },
 }
+
+-- Custom content registry (gimmicks, summons, transforms, extra plists)
+require 'class.custom'

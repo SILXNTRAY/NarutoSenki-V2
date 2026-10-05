@@ -44,6 +44,10 @@
 #include "Shinobi/Bunshin/SageNarutoClone.hpp"
 #include "Shinobi/Bunshin/RikudoNarutoClone.hpp"
 
+// Custom content (lua/class/custom.lua)
+#include "CustomRegistry.hpp"
+#include "Generic.hpp"
+
 // Guardian
 // Han, Roshi
 #include "Guardian/Guardian.hpp"
@@ -80,7 +84,40 @@ class Provider
 public:
 	static Hero *create(const string &name, Role role, Group group)
 	{
-		Hero *ptr;
+		// 1. Stock character, 2. custom unit from lua/class/custom.lua, 3. nothing known
+		Hero *ptr = instantiate(name, role);
+
+		if (!ptr)
+			ptr = instantiateCustom(name, role);
+
+		if (!ptr)
+			ptr = new DefaultAI();
+
+		if (!ptr)
+		{
+			CCLOG("Not found character [ %s ]", name.c_str());
+			return nullptr;
+		}
+
+		if (ptr->init())
+		{
+			ptr->setID(name, role, group);
+			ptr->autorelease();
+		}
+		else
+		{
+			CCLOG("Set character %s not found", name.c_str());
+			delete ptr;
+			ptr = nullptr;
+		}
+		return ptr;
+	}
+
+private:
+	/** Stock characters only. Returns nullptr when the name isn't one. */
+	static Hero *instantiate(const string &name, Role role)
+	{
+		Hero *ptr = nullptr;
 
 		__begin__
 		is("Akamaru") 						ptr = new Akamaru();
@@ -138,26 +175,24 @@ public:
 		is("Tobirama") 						ptr = new Tobirama();
 		is("Tsunade") 						ptr = new Tsunade();
 		is_or("Roshi", "Han")				ptr = new Guardian();
-		else								ptr = new DefaultAI();
-
-		if (!ptr)
-		{
-			CCLOG("Not found character [ %s ]", name.c_str());
-			return nullptr;
-		}
-
-		if (ptr->init())
-		{
-			ptr->setID(name, role, group);
-			ptr->autorelease();
-		}
-		else
-		{
-			CCLOG("Set character %s not found", name.c_str());
-			delete ptr;
-			ptr = nullptr;
-		}
 		return ptr;
+	}
+
+	/** Custom units: build the class of the gimmick they copy ('Generic' = plain template). */
+	static Hero *instantiateCustom(const string &name, Role role)
+	{
+		auto unit = Custom::Registry::get().findUnit(name);
+		if (!unit)
+			return nullptr;
+
+		Hero *ptr = nullptr;
+		if (unit->gimmick != Custom::Registry::kGeneric)
+		{
+			ptr = instantiate(unit->gimmick, role);
+			if (!ptr)
+				CCLOG("[Custom] '%s' copies unknown gimmick '%s', using %s", name.c_str(), unit->gimmick.c_str(), Custom::Registry::kGeneric);
+		}
+		return ptr ? ptr : new GenericHero();
 	}
 };
 

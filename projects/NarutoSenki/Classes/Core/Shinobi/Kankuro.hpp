@@ -33,15 +33,15 @@ class Kankuro : public Hero
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == KugutsuEnum::Saso)
+				if (mo->getGimmickName() == KugutsuEnum::Saso)
 				{
 					isFound3 = true;
 				}
-				else if (mo->getName() == KugutsuEnum::Sanshouuo)
+				else if (mo->getGimmickName() == KugutsuEnum::Sanshouuo)
 				{
 					isFound2 = true;
 				}
-				else if (mo->getName() == KugutsuEnum::Karasu)
+				else if (mo->getGimmickName() == KugutsuEnum::Karasu)
 				{
 					isFound1 = true;
 				}

@@ -68,20 +68,20 @@ class NarakaPath : public Hero
 					{
 						for (auto mo : _monsterArray)
 						{
-							if (mo->getName() == HeroEnum::AnimalPath)
+							if (mo->getGimmickName() == HeroEnum::AnimalPath)
 							{
 								isHaveKugutsu1 = true;
 							}
-							else if (mo->getName() == HeroEnum::AsuraPath)
+							else if (mo->getGimmickName() == HeroEnum::AsuraPath)
 							{
 								isHaveKugutsu2 = true;
 							}
-							else if (mo->getName() == HeroEnum::HumanPath)
+							else if (mo->getGimmickName() == HeroEnum::HumanPath)
 							{
 								isHaveKugutsu3 = true;
 							}
 
-							else if (mo->getName() == HeroEnum::PertaPath)
+							else if (mo->getGimmickName() == HeroEnum::PertaPath)
 							{
 								isHaveKugutsu4 = true;
 							}

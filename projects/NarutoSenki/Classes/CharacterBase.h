@@ -410,6 +410,12 @@ public:
 
 	virtual Hero* createClone(int cloneTime);
 	void				setClone(int cloneTime);
+	/** Add a freshly created clone/summon to the battle (shared by setClone and setSummon) */
+	void				attachClone(Hero* clone, int cloneTime);
+	/** Spawn a summon linked to this unit in ns.LinkSummon. spec is "Name" or "Name:seconds" */
+	void				setSummon(const string& spec);
+	/** The stock character whose gimmick this unit copies. Equals getName() for stock characters. */
+	string				getGimmickName();
 	void				setMon(const string& monName);
 	void				setMonPer(float dt);
 	void				setBullet(const string& bulletName);

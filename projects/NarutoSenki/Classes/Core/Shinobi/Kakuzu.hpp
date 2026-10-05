@@ -252,17 +252,17 @@ class Kakuzu : public Hero
 
 		for (auto mo : _monsterArray)
 		{
-			if (mo->getName() == KugutsuEnum::MaskRaiton)
+			if (mo->getGimmickName() == KugutsuEnum::MaskRaiton)
 			{
 				countMon++;
 				isRaiton = true;
 			}
-			if (mo->getName() == KugutsuEnum::MaskFuton)
+			if (mo->getGimmickName() == KugutsuEnum::MaskFuton)
 			{
 				countMon++;
 				isFuton = true;
 			}
-			if (mo->getName() == KugutsuEnum::MaskKaton)
+			if (mo->getGimmickName() == KugutsuEnum::MaskKaton)
 			{
 				countMon++;
 				isKaton = true;

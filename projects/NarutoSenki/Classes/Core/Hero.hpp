@@ -483,7 +483,7 @@ public:
 		stopAllActions();
 		_state = State::DEAD;
 
-		if (!_monsterArray.empty() && getName() != HeroEnum::Minato)
+		if (!_monsterArray.empty() && getGimmickName() != HeroEnum::Minato)
 		{
 			for (auto mo : _monsterArray)
 			{
@@ -626,17 +626,17 @@ public:
 	/** Character Macros */
 
 #define match_char_exp(_name, _fn, _name2, _fn2) \
-	if (getName() == _name)                      \
+	if (getGimmickName() == _name)               \
 		_fn;                                     \
-	else if (getName() == _name2)                \
+	else if (getGimmickName() == _name2)         \
 		_fn2;
 
 #define match_char_exp3(_name, _fn, _name2, _fn2, _name3, _fn3)            \
-	match_char_exp(_name, _fn, _name2, _fn2) else if (getName() == _name3) \
+	match_char_exp(_name, _fn, _name2, _fn2) else if (getGimmickName() == _name3) \
 		_fn3;
 
 #define match_char_exp4(_name, _fn, _name2, _fn2, _name3, _fn3, _name4, _fn4)             \
-	match_char_exp3(_name, _fn, _name2, _fn2, _name3, _fn3) else if (getName() == _name4) \
+	match_char_exp3(_name, _fn, _name2, _fn2, _name3, _fn3) else if (getGimmickName() == _name4) \
 		_fn4;
 
 protected:

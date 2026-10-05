@@ -308,7 +308,7 @@ class Pain : public Hero
 	void changeAction() override
 	{
 		// TODO: New Pain
-		// if (getName() == HeroEnum::Nagato)
+		// if (getGimmickName() == HeroEnum::Nagato)
 		// {
 		// 	if (_skillChangeBuffValue == 17)
 		// 	{
@@ -337,7 +337,7 @@ class Pain : public Hero
 	void setActionResume() override
 	{
 		// TODO: New Pain
-		// if (getName() == HeroEnum::Nagato)
+		// if (getGimmickName() == HeroEnum::Nagato)
 		// {
 		// 	if (_skillChangeBuffValue == 17)
 		// 	{
@@ -366,14 +366,14 @@ class Pain : public Hero
 		Hero *clone = nullptr;
 
 		// TODO: New Pain
-		// if (getName() == HeroEnum::Pain)
+		// if (getGimmickName() == HeroEnum::Pain)
 		// {
 		// 	clone = createCloneHero<NarakaPath>(HeroEnum::NarakaPath);
 		// 	clone->_isArmored = true;
 
 		// 	lockSkill5Button();
 		// }
-		if (getName() == HeroEnum::Nagato) // Old Nagato skill
+		if (getGimmickName() == HeroEnum::Nagato) // Old Nagato skill
 		{
 			clone = createCloneHero<NarakaPath>(HeroEnum::NarakaPath);
 			clone->_isArmored = true;

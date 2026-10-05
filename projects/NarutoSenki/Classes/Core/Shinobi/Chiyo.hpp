@@ -29,7 +29,7 @@ class Chiyo : public Hero
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == KugutsuEnum::Parents)
+				if (mo->getGimmickName() == KugutsuEnum::Parents)
 				{
 					isFound1 = true;
 				}
@@ -51,7 +51,7 @@ class Chiyo : public Hero
 						if (getGroup() == hero->getGroup() &&
 							hero->isPlayerOrCom() &&
 							hero->getState() != State::DEAD &&
-							hero->getName() != HeroEnum::Chiyo)
+							hero->getGimmickName() != HeroEnum::Chiyo)
 						{
 							Vec2 sp = hero->getPosition() - getPosition();
 							if (sp.x <= kAttackRange)

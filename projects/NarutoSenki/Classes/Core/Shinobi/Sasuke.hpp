@@ -181,8 +181,8 @@ class Sasuke : public Hero
 					{
 						if (!hero->_isVisable)
 						{
-							if (hero->getName() == HeroEnum::Konan ||
-								hero->getName() == HeroEnum::Deidara)
+							if (hero->getGimmickName() == HeroEnum::Konan ||
+								hero->getGimmickName() == HeroEnum::Deidara)
 							{
 								hero->unschedule(schedule_selector(CharacterBase::disableBuff));
 							}
@@ -434,8 +434,8 @@ class Sasuke : public Hero
 					{
 						if (!hero->_isVisable)
 						{
-							if (hero->getName() == HeroEnum::Konan ||
-								hero->getName() == HeroEnum::Deidara)
+							if (hero->getGimmickName() == HeroEnum::Konan ||
+								hero->getGimmickName() == HeroEnum::Deidara)
 							{
 								hero->unschedule(schedule_selector(CharacterBase::disableBuff));
 							}
