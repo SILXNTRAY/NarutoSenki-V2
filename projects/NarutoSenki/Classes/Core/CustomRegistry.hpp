@@ -63,12 +63,45 @@ struct Unit
 	Kind kind = Kind::Hero;
 };
 
+enum class MonMode : uint8_t
+{
+	Attack, // plays its attack animation as soon as it is summoned
+	Ai,		// idles/walks, looks for a target, attacks it once in range
+	None,	// just appears, the owner or its xml drives it
+};
+
+enum class MonMoveType : uint8_t
+{
+	None,
+	Direct, // straight line in the facing direction, removed at the end (Monster::setDirectMove)
+	Ease,	// accelerating line, 1s long, `time` is the ease rate (Monster::setEaseIn)
+	Chase,	// steps toward the owner's target (or forward) for `time` seconds (Monster::setDirectMoveBy)
+};
+
+struct MonMove
+{
+	MonMoveType type = MonMoveType::None;
+	int length = 0;
+	float time = 0.0f;
+	bool reverse = false; // Direct only: goes there and comes back
+};
+
 struct MonProfile
 {
 	std::string name;
+	std::string gimmick; // Stock mon to copy exactly (spawn, AI and hit quirks). Empty = generic mon.
+
+	// The fields below only apply to generic mons (no gimmick)
+	MonMode mode = MonMode::Attack;
 	float offX = 32.0f;
 	float offY = 0.0f;
-	bool ai = true;
+	bool hasAnchor = false;
+	float anchorX = 0.5f;
+	float anchorY = 0.0f;
+	bool armorBroken = false;
+	std::string effect; // setSkillEffect, e.g. "smk"
+	bool track = true;	// the owner keeps it in its monster array (cleanup on death, commands)
+	MonMove move;
 };
 
 struct BulletProfile
@@ -158,12 +191,19 @@ public:
 		return (u && u->kind != Kind::Hero) ? u : nullptr;
 	}
 
-	/** Stock class a custom unit copies; for anything else the name itself. */
+	/** Stock character or mon a custom unit/mon copies; for anything else the name itself. */
 	std::string gimmickOf(const std::string &name) const
 	{
-		auto u = findUnit(name);
-		return u ? u->gimmick : name;
+		if (auto u = findUnit(name))
+			return u->gimmick;
+		auto m = mons_.find(name);
+		if (m != mons_.end() && !m->second.gimmick.empty())
+			return m->second.gimmick;
+		return name;
 	}
+
+	/** Cheap check so gimmickOf() can be skipped entirely when nothing custom is registered. */
+	bool hasAliases() const { return !unitIndex_.empty() || !mons_.empty(); }
 
 	/** ---- Transform ---- */
 
@@ -565,13 +605,103 @@ private:
 			{
 				MonProfile p;
 				p.name = name;
-				if (lua_istable(L, v))
+				if (lua_type(L, v) == LUA_TSTRING)
 				{
+					p.gimmick = lua_tostring(L, v);
+				}
+				else if (lua_istable(L, v))
+				{
+					readString(L, v, "gimmick", p.gimmick);
+
+					std::string mode;
+					if (readString(L, v, "mode", mode))
+					{
+						if (mode == "attack")
+							p.mode = MonMode::Attack;
+						else if (mode == "ai")
+							p.mode = MonMode::Ai;
+						else if (mode == "none")
+							p.mode = MonMode::None;
+						else
+							CUSTOM_LOG("[Custom] CustomMons.%s: unknown mode '%s' (use attack, ai or none), using attack", name.c_str(), mode.c_str());
+					}
+
 					readPair(L, v, "offset", p.offX, p.offY);
-					readBool(L, v, "ai", p.ai);
+					p.hasAnchor = readPair(L, v, "anchor", p.anchorX, p.anchorY);
+					readBool(L, v, "armorBroken", p.armorBroken);
+					readString(L, v, "effect", p.effect);
+					readBool(L, v, "track", p.track);
+					readMonMove(L, v, name, p.move);
+
+					if (!p.gimmick.empty())
+					{
+						lua_getfield(L, v, "mode");
+						bool hasTweaks = !lua_isnil(L, -1);
+						lua_pop(L, 1);
+						for (const char *key : {"offset", "anchor", "armorBroken", "effect", "track", "move"})
+						{
+							lua_getfield(L, v, key);
+							hasTweaks = hasTweaks || !lua_isnil(L, -1);
+							lua_pop(L, 1);
+						}
+						if (hasTweaks)
+							CUSTOM_LOG("[Custom] CustomMons.%s copies '%s' exactly: mode/offset/anchor/armorBroken/effect/track/move are ignored", name.c_str(), p.gimmick.c_str());
+					}
+				}
+				else
+				{
+					CUSTOM_LOG("[Custom] CustomMons.%s must be a string or a table, skipped", name.c_str());
+					return;
 				}
 				mons_[name] = p;
 			});
+		}
+		lua_pop(L, 1);
+	}
+
+	/** move = { 'direct', length, seconds [, reverse] } | { 'ease', length, rate } | { 'chase', seconds } */
+	static void readMonMove(lua_State *L, int tbl, const std::string &mon, MonMove &out)
+	{
+		lua_getfield(L, tbl, "move");
+		if (lua_istable(L, -1))
+		{
+			int m = lua_gettop(L);
+			auto num = [&](int i, double fallback)
+			{
+				lua_rawgeti(L, m, i);
+				double n = lua_isnumber(L, -1) ? lua_tonumber(L, -1) : fallback;
+				lua_pop(L, 1);
+				return n;
+			};
+
+			lua_rawgeti(L, m, 1);
+			std::string type = lua_type(L, -1) == LUA_TSTRING ? lua_tostring(L, -1) : "";
+			lua_pop(L, 1);
+
+			if (type == "direct")
+			{
+				out.type = MonMoveType::Direct;
+				out.length = (int)num(2, 128);
+				out.time = (float)num(3, 2.0);
+				lua_rawgeti(L, m, 4);
+				out.reverse = lua_isboolean(L, -1) && lua_toboolean(L, -1);
+				lua_pop(L, 1);
+			}
+			else if (type == "ease")
+			{
+				out.type = MonMoveType::Ease;
+				out.length = (int)num(2, 224);
+				out.time = (float)num(3, 1.0);
+			}
+			else if (type == "chase")
+			{
+				out.type = MonMoveType::Chase;
+				out.time = (float)num(2, 2.0);
+			}
+			else
+			{
+				CUSTOM_LOG("[Custom] CustomMons.%s: move must start with 'direct', 'ease' or 'chase', ignored", mon.c_str());
+			}
 		}
 		lua_pop(L, 1);
 	}

@@ -70,8 +70,8 @@ void HPBar::loseHP(float percent)
 		if (_delegate->isFlog())
 		{
 			if (_slayer->getSecMaster() &&
-				_slayer->getName() != SkillEnum::KageHand &&
-				_slayer->getName() != SkillEnum::KageHands)
+				_slayer->getGimmickName() != SkillEnum::KageHand &&
+				_slayer->getGimmickName() != SkillEnum::KageHands)
 			{
 				if (_slayer->getSecMaster()->getController())
 					currentSlayer = _slayer->getSecMaster()->getController();
@@ -141,8 +141,8 @@ void HPBar::loseHP(float percent)
 		else if (_delegate->isTower())
 		{
 			if (_slayer->getSecMaster() &&
-				_slayer->getName() != SkillEnum::KageHand &&
-				_slayer->getName() != SkillEnum::KageHands &&
+				_slayer->getGimmickName() != SkillEnum::KageHand &&
+				_slayer->getGimmickName() != SkillEnum::KageHands &&
 				_slayer->getName() != SummonEnum::SmallSlug)
 			{
 				if (_slayer->getSecMaster()->getController())
@@ -341,10 +341,10 @@ void HPBar::loseHP(float percent)
 				currentSlayer = _delegate->getController();
 			}
 			else if (_slayer->getSecMaster() &&
-					 _slayer->getName() != SkillEnum::KageHand &&
-					 _slayer->getName() != SkillEnum::KageHands &&
+					 _slayer->getGimmickName() != SkillEnum::KageHand &&
+					 _slayer->getGimmickName() != SkillEnum::KageHands &&
 					 _slayer->getName() != SummonEnum::SmallSlug &&
-					 _slayer->getName() != SkillEnum::FakeItachi)
+					 _slayer->getGimmickName() != SkillEnum::FakeItachi)
 			{
 				if (_slayer->getSecMaster()->getController())
 					currentSlayer = _slayer->getSecMaster()->getController();

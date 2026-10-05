@@ -12,7 +12,7 @@ class Hidan : public Hero
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == "CircleMark")
+				if (mo->getGimmickName() == "CircleMark")
 				{
 					_mainTarget = mo;
 					_isFound = true;

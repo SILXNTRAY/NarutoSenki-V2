@@ -397,7 +397,7 @@ void CharacterBase::acceptAttack(Ref* object)
 	if (!onAcceptAttack(attacker))
 		return;
 
-	if (attacker->getName() == HeroEnum::Hiruzen && attacker->_state == State::O2ATTACK)
+	if (attacker->getGimmickName() == HeroEnum::Hiruzen && attacker->_state == State::O2ATTACK)
 	{
 		isCannotMiss = true; // TODO: Add this as a parameter of CharacterBase::acceptAttack
 	}
@@ -634,10 +634,10 @@ void CharacterBase::acceptAttack(Ref* object)
 								setKnockLength(1);
 							}
 
-							if (attacker->getName() == HeroEnum::Kakuzu && _sticker)
+							if (attacker->getGimmickName() == HeroEnum::Kakuzu && _sticker)
 							{
 								CharacterBase* stHero = _sticker;
-								if (stHero->getName() == HeroEnum::Kakuzu && stHero->hearts <= 4)
+								if (stHero->getGimmickName() == HeroEnum::Kakuzu && stHero->hearts <= 4)
 								{
 									attacker->hearts += 1;
 
@@ -653,7 +653,7 @@ void CharacterBase::acceptAttack(Ref* object)
 									int monCount = 0;
 									for (auto mo : attacker->getMonsterArray())
 									{
-										if (mo->getName() != "Traps")
+										if (mo->getGimmickName() != "Traps")
 										{
 											monCount++;
 										}
@@ -665,10 +665,10 @@ void CharacterBase::acceptAttack(Ref* object)
 									}
 								}
 							}
-							else if (attacker->getName() == HeroEnum::Nagato && _sticker)
+							else if (attacker->getGimmickName() == HeroEnum::Nagato && _sticker)
 							{
 								CharacterBase* stHero = _sticker;
-								if (stHero->getName() == HeroEnum::Nagato && stHero->hearts <= 2)
+								if (stHero->getGimmickName() == HeroEnum::Nagato && stHero->hearts <= 2)
 									attacker->hearts += 1;
 							}
 
@@ -681,12 +681,12 @@ void CharacterBase::acceptAttack(Ref* object)
 								setKnockLength(1);
 							}
 							if (hurt() &&
-								(!attacker->_isCatchOne || attacker->getName() == SkillEnum::FakeMinato))
+								(!attacker->_isCatchOne || attacker->getGimmickName() == SkillEnum::FakeMinato))
 							{
 								attacker->_isCatchOne = true;
 								if (attacker->_master)
 								{
-									if (attacker->getName() == SkillEnum::FakeMinato)
+									if (attacker->getGimmickName() == SkillEnum::FakeMinato)
 									{
 										setPosition(Vec2(attacker->_master->_isFlipped ? attacker->_master->getPositionX() - 64 : attacker->_master->getPositionX() + 64,
 											attacker->_master->getPositionY() + 2));
@@ -783,14 +783,14 @@ void CharacterBase::acceptAttack(Ref* object)
 										attacker->_state == State::OATTACK)))
 							{
 								if (attacker->_isCatchOne == false ||
-									attacker->getName() == SkillEnum::Shenwei)
+									attacker->getGimmickName() == SkillEnum::Shenwei)
 								{
 									if (attacker->_master)
 									{
-										if (attacker->getName() == SkillEnum::Kuroari ||
-											attacker->getName() == SkillEnum::Shenwei ||
-											attacker->getName() == SkillEnum::Sabaku ||
-											attacker->getName() == SkillEnum::Shenwei2)
+										if (attacker->getGimmickName() == SkillEnum::Kuroari ||
+											attacker->getGimmickName() == SkillEnum::Shenwei ||
+											attacker->getGimmickName() == SkillEnum::Sabaku ||
+											attacker->getGimmickName() == SkillEnum::Shenwei2)
 										{
 											if (hardHurt(3000, false, true, false, false))
 											{
@@ -798,7 +798,7 @@ void CharacterBase::acceptAttack(Ref* object)
 												scheduleOnce(schedule_selector(CharacterBase::reCatched), 2.9f);
 											}
 										}
-										else if (attacker->getName() == SkillEnum::SandBall)
+										else if (attacker->getGimmickName() == SkillEnum::SandBall)
 										{
 											if (hardHurt(1000, false, true, false, false))
 											{
@@ -806,10 +806,10 @@ void CharacterBase::acceptAttack(Ref* object)
 												scheduleOnce(schedule_selector(CharacterBase::reCatched), 0.9f);
 											}
 										}
-										else if (attacker->_master->getName() == HeroEnum::Shikamaru)
+										else if (attacker->_master->getGimmickName() == HeroEnum::Shikamaru)
 										{
 											bool underAttack = false;
-											if (attacker->getName() == SkillEnum::KageHand)
+											if (attacker->getGimmickName() == SkillEnum::KageHand)
 											{
 												underAttack = hardHurt(6000, false, false, true, false);
 												if (underAttack)
@@ -822,8 +822,8 @@ void CharacterBase::acceptAttack(Ref* object)
 													scheduleOnce(schedule_selector(CharacterBase::removeLostBlood), 6.0f);
 												}
 											}
-											else if (attacker->getName() == SkillEnum::QuanRen ||
-												attacker->getName() == SkillEnum::KageBom)
+											else if (attacker->getGimmickName() == SkillEnum::QuanRen ||
+												attacker->getGimmickName() == SkillEnum::KageBom)
 											{
 												underAttack = hardHurt(3000, false, false, true, false);
 											}
@@ -835,12 +835,12 @@ void CharacterBase::acceptAttack(Ref* object)
 												getGameLayer()->reorderChild(this, -getPositionY());
 											}
 										}
-										else if (attacker->_master->getName() == HeroEnum::Itachi ||
-											attacker->_master->getName() == HeroEnum::Chiyo)
+										else if (attacker->_master->getGimmickName() == HeroEnum::Itachi ||
+											attacker->_master->getGimmickName() == HeroEnum::Chiyo)
 										{
 											bool underAttack = false;
 
-											if (attacker->_master->getName() == HeroEnum::Chiyo)
+											if (attacker->_master->getGimmickName() == HeroEnum::Chiyo)
 											{
 												underAttack = hardHurt(2000, false, false, true, false);
 											}
@@ -855,11 +855,11 @@ void CharacterBase::acceptAttack(Ref* object)
 												getGameLayer()->reorderChild(this, -getPositionY());
 											}
 										}
-										else if (attacker->_master->getName() == HeroEnum::Nagato)
+										else if (attacker->_master->getGimmickName() == HeroEnum::Nagato)
 										{
 											bool underAttack = false;
 
-											if (attacker->getName() == HeroEnum::NarakaPath)
+											if (attacker->getGimmickName() == HeroEnum::NarakaPath)
 												underAttack = hardHurt(2000, false, false, true, false);
 
 											if (underAttack)
@@ -872,8 +872,8 @@ void CharacterBase::acceptAttack(Ref* object)
 									}
 									else
 									{
-										if (attacker->getName() == HeroEnum::Lee ||
-											attacker->getName() == HeroEnum::RockLee)
+										if (attacker->getGimmickName() == HeroEnum::Lee ||
+											attacker->getGimmickName() == HeroEnum::RockLee)
 										{
 											if (hardHurt(1000, false, true, false, false))
 											{
@@ -881,7 +881,7 @@ void CharacterBase::acceptAttack(Ref* object)
 												scheduleOnce(schedule_selector(CharacterBase::reCatched), 1.1f);
 											}
 										}
-										else if (attacker->getName() == HeroEnum::Kakuzu)
+										else if (attacker->getGimmickName() == HeroEnum::Kakuzu)
 										{
 											bool underAttack = false;
 
@@ -899,7 +899,7 @@ void CharacterBase::acceptAttack(Ref* object)
 												getGameLayer()->reorderChild(this, -getPositionY());
 											}
 										}
-										else if (attacker->getName() == HeroEnum::Tobi)
+										else if (attacker->getGimmickName() == HeroEnum::Tobi)
 										{
 											if (!_isArmored)
 											{
@@ -1051,6 +1051,11 @@ FiniteTimeAction* CharacterBase::createAnimation(CCArray* ationArray, uint8_t fp
 				{
 					int cloneTime = dic->valueForKey(key)->intValue();
 					auto call = CallFunc::create(std::bind(&CharacterBase::setClone, this, cloneTime));
+					list.pushBack(call);
+				}
+				else if (key == "setSummon")
+				{
+					auto call = CallFunc::create(std::bind(&CharacterBase::setSummon, this, keyValue));
 					list.pushBack(call);
 				}
 				else if (key == "setMon")
@@ -1284,14 +1289,14 @@ void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType,
 	else
 		criticalValue = rand() % 50;
 
-	if (attacker->getName() == HeroEnum::Hidan && attacker->_skillChangeBuffValue)
+	if (attacker->getGimmickName() == HeroEnum::Hidan && attacker->_skillChangeBuffValue)
 	{
 		realValue = attackValue + criticalValue;
 	}
 	else
 	{
 		bool isCannotMiss = false; // is this attack has 100 percent accuracy
-		if (attacker->getName() == HeroEnum::Hiruzen && attacker->_state == State::O2ATTACK)
+		if (attacker->getGimmickName() == HeroEnum::Hiruzen && attacker->_state == State::O2ATTACK)
 		{
 			isCannotMiss = true;
 		}
@@ -1319,14 +1324,14 @@ void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType,
 				if (hasArmor)
 					decreaseRating += 0.25f;
 
-				if (getName() == HeroEnum::Kakuzu && _skillChangeBuffValue)
+				if (getGimmickName() == HeroEnum::Kakuzu && _skillChangeBuffValue)
 					decreaseRating += 0.25f;
 
-				if (getName() == HeroEnum::Chiyo)
+				if (getGimmickName() == HeroEnum::Chiyo)
 				{
 					for (auto mo : _monsterArray)
 					{
-						if (mo->getName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK)
+						if (mo->getGimmickName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK)
 						{
 							Vec2 sp = mo->getPosition() - getPosition();
 							if (sp.x <= 48)
@@ -1351,11 +1356,11 @@ void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType,
 	if (isClone() && _master && !_master->_isControlled)
 	{
 		uint32_t boundValue = 0;
-		if (getName() == HeroEnum::Naruto)
+		if (getGimmickName() == HeroEnum::Naruto)
 			boundValue = realValue * 15 / 100;
-		else if (getName() == HeroEnum::SageNaruto)
+		else if (getGimmickName() == HeroEnum::SageNaruto)
 			boundValue = realValue * 25 / 100;
-		else if (getName() == HeroEnum::RikudoNaruto)
+		else if (getGimmickName() == HeroEnum::RikudoNaruto)
 			boundValue = realValue * 35 / 100;
 
 		// 4v4
@@ -1398,9 +1403,9 @@ void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType,
 		}
 
 		bool isGainable = true;
-		if (getName() == HeroEnum::Tsunade && _skillChangeBuffValue)
+		if (getGimmickName() == HeroEnum::Tsunade && _skillChangeBuffValue)
 			isGainable = false;
-		if (attacker->getName() == HeroEnum::Hinata && attacker->_skillUPBuffValue)
+		if (attacker->getGimmickName() == HeroEnum::Hinata && attacker->_skillUPBuffValue)
 			isGainable = false;
 
 		if (isGainable)
@@ -1411,7 +1416,7 @@ void CharacterBase::setDamage(CharacterBase* attacker, const string& effectType,
 	{
 		uint32_t gainValue = 0;
 
-		if (attacker->getName() == HeroEnum::Kisame && attacker->_skillChangeBuffValue)
+		if (attacker->getGimmickName() == HeroEnum::Kisame && attacker->_skillChangeBuffValue)
 		{
 			if (currentAttacker->isAttackGainCKR)
 				gainValue = realValue * 80 / 100;
@@ -1590,16 +1595,16 @@ void CharacterBase::setItem(ABType type)
 	if (_isControlled)
 		return;
 
-	if (getName() == HeroEnum::Kankuro ||
-		getName() == HeroEnum::Chiyo ||
-		getName() == HeroEnum::Kiba ||
-		getName() == HeroEnum::Kakuzu)
+	if (getGimmickName() == HeroEnum::Kankuro ||
+		getGimmickName() == HeroEnum::Chiyo ||
+		getGimmickName() == HeroEnum::Kiba ||
+		getGimmickName() == HeroEnum::Kakuzu)
 	{
 		if (hasMonsterArrayAny())
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() != "Traps")
+				if (mo->getGimmickName() != "Traps")
 				{
 					mo->setItem(Item1);
 				}
@@ -1980,9 +1985,9 @@ void CharacterBase::setAttackBox(const string& effectType)
 
 	if (_state == State::HURT)
 	{
-		if (getName() == HeroEnum::Sasuke ||
-			getName() == HeroEnum::ImmortalSasuke ||
-			getName() == HeroEnum::NarakaPath)
+		if (getGimmickName() == HeroEnum::Sasuke ||
+			getGimmickName() == HeroEnum::ImmortalSasuke ||
+			getGimmickName() == HeroEnum::NarakaPath)
 		{
 			increaseHpAndUpdateUI(260);
 
@@ -1996,7 +2001,7 @@ void CharacterBase::setAttackBox(const string& effectType)
 			_attackRangeX = _spcAttackRangeX1;
 			_attackRangeY = _spcAttackRangeY1;
 		}
-		// else if (getName() == HeroEnum::Nagato)
+		// else if (getGimmickName() == HeroEnum::Nagato)
 		// {
 		// 	uint realValue;
 
@@ -2004,7 +2009,7 @@ void CharacterBase::setAttackBox(const string& effectType)
 		// 	CharacterBase *currentAttacker = attacker->_master ? attacker->_master : attacker;
 		// 	float gainValue = 0;
 
-		// 	if (attacker->getName() == HeroEnum::Nagato)
+		// 	if (attacker->getGimmickName() == HeroEnum::Nagato)
 		// 	{
 		// 		if (currentAttacker->isAttackGainCKR)
 		// 			gainValue = realValue * 80 / 100;
@@ -2194,8 +2199,8 @@ void CharacterBase::setBuff(int buffValue)
 					{
 						if (!hero->_isVisable)
 						{
-							if (hero->getName() == HeroEnum::Konan ||
-								hero->getName() == HeroEnum::Deidara)
+							if (hero->getGimmickName() == HeroEnum::Konan ||
+								hero->getGimmickName() == HeroEnum::Deidara)
 							{
 								hero->unschedule(schedule_selector(CharacterBase::disableBuff));
 							}
@@ -2212,7 +2217,7 @@ void CharacterBase::setBuff(int buffValue)
 					}
 				}
 			}
-			if (getName() == HeroEnum::Neji)
+			if (getGimmickName() == HeroEnum::Neji)
 			{
 				_isArmored = true;
 			}
@@ -2222,9 +2227,9 @@ void CharacterBase::setBuff(int buffValue)
 	{
 		_skillChangeBuffValue = buffValue;
 
-		if (getName() == HeroEnum::Shino ||
-			getName() == HeroEnum::Sai ||
-			getName() == HeroEnum::Deidara)
+		if (getGimmickName() == HeroEnum::Shino ||
+			getGimmickName() == HeroEnum::Sai ||
+			getGimmickName() == HeroEnum::Deidara)
 		{
 			if (_skillChangeBuffValue == 17)
 			{
@@ -2237,15 +2242,15 @@ void CharacterBase::setBuff(int buffValue)
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
 		}
-		else if (getName() == HeroEnum::Kiba)
+		else if (getGimmickName() == HeroEnum::Kiba)
 		{
 			if (_skillChangeBuffValue == 18)
 			{
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
 		}
-		else if ((getName() == HeroEnum::ImmortalSasuke ||
-			getName() == HeroEnum::Sasuke) &&
+		else if ((getGimmickName() == HeroEnum::ImmortalSasuke ||
+			getGimmickName() == HeroEnum::Sasuke) &&
 			_skillChangeBuffValue == 18)
 		{
 			unschedule(schedule_selector(CharacterBase::resumeAction));
@@ -2257,7 +2262,7 @@ void CharacterBase::setBuff(int buffValue)
 
 			scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 		}
-		else if (getName() == HeroEnum::Minato)
+		else if (getGimmickName() == HeroEnum::Minato)
 		{
 			if (_skillChangeBuffValue == 18)
 			{
@@ -2267,16 +2272,16 @@ void CharacterBase::setBuff(int buffValue)
 		else
 		{
 			if (isNotGuardian() &&
-				getName() != HeroEnum::Kankuro &&
-				getName() != HeroEnum::Chiyo &&
-				getName() != HeroEnum::Hiruzen &&
-				getName() != HeroEnum::Suigetsu &&
-				getName() != HeroEnum::Jugo &&
-				getName() != HeroEnum::Kisame &&
-				getName() != KugutsuEnum::Parents &&
-				getName() != HeroEnum::Lee &&
-				getName() != HeroEnum::RockLee &&
-				getName() != HeroEnum::Nagato)
+				getGimmickName() != HeroEnum::Kankuro &&
+				getGimmickName() != HeroEnum::Chiyo &&
+				getGimmickName() != HeroEnum::Hiruzen &&
+				getGimmickName() != HeroEnum::Suigetsu &&
+				getGimmickName() != HeroEnum::Jugo &&
+				getGimmickName() != HeroEnum::Kisame &&
+				getGimmickName() != KugutsuEnum::Parents &&
+				getGimmickName() != HeroEnum::Lee &&
+				getGimmickName() != HeroEnum::RockLee &&
+				getGimmickName() != HeroEnum::Nagato)
 			{
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
@@ -2296,7 +2301,7 @@ void CharacterBase::setBuff(int buffValue)
 	else if (_attackType == "gBuff")
 	{
 		_skillChangeBuffValue = buffValue;
-		if (getName() == HeroEnum::Nagato)
+		if (getGimmickName() == HeroEnum::Nagato)
 		{
 			if (_skillChangeBuffValue == 18 && hearts == 1)
 			{
@@ -2437,7 +2442,7 @@ void CharacterBase::disableBuff(float dt)
 		setSAttackValue3(getSAttackValue3() - _skillUPBuffValue);
 		_skillUPBuffValue = 0;
 
-		if (getName() == HeroEnum::Neji)
+		if (getGimmickName() == HeroEnum::Neji)
 		{
 			_isArmored = false;
 		}
@@ -2458,7 +2463,7 @@ void CharacterBase::disableBuff(float dt)
 		if (_shadow)
 			_shadow->setVisible(true);
 	}
-	else if (_skillChangeBuffValue && getName() == HeroEnum::Tobi)
+	else if (_skillChangeBuffValue && getGimmickName() == HeroEnum::Tobi)
 	{
 		setOpacity(255);
 	}
@@ -2466,7 +2471,7 @@ void CharacterBase::disableBuff(float dt)
 
 void CharacterBase::disableDebuff(float dt)
 {
-	if ((getName() == HeroEnum::ImmortalSasuke || getName() == HeroEnum::Itachi) && _isArmored)
+	if ((getGimmickName() == HeroEnum::ImmortalSasuke || getGimmickName() == HeroEnum::Itachi) && _isArmored)
 	{
 		return;
 	}
@@ -2487,7 +2492,7 @@ void CharacterBase::healBuff(float dt)
 	}
 	int limitTime = 10000;
 
-	if (getName() == HeroEnum::Tsunade)
+	if (getGimmickName() == HeroEnum::Tsunade)
 	{
 		limitTime = 15000;
 	}
@@ -2501,7 +2506,7 @@ void CharacterBase::healBuff(float dt)
 		return;
 	}
 
-	if (getName() == HeroEnum::Karin)
+	if (getGimmickName() == HeroEnum::Karin)
 	{
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
@@ -2531,13 +2536,13 @@ void CharacterBase::healBuff(float dt)
 			}
 		}
 	}
-	else if (getName() == HeroEnum::Chiyo)
+	else if (getGimmickName() == HeroEnum::Chiyo)
 	{
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
 			if (getGroup() == hero->getGroup() &&
 				hero->isPlayerOrCom() &&
-				hero->getName() != HeroEnum::Chiyo)
+				hero->getGimmickName() != HeroEnum::Chiyo)
 			{
 				Vec2 sp = hero->getPosition() - getPosition();
 				if (abs(sp.x) <= kAttackRange)
@@ -2558,7 +2563,7 @@ void CharacterBase::healBuff(float dt)
 			}
 		}
 	}
-	else if (getName() == SummonEnum::Slug)
+	else if (getGimmickName() == SummonEnum::Slug)
 	{
 		auto list = isAkatsukiGroup()
 			? getGameLayer()->_AkatsukiFlogArray
@@ -2577,8 +2582,8 @@ void CharacterBase::healBuff(float dt)
 			}
 		}
 	}
-	else if (getName() == HeroEnum::Sakura ||
-		getName() == HeroEnum::Tsunade)
+	else if (getGimmickName() == HeroEnum::Sakura ||
+		getGimmickName() == HeroEnum::Tsunade)
 	{
 		increaseHpAndUpdateUI(_healBuffValue);
 	}
@@ -2605,7 +2610,7 @@ void CharacterBase::dehealBuff(float dt)
 
 	for (auto hero : getGameLayer()->_CharacterArray)
 	{
-		if (hero->getName() == HeroEnum::Asuma)
+		if (hero->getGimmickName() == HeroEnum::Asuma)
 			_slayer = hero;
 	}
 
@@ -2626,7 +2631,7 @@ void CharacterBase::lostBlood(float dt)
 
 	for (auto hero : getGameLayer()->_CharacterArray)
 	{
-		if (hero->getCharId() == lbAttackerId && hero->getName() == HeroEnum::Shikamaru)
+		if (hero->getCharId() == lbAttackerId && hero->getGimmickName() == HeroEnum::Shikamaru)
 		{
 			_slayer = hero;
 			lbAttackerId = -1;
@@ -2656,7 +2661,7 @@ void CharacterBase::changeAction()
 
 void CharacterBase::changeAction2()
 {
-	if (getName() == HeroEnum::Minato)
+	if (getGimmickName() == HeroEnum::Minato)
 	{
 		_attackValue = getSpcAttackValue2();
 		setAttackType(getSpcAttack2Type());
@@ -2665,7 +2670,7 @@ void CharacterBase::changeAction2()
 
 		setSkill2Action(createAnimation(skillSPC2Array, 10, false, true));
 	}
-	else if (getName() == HeroEnum::Nagato)
+	else if (getGimmickName() == HeroEnum::Nagato)
 	{
 		if (_skillChangeBuffValue == 18)
 		{
@@ -2695,11 +2700,11 @@ void CharacterBase::setActionResume()
 
 void CharacterBase::setActionResume2()
 {
-	if (getName() == HeroEnum::Minato)
+	if (getGimmickName() == HeroEnum::Minato)
 	{
 		setSkill2Action(createAnimation(skill2Array, 10, false, true));
 	}
-	else if (getName() == HeroEnum::Nagato)
+	else if (getGimmickName() == HeroEnum::Nagato)
 	{
 		if (_skillChangeBuffValue == 18)
 		{
@@ -2825,6 +2830,16 @@ void CharacterBase::setBullet(const string& bulletName)
 		bullet->attack(NAttack);
 		_monsterArray.push_back(bullet);
 	}
+	else if (auto profile = Custom::Registry::get().findBullet(bulletName))
+	{
+		// Custom bullet (ns.CustomBullets)
+		bullet->setScale(profile->scale);
+		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -profile->offX : profile->offX),
+			getPositionY() + (profile->hasOffY ? profile->offY : getContentSize().height / 2)));
+
+		bullet->attack(NAttack);
+		bullet->setMove(profile->moveDist, profile->moveTime, false);
+	}
 	else
 	{
 		bullet->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32),
@@ -2880,9 +2895,58 @@ Hero* CharacterBase::createClone(int cloneTime)
 	return nullptr;
 }
 
+string CharacterBase::getGimmickName()
+{
+	auto& registry = Custom::Registry::get();
+	return registry.hasAliases() ? registry.gimmickOf(getName()) : getName();
+}
+
 void CharacterBase::setClone(int cloneTime)
 {
-	Hero* clone = createClone(cloneTime);
+	Hero* clone = nullptr;
+
+	// A custom clone linked to this unit (ns.LinkSummon) wins over the character's own createClone()
+	if (auto linked = Custom::Registry::get().firstLinkedClone(getName()))
+		clone = Provider::create(linked->name, Role::Clone, getGroup());
+	else
+		clone = createClone(cloneTime);
+
+	attachClone(clone, cloneTime);
+}
+
+void CharacterBase::setSummon(const string& spec)
+{
+	// "Name" or "Name:seconds" (0 or missing = no automatic despawn)
+	string summonName = spec;
+	int lifeTime = 0;
+	auto sep = spec.find(':');
+	if (sep != string::npos)
+	{
+		summonName = spec.substr(0, sep);
+		lifeTime = atoi(spec.c_str() + sep + 1);
+	}
+
+	auto& registry = Custom::Registry::get();
+	auto summon = registry.findSummon(summonName);
+	if (!summon || !registry.isLinked(summonName, getName()))
+	{
+		CCLOG("[Custom] %s can not summon '%s': not linked to it in ns.LinkSummon", getName().c_str(), summonName.c_str());
+		return;
+	}
+
+	Role role = Role::Clone;
+	if (summon->kind == Custom::Kind::Kuchiyose)
+		role = Custom::Registry::folderOf(summonName, true) == "Kugutsu" ? Role::Kugutsu : Role::Summon;
+
+	Hero* hero = Provider::create(summonName, role, getGroup());
+	if (hero && summon->kind == Custom::Kind::Kuchiyose)
+		_monsterArray.push_back(hero); // owners keep track of their kuchiyose here (see Kiba::createClone)
+
+	attachClone(hero, lifeTime);
+}
+
+void CharacterBase::attachClone(Hero* clone, int cloneTime)
+{
 	if (clone == nullptr)
 	{
 		CCLOG("Current character %s can not create clone", getName().c_str());
@@ -2901,8 +2965,8 @@ void CharacterBase::setClone(int cloneTime)
 
 	clone->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32), getPositionY() - 1));
 
-	if ((getName() == HeroEnum::SageNaruto || getName() == HeroEnum::Naruto) ||
-		(getName() == HeroEnum::RikudoNaruto && cloneTime == 10))
+	if ((getGimmickName() == HeroEnum::SageNaruto || getGimmickName() == HeroEnum::Naruto) ||
+		(getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 10))
 	{
 		clone->setHPValue(getHP(), false);
 	}
@@ -2919,7 +2983,7 @@ void CharacterBase::setClone(int cloneTime)
 	clone->setHPbar();
 	clone->_hpBar->getHPBAR()->setScaleX(clone->getHpPercent());
 
-	if (getName() == HeroEnum::RikudoNaruto && cloneTime == 9)
+	if (getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 9)
 	{
 		if (clone->_hpBar)
 		{
@@ -2927,7 +2991,7 @@ void CharacterBase::setClone(int cloneTime)
 		}
 		clone->setNAttackValue(1060);
 	}
-	else if (getName() == HeroEnum::Kakashi)
+	else if (getGimmickName() == HeroEnum::Kakashi)
 	{
 		clone->setNAttackValue(1060);
 	}
@@ -2975,6 +3039,10 @@ void CharacterBase::removeAllClones()
 
 void CharacterBase::setMon(const string& monName)
 {
+	// A custom mon that copies a stock mon (ns.CustomMons) is handled as that mon below;
+	// monName is still the one whose xml is loaded.
+	const string behavior = Custom::Registry::get().gimmickOf(monName);
+
 	float monsterStayTime = _attackRangeY;
 
 	auto monster = Monster::create();
@@ -3003,67 +3071,67 @@ void CharacterBase::setMon(const string& monName)
 	monster->setFlipX(_isFlipped);
 	monster->_isFlipped = _isFlipped;
 
-	if (monName == "FakeDeidara" ||
-		monName == "FakeKisame" ||
-		monName == "DeidaraBom" ||
-		monName == "ChuiDi" ||
-		monName == "SakuraBom" ||
-		monName == "Shoryu" ||
-		monName == "Stream" ||
-		monName == "FakeMinato")
+	if (behavior == "FakeDeidara" ||
+		behavior == "FakeKisame" ||
+		behavior == "DeidaraBom" ||
+		behavior == "ChuiDi" ||
+		behavior == "SakuraBom" ||
+		behavior == "Shoryu" ||
+		behavior == "Stream" ||
+		behavior == "FakeMinato")
 	{
 		monster->setPosition(Vec2(getPositionX(), _originY ? _originY : getPositionY()));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "LeeBom")
+	else if (behavior == "LeeBom")
 	{
 		// monster->setAnchorPoint(Vec2(0.5,0.5f));
 		monster->setPosition(Vec2(getPositionX(), getPositionY()));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "FakeItachi")
+	else if (behavior == "FakeItachi")
 	{
 		monster->setPosition(Vec2(getPositionX(), _originY ? _originY : getPositionY() - 4));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Tenmu")
+	else if (behavior == "Tenmu")
 	{
 		monster->setPosition(Vec2(getPositionX(), _originY));
 		monster->setAnchorPoint(Vec2(0.5, -0.1f));
 		monster->attack(NAttack);
 	}
-	else if (monName == "Kaiten")
+	else if (behavior == "Kaiten")
 	{
 		monster->setPosition(Vec2(getPositionX(), getPositionY()));
 		monster->setAnchorPoint(Vec2(0.5, 0.25f));
 		monster->attack(NAttack);
 	}
-	else if (monName == "Crash" ||
-		monName == "Crash2")
+	else if (behavior == "Crash" ||
+		behavior == "Crash2")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32), _originY ? _originY : getPositionY()));
 		monster->setAnchorPoint(Vec2(0.5, 0.25f));
 		monster->attack(NAttack);
 	}
-	else if (monName == "SansyoRed")
+	else if (behavior == "SansyoRed")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 240 : getPositionX() + 240, getPositionY() - 32));
 		monster->attack(NAttack);
 	}
-	else if (monName == "SansyoGreen")
+	else if (behavior == "SansyoGreen")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 144 : getPositionX() + 144, getPositionY() - 32 + 1));
 		monster->attack(NAttack);
 	}
-	else if (monName == "SansyoBlue")
+	else if (behavior == "SansyoBlue")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 48 : getPositionX() + 48, getPositionY() - 32 + 2));
 		monster->attack(NAttack);
 	}
-	else if (monName == SummonEnum::SmallSlug)
+	else if (behavior == SummonEnum::SmallSlug)
 	{
 		if (_monsterArray.size() < 3)
 		{
@@ -3077,49 +3145,49 @@ void CharacterBase::setMon(const string& monName)
 			return;
 		}
 	}
-	else if (monName == "Kuroari")
+	else if (behavior == "Kuroari")
 	{
 		monster->setSkillEffect("smk");
 		_monsterArray.push_back(monster);
 		monster->doAI();
 	}
-	else if (monName == "PaperRain" ||
-		monName == "Steam")
+	else if (behavior == "PaperRain" ||
+		behavior == "Steam")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 16 : getPositionX() + 16, _originY));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "FireRain")
+	else if (behavior == "FireRain")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 75 : getPositionX() + 75, _originY - 1));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Tuji" ||
-		monName == "Tuji2" ||
-		monName == "Suiji")
+	else if (behavior == "Tuji" ||
+		behavior == "Tuji2" ||
+		behavior == "Suiji")
 	{
 		monster->setPositionY(getPositionY() - 24);
 		monster->setPositionX(getPositionX() + (_isFlipped ? -64 : 64));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "ThunderWave")
+	else if (behavior == "ThunderWave")
 	{
 		monster->setPosition(Vec2(getPositionX(), getPositionY() - 1));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Jibaku" ||
-		monName == "JibakuEX" ||
-		monName == "Shenwei")
+	else if (behavior == "Jibaku" ||
+		behavior == "JibakuEX" ||
+		behavior == "Shenwei")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -96 : 96), getPositionY()));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Bikyu")
+	else if (behavior == "Bikyu")
 	{
 		monster->setFlipX(_isFlipped);
 		monster->hasArmorBroken = true;
@@ -3127,60 +3195,60 @@ void CharacterBase::setMon(const string& monName)
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Qilin")
+	else if (behavior == "Qilin")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -4 : 4), getPositionY() - 6));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "Laser")
+	else if (behavior == "Laser")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -100 : 100), getPositionY()));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "MagicDragon")
+	else if (behavior == "MagicDragon")
 	{
 		monster->hasArmorBroken = true;
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 		monster->setDirectMove(156, 2.0f, false);
 	}
-	else if (monName == "Chameleon" ||
-		monName == "Naraka" ||
-		monName == "Roar" ||
-		monName == "Smoke" ||
-		monName == "BannShou" ||
-		monName == "Bull" ||
-		monName == "Raintiger")
+	else if (behavior == "Chameleon" ||
+		behavior == "Naraka" ||
+		behavior == "Roar" ||
+		behavior == "Smoke" ||
+		behavior == "BannShou" ||
+		behavior == "Bull" ||
+		behavior == "Raintiger")
 	{
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "SuiRyuDan" ||
-		monName == "DotonPillar" ||
-		monName == "Yataikuzu" ||
-		monName == "Yominuma" ||
-		monName == "Dogs" ||
-		monName == "SandHand" ||
-		monName == "KageFeng" ||
-		monName == "Sanbao" ||
-		monName == "SandBall" ||
-		monName == "Sabaku" ||
-		monName == "SandWave" ||
-		monName == "Tsukuyomi" ||
-		monName == "Shark")
+	else if (behavior == "SuiRyuDan" ||
+		behavior == "DotonPillar" ||
+		behavior == "Yataikuzu" ||
+		behavior == "Yominuma" ||
+		behavior == "Dogs" ||
+		behavior == "SandHand" ||
+		behavior == "KageFeng" ||
+		behavior == "Sanbao" ||
+		behavior == "SandBall" ||
+		behavior == "Sabaku" ||
+		behavior == "SandWave" ||
+		behavior == "Tsukuyomi" ||
+		behavior == "Shark")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -48 : 48), getPositionY() - 4));
 		monster->attack(NAttack);
 	}
-	else if (monName == "Suijin" ||
-		monName == "BugPillar")
+	else if (behavior == "Suijin" ||
+		behavior == "BugPillar")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -64 : 64), getPositionY() + 1));
 		monster->attack(NAttack);
 	}
-	else if (monName == "Mine")
+	else if (behavior == "Mine")
 	{
 		monster->setSkillEffect("smk");
 		_monsterArray.push_back(monster);
@@ -3190,7 +3258,7 @@ void CharacterBase::setMon(const string& monName)
 			monster->setVisible(false);
 		}
 	}
-	else if (monName == "Kage")
+	else if (behavior == "Kage")
 	{
 		_isCatchOne = true;
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -getContentSize().width / 2 + 4 : getContentSize().width / 2 - 4), getPositionY()));
@@ -3208,7 +3276,7 @@ void CharacterBase::setMon(const string& monName)
 		monster->attack(NAttack);
 		monster->doAI();
 	}
-	else if (monName == "KageHand")
+	else if (behavior == "KageHand")
 	{
 		Vec2 dir = Vec2(_isFlipped ? getPositionX() - getContentSize().width : getPositionX() + getContentSize().width, getPositionY());
 		monster->setPosition(dir);
@@ -3218,7 +3286,7 @@ void CharacterBase::setMon(const string& monName)
 			_master->_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "KageHands")
+	else if (behavior == "KageHands")
 	{
 		if (_master)
 			_master->_monsterArray.push_back(monster);
@@ -3226,23 +3294,23 @@ void CharacterBase::setMon(const string& monName)
 		monster->setAnchorPoint(Vec2(0.5f, 0.15f));
 		monster->attack(NAttack);
 	}
-	else if (monName == "QuanRen")
+	else if (behavior == "QuanRen")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 64 : getPositionX() + 64, _originY));
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
 	}
-	else if (monName == "ItachiSusano" ||
-		monName == "SasukeSusano")
+	else if (behavior == "ItachiSusano" ||
+		behavior == "SasukeSusano")
 	{
 		_monsterArray.push_back(monster);
 	}
-	else if (monName == SkillEnum::HiraishinMark)
+	else if (behavior == SkillEnum::HiraishinMark)
 	{
 		_monsterArray.push_back(monster);
 		_isCanSkill1 = true;
 	}
-	else if (monName == "CircleMark")
+	else if (behavior == "CircleMark")
 	{
 		monster->setPosition(Vec2(getPositionX(), getPositionY()));
 		monster->setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -3254,19 +3322,19 @@ void CharacterBase::setMon(const string& monName)
 			getGameLayer()->getHudLayer()->skill1Button->setLock();
 		}
 	}
-	else if (monName == "InkDragon")
+	else if (behavior == "InkDragon")
 	{
 		monster->setPosition(Vec2(_isFlipped ? getPositionX() - 128 : getPositionX() + 128, getPositionY()));
 		monster->attack(NAttack);
 		monster->setDirectMove(156, 2.0f, false);
 	}
-	else if (monName == "BugTomado")
+	else if (behavior == "BugTomado")
 	{
 		monster->attack(NAttack);
 		monster->setDirectMove(128, 2.0f, false);
 	}
-	else if (monName == "FutonSRK2" ||
-		monName == "FutonSRK")
+	else if (behavior == "FutonSRK2" ||
+		behavior == "FutonSRK")
 	{
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -48 : 48), getPositionY()));
 
@@ -3300,44 +3368,86 @@ void CharacterBase::setMon(const string& monName)
 			monster->walk(moveDirection);
 		}
 	}
-	else if (monName == "Kubi")
+	else if (behavior == "Kubi")
 	{
 		monster->attack(NAttack);
 		monster->setDirectMove(128, 0.8f, true);
 	}
-	else if (monName == "Shark2")
+	else if (behavior == "Shark2")
 	{
 		monster->attack(NAttack);
 		monster->setEaseIn(224, 3.0f);
 	}
-	else if (monName == "WaterBullet" ||
-		monName == "BoneBullet" ||
-		monName == "WaterBom")
+	else if (behavior == "WaterBullet" ||
+		behavior == "BoneBullet" ||
+		behavior == "WaterBom")
 	{
 		monster->attack(NAttack);
 		monster->setEaseIn(224, 1.0f);
 	}
-	else if (monName == "Hasan")
+	else if (behavior == "Hasan")
 	{
 		monster->attack(NAttack);
 		monster->setAnchorPoint(Vec2(0.5f, 0.28f));
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -24 : 24), getPositionY()));
 		monster->setEaseIn(224, 1.0f);
 	}
-	else if (monName == "Wave")
+	else if (behavior == "Wave")
 	{
 		monster->attack(NAttack);
 		monster->setAnchorPoint(Vec2(0.5f, 0.1f));
 		monster->setPosition(Vec2(getPositionX() + (_isFlipped == true ? -24 : 24), getPositionY()));
 		monster->setEaseIn(224, 1.0f);
 	}
-	else if (monName == "InkBird" ||
-		monName == "FakeTobirama" ||
-		monName == "TamaBomb" ||
-		monName == "Shenwei2")
+	else if (behavior == "InkBird" ||
+		behavior == "FakeTobirama" ||
+		behavior == "TamaBomb" ||
+		behavior == "Shenwei2")
 	{
 		_monsterArray.push_back(monster);
 		monster->attack(NAttack);
+	}
+	else if (auto profile = Custom::Registry::get().findMon(monName))
+	{
+		// Generic custom mon (ns.CustomMons without a stock gimmick)
+		monster->setPosition(Vec2(getPositionX() + (_isFlipped ? -profile->offX : profile->offX),
+			(_originY ? _originY : getPositionY()) + profile->offY));
+		if (profile->hasAnchor)
+			monster->setAnchorPoint(Vec2(profile->anchorX, profile->anchorY));
+		if (profile->armorBroken)
+			monster->hasArmorBroken = true;
+		if (!profile->effect.empty())
+			monster->setSkillEffect(profile->effect);
+		if (profile->track)
+			_monsterArray.push_back(monster);
+
+		switch (profile->mode)
+		{
+		case Custom::MonMode::Attack:
+			monster->attack(NAttack);
+			break;
+		case Custom::MonMode::Ai:
+			monster->doAI();
+			break;
+		case Custom::MonMode::None:
+			break;
+		}
+
+		// Same order as the stock mons: attack first, then start moving
+		switch (profile->move.type)
+		{
+		case Custom::MonMoveType::Direct:
+			monster->setDirectMove(profile->move.length, profile->move.time, profile->move.reverse);
+			break;
+		case Custom::MonMoveType::Ease:
+			monster->setEaseIn(profile->move.length, profile->move.time);
+			break;
+		case Custom::MonMoveType::Chase:
+			monster->setDirectMoveBy(0, profile->move.time);
+			break;
+		case Custom::MonMoveType::None:
+			break;
+		}
 	}
 	else
 	{
@@ -3345,22 +3455,22 @@ void CharacterBase::setMon(const string& monName)
 		monster->doAI();
 	}
 
-	if (monName == "ItachiSusano")
+	if (behavior == "ItachiSusano")
 	{
 		monster->setFlipX(_isFlipped);
 		monster->setAnchorPoint(Vec2(0.5f, 0));
 		monster->setPosition(Vec2(146 / 2 - 10, -40));
 		addChild(monster, -1000);
 	}
-	else if (monName == "SasukeSusano")
+	else if (behavior == "SasukeSusano")
 	{
 		monster->setFlipX(_isFlipped);
 		monster->setAnchorPoint(Vec2(0.5f, 0));
 		monster->setPosition(Vec2(141 / 2, -6));
 		addChild(monster, -1000);
 	}
-	else if (monName == "CircleMark" ||
-		monName == "Yominuma")
+	else if (behavior == "CircleMark" ||
+		behavior == "Yominuma")
 	{
 		getGameLayer()->addChild(monster, -5000);
 	}
@@ -3374,11 +3484,11 @@ void CharacterBase::setMonPer(float dt)
 {
 	auto monster = Monster::create();
 
-	if (getName() == HeroEnum::Deidara)
+	if (getGimmickName() == HeroEnum::Deidara)
 	{
 		monster->setID("Spider", Role::Mon, _group);
 	}
-	else if (getName() == HeroEnum::Sai)
+	else if (getGimmickName() == HeroEnum::Sai)
 	{
 		monster->setID("Mouse", Role::Mon, _group);
 		setSound("Audio/Sai/ink_mouse.ogg");
@@ -3410,8 +3520,8 @@ void CharacterBase::setTrap(const string& trapName)
 				{
 					if (!hero->_isVisable)
 					{
-						if (hero->getName() == HeroEnum::Konan ||
-							hero->getName() == HeroEnum::Deidara)
+						if (hero->getGimmickName() == HeroEnum::Konan ||
+							hero->getGimmickName() == HeroEnum::Deidara)
 						{
 							hero->unschedule(schedule_selector(CharacterBase::disableBuff));
 						}
@@ -3429,7 +3539,7 @@ void CharacterBase::setTrap(const string& trapName)
 			}
 		}
 
-		if (getName() == HeroEnum::ImmortalSasuke)
+		if (getGimmickName() == HeroEnum::ImmortalSasuke)
 		{
 			Vec2 targetPoint = _mainTarget ? _mainTarget->getPosition() : getPosition();
 
@@ -3537,15 +3647,15 @@ void CharacterBase::setMonAttack(int skillNum)
 {
 	for (auto mo : _monsterArray)
 	{
-		if (mo->getName() != "Traps")
+		if (mo->getGimmickName() != "Traps")
 		{
-			if (getName() == HeroEnum::Kiba)
+			if (getGimmickName() == HeroEnum::Kiba)
 			{
 				mo->attack(SKILL1);
 			}
-			else if (getName() == HeroEnum::Kankuro)
+			else if (getGimmickName() == HeroEnum::Kankuro)
 			{
-				if (mo->getName() == KugutsuEnum::Karasu)
+				if (mo->getGimmickName() == KugutsuEnum::Karasu)
 				{
 					if (skillNum == 1)
 					{
@@ -3557,9 +3667,9 @@ void CharacterBase::setMonAttack(int skillNum)
 					}
 				}
 			}
-			else if (getName() == HeroEnum::Chiyo)
+			else if (getGimmickName() == HeroEnum::Chiyo)
 			{
-				if (mo->getName() == KugutsuEnum::Parents)
+				if (mo->getGimmickName() == KugutsuEnum::Parents)
 				{
 					if (skillNum == 1 && !mo->_skillChangeBuffValue)
 					{
@@ -3571,8 +3681,8 @@ void CharacterBase::setMonAttack(int skillNum)
 					}
 				}
 			}
-			else if (getName() == HeroEnum::Itachi ||
-				getName() == HeroEnum::ImmortalSasuke)
+			else if (getGimmickName() == HeroEnum::Itachi ||
+				getGimmickName() == HeroEnum::ImmortalSasuke)
 			{
 				if (_state == State::NATTACK)
 				{
@@ -3588,8 +3698,8 @@ void CharacterBase::setTransform()
 	CCNotificationCenter::sharedNotificationCenter()->removeObserver(this, "acceptAttack");
 	unschedule(schedule_selector(CharacterBase::dehealBuff));
 
-	if (getName() == HeroEnum::Lee ||
-		getName() == HeroEnum::RockLee)
+	if (getGimmickName() == HeroEnum::Lee ||
+		getGimmickName() == HeroEnum::RockLee)
 	{
 		removeBuffEffect("dhBuff");
 	}
@@ -3608,20 +3718,29 @@ void CharacterBase::setTransform()
 	auto oldMaxHP = getMaxHP();
 	auto oldHP = getHP();
 
+	// Custom units follow ns.Transform only (and never fall into the stock chain below)
+	auto& customRegistry = Custom::Registry::get();
+	if (customRegistry.isCustomUnit(getName()))
+	{
+		if (auto nextForm = customRegistry.transformNext(getName()))
+			setID(*nextForm, _role, _group);
+		else
+			CCLOG("[Custom] %s has no next form in ns.Transform", getName().c_str());
+	}
 	// NOTE: Update HudLayer logic was moved to Hero::setID
-	if (getName() == HeroEnum::Naruto)
+	else if (getGimmickName() == HeroEnum::Naruto)
 		setID(HeroEnum::SageNaruto, _role, _group);
-	else if (getName() == HeroEnum::SageNaruto)
+	else if (getGimmickName() == HeroEnum::SageNaruto)
 		setID(HeroEnum::RikudoNaruto, _role, _group);
-	else if (getName() == HeroEnum::Jiraiya)
+	else if (getGimmickName() == HeroEnum::Jiraiya)
 		setID(HeroEnum::SageJiraiya, _role, _group);
-	else if (getName() == HeroEnum::Sasuke)
+	else if (getGimmickName() == HeroEnum::Sasuke)
 		setID(HeroEnum::ImmortalSasuke, _role, _group);
-	else if (getName() == HeroEnum::Lee)
+	else if (getGimmickName() == HeroEnum::Lee)
 		setID(HeroEnum::RockLee, _role, _group);
-	else if (getName() == HeroEnum::RockLee)
+	else if (getGimmickName() == HeroEnum::RockLee)
 		setID(HeroEnum::Lee, _role, _group);
-	else if (getName() == HeroEnum::Pain)
+	else if (getGimmickName() == HeroEnum::Pain)
 		setID(HeroEnum::Nagato, _role, _group);
 
 	setNAttackValue(oldNAttackValue);
@@ -3780,8 +3899,8 @@ void CharacterBase::sAttack(ABType type)
 	{
 		if (!_isVisable)
 		{
-			if (getName() == HeroEnum::Konan ||
-				getName() == HeroEnum::Deidara)
+			if (getGimmickName() == HeroEnum::Konan ||
+				getGimmickName() == HeroEnum::Deidara)
 			{
 				unschedule(schedule_selector(CharacterBase::disableBuff));
 			}
@@ -3860,8 +3979,8 @@ void CharacterBase::oAttack(ABType type)
 		}
 		if (!_isVisable)
 		{
-			if (getName() == HeroEnum::Konan ||
-				getName() == HeroEnum::Deidara)
+			if (getGimmickName() == HeroEnum::Konan ||
+				getGimmickName() == HeroEnum::Deidara)
 			{
 				unschedule(schedule_selector(CharacterBase::disableBuff));
 			}
@@ -3962,10 +4081,10 @@ void CharacterBase::walk(Vec2 direction)
 
 		if (_state == State::NATTACK &&
 			_isOnlySkillLocked &&
-			(getName() == HeroEnum::Suigetsu ||
-				getName() == HeroEnum::Jugo ||
-				getName() == HeroEnum::Hiruzen ||
-				getName() == HeroEnum::Kisame))
+			(getGimmickName() == HeroEnum::Suigetsu ||
+				getGimmickName() == HeroEnum::Jugo ||
+				getGimmickName() == HeroEnum::Hiruzen ||
+				getGimmickName() == HeroEnum::Kisame))
 		{
 			if (isAiRoleBody)
 			{
@@ -3991,18 +4110,18 @@ void CharacterBase::walk(Vec2 direction)
 			}
 		}
 
-		if (getName() == HeroEnum::Itachi ||
-			getName() == HeroEnum::ImmortalSasuke ||
-			getName() == HeroEnum::Chiyo)
+		if (getGimmickName() == HeroEnum::Itachi ||
+			getGimmickName() == HeroEnum::ImmortalSasuke ||
+			getGimmickName() == HeroEnum::Chiyo)
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == "ItachiSusano" ||
-					mo->getName() == "SasukeSusano")
+				if (mo->getGimmickName() == "ItachiSusano" ||
+					mo->getGimmickName() == "SasukeSusano")
 				{
 					mo->setFlipX(_isFlipped);
 				}
-				else if (mo->getName() == KugutsuEnum::Parents)
+				else if (mo->getGimmickName() == KugutsuEnum::Parents)
 				{
 					if (mo->_state == State::IDLE)
 					{
@@ -4034,7 +4153,7 @@ bool CharacterBase::hurt()
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
 			if (getGroup() == hero->getGroup() &&
-				hero->getName() == HeroEnum::Chiyo &&
+				hero->getGimmickName() == HeroEnum::Chiyo &&
 				hero->_state != State::DEAD &&
 				hero->_buffStartTime)
 			{
@@ -4045,11 +4164,11 @@ bool CharacterBase::hurt()
 				}
 			}
 		}
-		if (getName() == HeroEnum::Chiyo)
+		if (getGimmickName() == HeroEnum::Chiyo)
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
+				if (mo->getGimmickName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
 				{
 					Vec2 sp = mo->getPosition() - getPosition();
 					if (sp.x <= 48)
@@ -4102,7 +4221,7 @@ bool CharacterBase::hardHurt(int delayTime, bool isHurtAction, bool isCatch, boo
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
 			if (getGroup() == hero->getGroup() &&
-				hero->getName() == HeroEnum::Chiyo &&
+				hero->getGimmickName() == HeroEnum::Chiyo &&
 				hero->_state != State::DEAD &&
 				hero->_buffStartTime)
 			{
@@ -4114,11 +4233,11 @@ bool CharacterBase::hardHurt(int delayTime, bool isHurtAction, bool isCatch, boo
 			}
 		}
 
-		if (getName() == HeroEnum::Chiyo)
+		if (getGimmickName() == HeroEnum::Chiyo)
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
+				if (mo->getGimmickName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
 				{
 					Vec2 sp = mo->getPosition() - getPosition();
 					if (sp.x <= 48)
@@ -4293,7 +4412,7 @@ void CharacterBase::floatUP(float floatHeight, bool isCancelSkill)
 		for (auto hero : getGameLayer()->_CharacterArray)
 		{
 			if (getGroup() == hero->getGroup() &&
-				hero->getName() == HeroEnum::Chiyo &&
+				hero->getGimmickName() == HeroEnum::Chiyo &&
 				hero->_state != State::DEAD &&
 				hero->_buffStartTime)
 			{
@@ -4305,11 +4424,11 @@ void CharacterBase::floatUP(float floatHeight, bool isCancelSkill)
 			}
 		}
 
-		if (getName() == HeroEnum::Chiyo)
+		if (getGimmickName() == HeroEnum::Chiyo)
 		{
 			for (auto mo : _monsterArray)
 			{
-				if (mo->getName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
+				if (mo->getGimmickName() == KugutsuEnum::Parents && !mo->_skillChangeBuffValue && mo->_state != State::SATTACK && mo->_state != State::DEAD)
 				{
 					Vec2 sp = mo->getPosition() - getPosition();
 					if (sp.x <= 48)
@@ -4386,7 +4505,7 @@ void CharacterBase::dead()
 		_isControlled = false;
 		if (_controller->isPlayer())
 		{
-			if (_controller->getName() == HeroEnum::Ino)
+			if (_controller->getGimmickName() == HeroEnum::Ino)
 			{
 				_isAI = true;
 				_isControlled = false;
@@ -4417,7 +4536,7 @@ void CharacterBase::dead()
 		_controller = nullptr;
 	}
 
-	if (getName() == HeroEnum::Minato || getName() == HeroEnum::Nagato)
+	if (getGimmickName() == HeroEnum::Minato || getGimmickName() == HeroEnum::Nagato)
 	{
 		setActionResume2();
 	}
@@ -4445,8 +4564,8 @@ void CharacterBase::dead()
 		_buffStartTime = 0;
 		unschedule(schedule_selector(CharacterBase::dehealBuff));
 
-		if (getName() != HeroEnum::RockLee &&
-			getName() != HeroEnum::Lee)
+		if (getGimmickName() != HeroEnum::RockLee &&
+			getGimmickName() != HeroEnum::Lee)
 		{
 			removeBuffEffect("all");
 		}
@@ -4819,8 +4938,8 @@ CharacterBase::findTargetEnemyBy(const vector<T*>& list, bool isTowerDected)
 				findSome = true;
 				if (target->isHurtingTower)
 				{
-					if (target->getName() == HeroEnum::Choji ||
-						target->getName() == HeroEnum::Sakura)
+					if (target->getGimmickName() == HeroEnum::Choji ||
+						target->getGimmickName() == HeroEnum::Sakura)
 					{
 						_mainTarget = target;
 						return true;
@@ -5094,11 +5213,11 @@ void CharacterBase::changeSide(Vec2 sp)
 		_isFlipped = true;
 	}
 
-	if (getName() == HeroEnum::Itachi || getName() == HeroEnum::ImmortalSasuke)
+	if (getGimmickName() == HeroEnum::Itachi || getGimmickName() == HeroEnum::ImmortalSasuke)
 	{
 		for (auto mo : _monsterArray)
 		{
-			if (mo->getName() == "ItachiSusano" || getName() == "SasukeSusano")
+			if (mo->getGimmickName() == "ItachiSusano" || getGimmickName() == "SasukeSusano")
 				mo->_isFlipped = _isFlipped;
 			mo->setFlipX(_isFlipped);
 		}

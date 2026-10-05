@@ -87,11 +87,11 @@ void Monster::initAction()
 	setWalkAction(createAnimation(walkArray, 10, true, false));
 	setDeadAction(createAnimation(deadArray, 10, false, false));
 
-	if (getName() == SkillEnum::Kage ||
-		getName() == SkillEnum::KageHand ||
-		getName() == SkillEnum::FutonSRK ||
-		getName() == SkillEnum::FutonSRK2 ||
-		getName() == SkillEnum::Kubi)
+	if (getGimmickName() == SkillEnum::Kage ||
+		getGimmickName() == SkillEnum::KageHand ||
+		getGimmickName() == SkillEnum::FutonSRK ||
+		getGimmickName() == SkillEnum::FutonSRK2 ||
+		getGimmickName() == SkillEnum::Kubi)
 	{
 		setNAttackAction(createAnimation(nattackArray, 10, false, false));
 	}
@@ -160,7 +160,7 @@ void Monster::changeHPbar()
 
 void Monster::setAI(float dt)
 {
-	auto charName = getName();
+	auto charName = getGimmickName();
 	if (charName == SkillEnum::Kage)
 	{
 		for (auto hero : getGameLayer()->_CharacterArray)
@@ -305,14 +305,14 @@ void Monster::dealloc()
 	unschedule(schedule_selector(CharacterBase::setAI));
 	setState(State::DEAD);
 
-	if (getName() == SkillEnum::FutonSRK || getName() == SkillEnum::FutonSRK2)
+	if (getGimmickName() == SkillEnum::FutonSRK || getGimmickName() == SkillEnum::FutonSRK2)
 	{
 		auto call = CallFunc::create(std::bind(&Monster::removeFromParent, this));
 		auto seq = newSequence(getDeadAction(), call);
 		runAction(seq);
 		return;
 	}
-	if (getName() == SkillEnum::HiraishinMark)
+	if (getGimmickName() == SkillEnum::HiraishinMark)
 	{
 		_master->_isCanSkill1 = false;
 		_master->setActionResume();
@@ -342,7 +342,7 @@ void Monster::dealloc()
 			_master->removeMon(this);
 	}
 
-	if (getName() == SkillEnum::KageHand || getName() == SkillEnum::Kage)
+	if (getGimmickName() == SkillEnum::KageHand || getGimmickName() == SkillEnum::Kage)
 	{
 		auto call = CallFunc::create(std::bind(&Monster::setResume, this));
 		auto call2 = CallFunc::create(std::bind(&Monster::removeFromParent, this));

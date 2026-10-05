@@ -121,21 +121,21 @@ private:
 
 			   if (thiz->_mainTarget)
 			   {
-				   if (thiz->getName() == SkillEnum::Dogs ||
-					   thiz->getName() == SkillEnum::Yominuma ||
-					   thiz->getName() == SkillEnum::SandBall ||
-					   thiz->getName() == SkillEnum::Sabaku ||
-					   thiz->getName() == SkillEnum::Yataikuzu ||
+				   if (thiz->getGimmickName() == SkillEnum::Dogs ||
+					   thiz->getGimmickName() == SkillEnum::Yominuma ||
+					   thiz->getGimmickName() == SkillEnum::SandBall ||
+					   thiz->getGimmickName() == SkillEnum::Sabaku ||
+					   thiz->getGimmickName() == SkillEnum::Yataikuzu ||
 					   thiz->getName() == HeroEnum::Lee ||
 					   thiz->getName() == HeroEnum::RockLee)
 				   {
 					   thiz->_markPoint = Vec2(thiz->_mainTarget->getPositionX(), thiz->_mainTarget->_originY ? thiz->_mainTarget->_originY : thiz->_mainTarget->getPositionY());
 				   }
-				   else if (thiz->getName() == SkillEnum::Tsukuyomi)
+				   else if (thiz->getGimmickName() == SkillEnum::Tsukuyomi)
 				   {
 					   thiz->_markPoint = Vec2(thiz->_mainTarget->getPositionX(), thiz->_mainTarget->_originY ? thiz->_mainTarget->_originY : thiz->_mainTarget->getPositionY() + 2);
 				   }
-				   else if (thiz->getName() == SkillEnum::KageFeng)
+				   else if (thiz->getGimmickName() == SkillEnum::KageFeng)
 				   {
 					   thiz->_markPoint = Vec2(thiz->_mainTarget->getPositionX(), thiz->_mainTarget->_originY ? thiz->_mainTarget->_originY - 6 : thiz->_mainTarget->getPositionY() - 6);
 				   }
@@ -232,7 +232,7 @@ private:
 			   thiz->setPosition(Vec2(tsPosX, tsPosY));
 			   CCNotificationCenter::sharedNotificationCenter()->postNotification("updateMap", thiz);
 
-			   if (thiz->getName() != SkillEnum::Yominuma)
+			   if (thiz->getGimmickName() != SkillEnum::Yominuma)
 			   {
 				   getGameLayer()->reorderChild(thiz, -tsPosY);
 			   }
@@ -358,7 +358,7 @@ private:
 			   {
 				   for (auto mo : thiz->getMonsterArray())
 				   {
-					   if (mo->getName() == SkillEnum::HiraishinMark)
+					   if (mo->getGimmickName() == SkillEnum::HiraishinMark)
 					   {
 						   tsPosX = mo->getPositionX();
 						   tsPosY = mo->getPositionY();
