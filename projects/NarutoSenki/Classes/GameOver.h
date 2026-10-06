@@ -10,28 +10,28 @@ public:
 	GameOver();
 	~GameOver();
 
-	bool init(RenderTexture *snapshoot);
+	bool init(RenderTexture* snapshoot);
 
 	PROP(bool, _isWin, Win);
 
-	Layer *exitLayer = nullptr;
-	Layer *cheatLayer = nullptr;
-	Sprite *result_bg = nullptr;
+	Layer* exitLayer = nullptr;
+	Layer* cheatLayer = nullptr;
+	Sprite* result_bg = nullptr;
 
-	Sprite *refreshBtn = nullptr;
-	MenuItem *upload_btn = nullptr;
+	Sprite* refreshBtn = nullptr;
+	MenuItem* upload_btn = nullptr;
 
 	string detailRecord;
 	float finnalScore;
 
-	static GameOver *create(RenderTexture *snapshoot);
+	static GameOver* create(RenderTexture* snapshoot);
 
 private:
-	const char *resultChar = nullptr;
+	std::string resultChar;
 
-	void onBackToMenu(Ref *sender);
+	void onBackToMenu(Ref* sender);
 	void listResult();
-	void onCancel(Ref *sender);
-	void onLeft(Ref *sender);
-	void onUPloadBtn(Ref *sender);
+	void onCancel(Ref* sender);
+	void onLeft(Ref* sender);
+	void onUPloadBtn(Ref* sender);
 };

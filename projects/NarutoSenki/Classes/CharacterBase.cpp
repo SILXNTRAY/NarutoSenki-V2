@@ -3717,6 +3717,7 @@ void CharacterBase::setTransform()
 	auto oldNAttackValue = getNAttackValue();
 	auto oldMaxHP = getMaxHP();
 	auto oldHP = getHP();
+	auto oldKillNum = getKillNum(); // Hero::setID() zeroes the kill count; keep it across the transform
 
 	// Custom units follow ns.Transform only (and never fall into the stock chain below)
 	auto& customRegistry = Custom::Registry::get();
@@ -3746,6 +3747,7 @@ void CharacterBase::setTransform()
 	setNAttackValue(oldNAttackValue);
 	setMaxHPValue(oldMaxHP, false);
 	setHPValue(oldHP);
+	setKillNum(oldKillNum);
 
 	if (_hpBar)
 	{
