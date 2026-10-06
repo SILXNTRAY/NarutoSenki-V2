@@ -27,6 +27,8 @@ public:
 	static void saveSQLite(const char *table, const char *relatedColumn, const char *value, const char *targetColumn, const string &targetValue, bool isPlus);
 
 	static int readWinNumFromSQL(const char *heroName);
+	/** Make sure CharRecord has a row for this hero (wins and best time are dropped silently without one) */
+	static void ensureCharRecord(const char *heroName);
 	static int readCoinFromSQL();
 	static const char *readRecordTimeFromSQL(const char *heroName);
 

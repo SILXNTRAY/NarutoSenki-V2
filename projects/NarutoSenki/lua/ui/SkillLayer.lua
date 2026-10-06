@@ -123,6 +123,7 @@ function SkillLayer:initInterface()
     self:addChild(bgSprite, -5)
 
     local winNum = tools.readWinNumFromSQL(self.selectHero)
+    log('[SkillLayer] selectHero=%s wins=%d', tostring(self.selectHero), winNum)
 
     local rank_src
     local isBlink = false

@@ -122,6 +122,60 @@ void KTools::decode(string &str)
 	}
 }
 
+/** Insert a CharRecord row for a hero: 0 wins, 0, no best time. Same scrambling as the first-run seed. */
+static void insertCharRecordRow(sqlite3 *pDB, const string &heroName)
+{
+	string name = heroName;
+	int key = rand() % 50 + 40;
+	KTools::encode(name, key);
+
+	string column1DB = "0";
+	key = rand() % 60 + 40;
+	KTools::encode(column1DB, key);
+
+	string column2DB = "0";
+	key = rand() % 60 + 40;
+	KTools::encode(column2DB, key);
+
+	string column3DB = "";
+	key = rand() % 60 + 40;
+	KTools::encode(column3DB, key);
+
+	// Name the columns: tables created by older versions have extra ones (6 columns), and a bare
+	// "values(...)" with 4 entries is rejected there.
+	char *insertError = nullptr;
+	string sql = format("insert into CharRecord (name,column1,column2,column3) values('{}','{}','{}','{}')", name, column1DB, column2DB, column3DB);
+	sqlite3_exec(pDB, sql.c_str(), nullptr, nullptr, &insertError);
+	if (insertError != nullptr)
+	{
+		CCLOG("[Record] could not add CharRecord row for %s: %s", heroName.c_str(), insertError);
+		sqlite3_free(insertError);
+	}
+}
+
+/** Names that already have a CharRecord row (decoded). */
+static unordered_set<string> existingCharRecordNames(sqlite3 *pDB, bool &ok)
+{
+	unordered_set<string> existing;
+	char **rows = nullptr;
+	int rowCount = 0;
+	int colCount = 0;
+	ok = sqlite3_get_table(pDB, "select name from CharRecord", &rows, &rowCount, &colCount, nullptr) == SQLITE_OK;
+	if (ok)
+	{
+		for (int i = 1; i <= rowCount; i++)
+		{
+			string stored = rows[i] ? rows[i] : "";
+			if (stored.empty())
+				continue;
+			KTools::decode(stored);
+			existing.insert(stored);
+		}
+		sqlite3_free_table(rows);
+	}
+	return existing;
+}
+
 void KTools::initTableInDB()
 {
 	sqlite3 *pDB = nullptr;
@@ -188,7 +242,7 @@ void KTools::initTableInDB()
 			key = rand() % 60 + 40;
 			encode(column3DB, key);
 
-			sql = format("insert into  CharRecord values('{}','{}','{}','{}')", name, column1DB, column2DB, column3DB);
+			sql = format("insert into CharRecord (name,column1,column2,column3) values('{}','{}','{}','{}')", name, column1DB, column2DB, column3DB);
 			sqlite3_exec(pDB, sql.c_str(), nullptr, nullptr, &errorMsg);
 
 			if (errorMsg != nullptr)
@@ -208,52 +262,21 @@ void KTools::initTableInDB()
 			wanted.push_back(name);
 
 		// Names are stored scrambled with a different key per row, so compare decoded
-		unordered_set<string> existing;
-		char **rows = nullptr;
-		int rowCount = 0;
-		int colCount = 0;
-		if (sqlite3_get_table(pDB, "select name from CharRecord", &rows, &rowCount, &colCount, nullptr) == SQLITE_OK)
+		bool ok = false;
+		auto existing = existingCharRecordNames(pDB, ok);
+		if (ok)
 		{
-			for (int i = 1; i <= rowCount; i++)
-			{
-				string stored = rows[i] ? rows[i] : "";
-				if (stored.empty())
-					continue;
-				decode(stored);
-				existing.insert(stored);
-			}
-			sqlite3_free_table(rows);
-
+			string added;
+			int addedCount = 0;
 			for (const auto &heroName : wanted)
 			{
 				if (existing.count(heroName))
 					continue;
-
-				string name = heroName;
-				int key = rand() % 50 + 40;
-				encode(name, key);
-
-				string column1DB = "0";
-				key = rand() % 60 + 40;
-				encode(column1DB, key);
-
-				string column2DB = "0";
-				key = rand() % 60 + 40;
-				encode(column2DB, key);
-
-				string column3DB = "";
-				key = rand() % 60 + 40;
-				encode(column3DB, key);
-
-				char *insertError = nullptr;
-				sql = format("insert into  CharRecord values('{}','{}','{}','{}')", name, column1DB, column2DB, column3DB);
-				sqlite3_exec(pDB, sql.c_str(), nullptr, nullptr, &insertError);
-				if (insertError != nullptr)
-				{
-					CCLOG("[Custom] could not add record row for %s: %s", heroName.c_str(), insertError);
-					sqlite3_free(insertError);
-				}
+				insertCharRecordRow(pDB, heroName);
+				addedCount++;
+				added += " " + heroName;
 			}
+			CCLOG("[Record] CharRecord: %d row(s) existed, %d added:%s", (int)existing.size(), addedCount, added.c_str());
 		}
 	}
 
@@ -416,6 +439,7 @@ string KTools::readSQLite(const char *table, const char *column, const char *val
 		sqlite3_get_table(pDB, sql.c_str(), &result, &row, &column, nullptr);
 
 		string target;
+		bool foundRow = false;
 		for (int i = 0; i <= row * 2; i++)
 		{
 			string str = result[i];
@@ -423,11 +447,15 @@ string KTools::readSQLite(const char *table, const char *column, const char *val
 			decode(str);
 			if (str == value)
 			{
+				foundRow = true;
 				target = result[i + 1];
 				decode(target);
 				break;
 			}
 		}
+
+		if (!foundRow && is_same(table, "CharRecord"))
+			CCLOG("[Record] read: no %s row for '%s'", table, value);
 
 		if (!is_same(targetColumn, "column3") &&
 			!is_same(targetColumn, "column4"))
@@ -472,6 +500,9 @@ void KTools::saveSQLite(const char *table, const char *relatedColumn, const char
 				break;
 			}
 		}
+
+		if (columnValue.empty() && is_same(table, "CharRecord"))
+			CCLOG("[Record] save: no %s row for '%s', %s=%s NOT saved", table, value, targetColumn, targetValue.c_str());
 
 		string saveValue;
 		if (isPlus)
@@ -520,6 +551,25 @@ int KTools::readWinNumFromSQL(const char *heroName)
 	return to_int(winNum.c_str());
 }
 
+void KTools::ensureCharRecord(const char *heroName)
+{
+	if (heroName == nullptr || heroName[0] == '\0')
+		return;
+
+	sqlite3 *pDB = prepareTableInDB();
+	if (pDB == nullptr)
+		return;
+
+	bool ok = false;
+	auto existing = existingCharRecordNames(pDB, ok);
+	if (ok && !existing.count(heroName))
+	{
+		CCLOG("[Record] no CharRecord row for '%s', creating it", heroName);
+		insertCharRecordRow(pDB, heroName);
+	}
+	sqlite3_close(pDB);
+}
+
 int KTools::readCoinFromSQL()
 {
 	auto coins = readFromSQLite();
@@ -528,8 +578,11 @@ int KTools::readCoinFromSQL()
 
 const char *KTools::readRecordTimeFromSQL(const char *heroName)
 {
-	auto recordTime = readSQLite("CharRecord", "name", heroName, "column3").c_str();
-	return recordTime;
+	// The caller (the tolua binding used by SkillLayer.lua) only gets a pointer, so the
+	// string has to outlive this call; it copies it right away.
+	static string recordTime;
+	recordTime = readSQLite("CharRecord", "name", heroName, "column3");
+	return recordTime.c_str();
 }
 
 string KTools::encodeData(string data)
