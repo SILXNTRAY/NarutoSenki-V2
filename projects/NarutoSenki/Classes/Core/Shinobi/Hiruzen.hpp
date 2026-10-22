@@ -1,5 +1,6 @@
 #pragma once
 #include "Hero.hpp"
+#include "BuffMechanics.hpp"
 
 class Hiruzen : public Hero
 {
@@ -163,36 +164,11 @@ class Hiruzen : public Hero
 
 	void changeAction() override
 	{
-		_isArmored = true;
-		_nAttackRangeX = 16;
-		_nAttackRangeY = 48;
-		setTempAttackValue1(getNAttackValue());
-		setNAttackValue(560);
-
-		_isOnlySkillLocked = true;
-
-		setIdleAction(createAnimation(skillSPC1Array, 5, true, false));
-		setWalkAction(createAnimation(skillSPC2Array, 10, true, false));
-		setNAttackAction(createAnimation(skillSPC3Array, 10, false, true));
-
-		lockOugisButtons();
+		BuffMechanics::hiruzenChange(*this);
 	}
 
 	void setActionResume() override
 	{
-		_isArmored = false;
-		_isOnlySkillLocked = false;
-		if (hasTempAttackValue1())
-		{
-			setNAttackValue(getTempAttackValue1());
-			setTempAttackValue1(0);
-		}
-		setIdleAction(createAnimation(idleArray, 5, true, false));
-		setWalkAction(createAnimation(walkArray, 10, true, false));
-		setNAttackAction(createAnimation(nattackArray, 10, false, true));
-
-		unlockOugisButtons();
-
-		_skillChangeBuffValue = 0;
+		BuffMechanics::hiruzenActionResume(*this);
 	}
 };

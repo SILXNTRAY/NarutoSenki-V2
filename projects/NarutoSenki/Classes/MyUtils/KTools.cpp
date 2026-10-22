@@ -329,26 +329,41 @@ void KTools::prepareFileOGG(const string &listName, bool unload /* =false */)
 		return;
 	}
 
-	unsigned long nSize;
-	const char *pXmlBuffer = (const char *)FileUtils::sharedFileUtils()->getFileData(md5Path.c_str(), "r", &nSize);
+	unsigned long nSize = 0;
+	auto pXmlBuffer = FileUtils::sharedFileUtils()->getFileData(md5Path.c_str(), "r", &nSize);
+	if (!pXmlBuffer || nSize == 0)
+	{
+		delete[] pXmlBuffer;
+		return;
+	}
+
+	// getFileData() returns exactly nSize bytes with no terminating '\0', so the
+	// length has to be passed to Parse(); parsing it as a C string reads past the
+	// end of the buffer and randomly fails.
 	tinyxml2::XMLDocument doc;
-	doc.Parse(pXmlBuffer);
-	delete pXmlBuffer;
+	doc.Parse((const char *)pXmlBuffer, nSize);
+	delete[] pXmlBuffer;
 
 	auto rootEle = doc.RootElement();
+	if (!rootEle)
+	{
+		CCLOG("[KTools] prepareFileOGG: failed to parse %s", md5Path.c_str());
+		return;
+	}
+
 	auto fileEle = rootEle->FirstChildElement();
 
 	while (fileEle)
 	{
-		auto pathSrc = fileEle->FirstAttribute()->Value();
+		auto attr = fileEle->FirstAttribute();
 		auto soundPath = fileEle->GetText();
-		if (pathSrc == listName)
+		if (attr && soundPath && listName == attr->Value())
 		{
 			if (!unload)
 			{
 				SimpleAudioEngine::sharedEngine()->preloadEffect(soundPath);
 			}
-			else if (unload)
+			else
 			{
 				SimpleAudioEngine::sharedEngine()->unloadEffect(soundPath);
 			}

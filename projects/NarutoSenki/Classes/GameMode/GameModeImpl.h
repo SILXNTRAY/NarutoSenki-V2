@@ -16,6 +16,9 @@
 #include "GameMode/Impl/RandomDeathmatch.hpp"
 
 extern GameMode s_GameMode;
+// Set by the main menu: true when the game mode screen was opened from the
+// "Network" button, which runs every mode with the hardcore rules (gear disabled).
+extern bool s_ForceHardCore;
 extern std::array<std::unique_ptr<IGameModeHandler>, GameMode::__Internal_Max_Length> s_ModeHandlers;
 
 inline GameMode getGameMode()

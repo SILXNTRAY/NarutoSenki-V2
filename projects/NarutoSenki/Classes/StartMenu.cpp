@@ -2,6 +2,7 @@
 #include "Constants/UiFlowKeys.hpp"
 
 GameMode s_GameMode = GameMode::Classic;
+bool s_ForceHardCore = false;
 std::array<std::unique_ptr<IGameModeHandler>, GameMode::__Internal_Max_Length> s_ModeHandlers = {
 	std::make_unique<Mode1v1>(),
 	std::make_unique<Mode3v3>(),
@@ -134,7 +135,7 @@ void MenuButton::ccTouchEnded(Touch *touch, Event *event)
 			break;
 		case MenuButtonType::Custom:
 			SimpleAudioEngine::sharedEngine()->playEffect("Audio/Menu/confirm.ogg");
-			// TODO
+			_startMenu->onNetworkCallBack();
 			break;
 		case MenuButtonType::HardCore:
 			SimpleAudioEngine::sharedEngine()->playEffect(SELECT_SOUND);
@@ -404,14 +405,27 @@ void StartMenu::onHardLayerCallBack()
 	}
 }
 
-void StartMenu::onTrainingCallBack()
+void StartMenu::enterGameModeScene(bool hardCore)
 {
+	s_ForceHardCore = hardCore;
+
 	// Enter game mode scene
 	auto modeScene = Scene::create();
 	auto gameModeLayer = GameModeLayer::create();
 	modeScene->addChild(gameModeLayer);
 
 	Director::sharedDirector()->replaceScene(TransitionFade::create(1.25f, modeScene));
+}
+
+void StartMenu::onTrainingCallBack()
+{
+	enterGameModeScene(false);
+}
+
+void StartMenu::onNetworkCallBack()
+{
+	// Same mode screen as training, but every mode runs with hardcore rules
+	enterGameModeScene(true);
 }
 
 void StartMenu::onCreditsCallBack()

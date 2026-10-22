@@ -2,6 +2,8 @@
 #include "CCLuaEngine.h"
 #include "script_support/CCScriptSupport.h"
 
+#include "Constants/LuaCrypt.hpp"
+#include <cstring>
 #include "Systems/Initializer.hpp"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
@@ -25,6 +27,10 @@ bool AppDelegate::applicationDidFinishLaunching()
 	CCScriptEngineManager::sharedManager()->setScriptEngine(pEngine);
 
 	auto pStack = pEngine->getLuaStack();
+
+	// Optional: encrypted Lua files (tools/lua-crypt/README.md). Only files that start with the signature
+	// are decrypted; everything else loads as plain Lua, so this changes nothing unless you ship one.
+	pStack->setXXTEAKeyAndSign(LuaCrypt::kKey, (int)strlen(LuaCrypt::kKey), LuaCrypt::kSign, (int)strlen(LuaCrypt::kSign));
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 	{
@@ -58,7 +64,6 @@ bool AppDelegate::applicationDidFinishLaunching()
 	pEngine->addSearchPath("../lua");
 	FileUtils::sharedFileUtils()->addSearchPath("../lua");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	// pStack->setXXTEAKeyAndSign("2dxLua", strlen("2dxLua"), "XXTEA", strlen("XXTEA"));
 	pEngine->addSearchPath("lua");
 	FileUtils::sharedFileUtils()->addSearchPath("lua");
 	CCLOG("------ Android writable path -> %s", FileUtils::sharedFileUtils()->getWritablePath().c_str());

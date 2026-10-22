@@ -78,6 +78,10 @@ public:
 
 	CCLabelBMFont *gameClock;
 	Menu *pauseNenu;
+	MenuItem *pauseButton = nullptr;
+	Sprite *killIcon = nullptr;
+	Sprite *deadIcon = nullptr;
+	CCLabelBMFont *hengLabel = nullptr; // the ":" between the team scores
 	Menu *gearMenu;
 
 	Layer *miniLayer;
@@ -163,6 +167,24 @@ public:
 	ActionButton *getSkill5Button() { return skill5Button; }
 	ActionButton *getItem1Button() { return item1Button; }
 	Layer *getMiniLayer() { return miniLayer; }
+	// top bar / gear buttons: placed by Lua (see HudLayer.lua, "Top bar" and "Gear buttons")
+	Sprite *getStatusBar() { return status_bar; }
+	Menu *getPauseMenu() { return pauseNenu; }
+	MenuItem *getPauseButton() { return pauseButton; }
+	Sprite *getKillIcon() { return killIcon; }
+	CCLabelBMFont *getKillLabel() { return killLabel; }
+	Sprite *getDeadIcon() { return deadIcon; }
+	CCLabelBMFont *getDeadLabel() { return deadLabel; }
+	CCLabelBMFont *getKonoLabel() { return KonoLabel; }
+	CCLabelBMFont *getAkaLabel() { return AkaLabel; }
+	CCLabelBMFont *getColonLabel() { return hengLabel; }
+	CCLabelBMFont *getCoinLabel() { return coinLabel; }
+	CCLabelBMFont *getGameClock() { return gameClock; }
+	Menu *getGearMenu() { return gearMenu; }
+	MenuItem *getGearMenuSprite() { return gearMenuSprite; }
+	ActionButton *getGear1Button() { return gear1Button; }
+	ActionButton *getGear2Button() { return gear2Button; }
+	ActionButton *getGear3Button() { return gear3Button; }
 
 	CREATE_FUNC(HudLayer);
 

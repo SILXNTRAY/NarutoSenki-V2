@@ -142,6 +142,12 @@ void GameModeLayer::selectMode(GameMode mode)
 			enableCustomSelect = Cheats >= kMaxCheats;
 		}
 
+		// Opened from the "Network" button: teammates can be picked in every mode that supports it
+		if (s_ForceHardCore && mode != GameMode::RandomDeathmatch && mode != GameMode::Clone)
+		{
+			enableCustomSelect = true;
+		}
+
 		// call lua global function StartMenu.enterSelectLayer
 		auto pStack = get_luastack;
 		auto state = pStack->getLuaState();
@@ -153,6 +159,13 @@ void GameModeLayer::selectMode(GameMode mode)
 		auto handler = getGameModeHandler();
 		handler->setOldCheats(Cheats);
 		handler->init();
+
+		// Opened from the "Network" button: hardcore rules on top of the chosen mode
+		if (s_ForceHardCore)
+		{
+			handler->gd.isHardCore = true;
+			handler->gd.enableGear = false;
+		}
 	}
 }
 

@@ -68,6 +68,8 @@ public:
 	bool init();
 
 	void onTrainingCallBack();
+	void onNetworkCallBack();
+	void enterGameModeScene(bool hardCore);
 	void onHardCoreOn(Ref *sender);
 	void onHardCoreOff(Ref *sender);
 	void onHardLayerCallBack();

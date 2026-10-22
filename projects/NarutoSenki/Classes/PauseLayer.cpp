@@ -1,5 +1,6 @@
 #include "PauseLayer.h"
 #include "GameLayer.h"
+#include "Constants/UiFlowKeys.hpp"
 
 bool PauseLayer::init(RenderTexture *snapshoot)
 {
@@ -10,56 +11,32 @@ bool PauseLayer::init(RenderTexture *snapshoot)
 	SimpleAudioEngine::sharedEngine()->pauseAllEffects();
 	SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 
+	// frozen screenshot of the game behind the pause screen
 	Texture2D *bgTexture = snapshoot->getSprite()->getTexture();
-	Sprite *bg = Sprite::createWithTexture(bgTexture);
-	bg->setAnchorPoint(Vec2(0, 0));
-	bg->setFlipY(true);
-	addChild(bg, 0);
+	_snapshotBg = Sprite::createWithTexture(bgTexture);
+	_snapshotBg->setFlipY(true);
+	addChild(_snapshotBg, 0);
 
-	Layer *blend = LayerColor::create(ccc4(0, 0, 0, 150), winSize.width, winSize.height);
-	addChild(blend, 1);
+	// Lua builds the dimmer, bars, title and hint (lua/ui/PauseLayer.lua)
+	lua_call_func_self(PauseFlowKeys::kInitDecor, this, "PauseLayer");
 
-	//produce the menu_bar
-	Sprite *menu_bar_b = Sprite::create("menu_bar2.png");
-	menu_bar_b->setAnchorPoint(Vec2(0, 0));
-	FULL_SCREEN_SPRITE(menu_bar_b);
-	addChild(menu_bar_b, 2);
+	_resumeBtn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("resume.png"), nullptr, nullptr, this, menu_selector(PauseLayer::onResume));
+	_backBtn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("btm.png"), nullptr, nullptr, this, menu_selector(PauseLayer::onBackToMenu));
 
-	Sprite *menu_bar_t = Sprite::create("menu_bar3.png");
-	menu_bar_t->setAnchorPoint(Vec2(0, 0));
-	menu_bar_t->setPosition(Vec2(0, winSize.height - menu_bar_t->getContentSize().height));
-	FULL_SCREEN_SPRITE(menu_bar_t);
-	addChild(menu_bar_t, 2);
-
-	Sprite *pause_title = Sprite::createWithSpriteFrameName("pause_title.png");
-	pause_title->setAnchorPoint(Vec2(0, 0));
-	pause_title->setPosition(Vec2(2, winSize.height - pause_title->getContentSize().height - 2));
-	addChild(pause_title, 3);
-
-	MenuItem *resume_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("resume.png"), nullptr, nullptr, this, menu_selector(PauseLayer::onResume));
-	MenuItem *btm_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("btm.png"), nullptr, nullptr, this, menu_selector(PauseLayer::onBackToMenu));
-
-	pauseMenu = Menu::create(resume_btn, btm_btn, nullptr);
-	pauseMenu->alignItemsVerticallyWithPadding(26);
-	pauseMenu->setPosition(Vec2(winSize.width / 2, winSize.height / 2 + 30));
+	pauseMenu = Menu::create(_resumeBtn, _backBtn, nullptr);
 	addChild(pauseMenu, 3);
-
-	Sprite *surrender_text = Sprite::createWithSpriteFrameName("surrender_tips.png");
-	surrender_text->setPosition(Vec2(winSize.width / 2, winSize.height / 2 - 23));
-	addChild(surrender_text, 4);
 
 	bgm_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("bgm_on.png"), Sprite::createWithSpriteFrameName("bgm_off.png"), nullptr, this, menu_selector(PauseLayer::onBGM));
 	voice_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("voice_on.png"), Sprite::createWithSpriteFrameName("voice_off.png"), nullptr, this, menu_selector(PauseLayer::onVoice));
 	soundMenu = Menu::create(bgm_btn, voice_btn, nullptr);
-	soundMenu->alignItemsHorizontallyWithPadding(25);
-	soundMenu->setPosition(Vec2(pauseMenu->getPositionX(), pauseMenu->getPositionY() - 80));
 	addChild(soundMenu, 4);
 
 	pre_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("preload_on.png"), Sprite::createWithSpriteFrameName("preload_off.png"), nullptr, this, menu_selector(PauseLayer::onPreload));
 	preMenu = Menu::create(pre_btn, nullptr);
-	preMenu->alignItemsHorizontallyWithPadding(25);
-	preMenu->setPosition(Vec2(pauseMenu->getPositionX(), preMenu->getPositionY() - 84));
 	addChild(preMenu, 4);
+
+	// Lua places every button
+	lua_call_func_self(PauseFlowKeys::kLayoutControls, this, "PauseLayer");
 
 	if (UserDefault::sharedUserDefault()->getBoolForKey("isBGM") == false)
 	{
@@ -142,27 +119,15 @@ void PauseLayer::onBackToMenu(Ref *sender)
 	SimpleAudioEngine::sharedEngine()->playEffect("Audio/Menu/select.ogg");
 	exitLayer = Layer::create();
 
-	Sprite *exit_bg = Sprite::createWithSpriteFrameName("confirm_bg.png");
-	exit_bg->setPosition(Vec2(winSize.width / 2, winSize.height / 2));
+	_yesBtn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("yes_btn1.png"), Sprite::createWithSpriteFrameName("yes_btn2.png"), this, menu_selector(PauseLayer::onLeft));
+	_noBtn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("no_btn1.png"), Sprite::createWithSpriteFrameName("no_btn2.png"), this, menu_selector(PauseLayer::onCancel));
 
-	Sprite *comfirm_title = Sprite::createWithSpriteFrameName("confirm_title.png");
-	comfirm_title->setPosition(Vec2(winSize.width / 2, winSize.height / 2 + 38));
-
-	Sprite *surrender_text = Sprite::createWithSpriteFrameName("surrender_text.png");
-	surrender_text->setPosition(Vec2(winSize.width / 2, winSize.height / 2 + 8));
-
-	MenuItem *yes_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("yes_btn1.png"), Sprite::createWithSpriteFrameName("yes_btn2.png"), this, menu_selector(PauseLayer::onLeft));
-	MenuItem *no_btn = MenuItemSprite::create(Sprite::createWithSpriteFrameName("no_btn1.png"), Sprite::createWithSpriteFrameName("no_btn2.png"), this, menu_selector(PauseLayer::onCancel));
-
-	Menu *confirm_menu = Menu::create(yes_btn, no_btn, nullptr);
-	confirm_menu->alignItemsHorizontallyWithPadding(24);
-	confirm_menu->setPosition(Vec2(winSize.width / 2, winSize.height / 2 - 30));
-
-	exitLayer->addChild(exit_bg, 1);
-	exitLayer->addChild(confirm_menu, 2);
-	exitLayer->addChild(comfirm_title, 2);
-	exitLayer->addChild(surrender_text, 2);
+	_confirmMenu = Menu::create(_yesBtn, _noBtn, nullptr);
+	exitLayer->addChild(_confirmMenu, 2);
 	addChild(exitLayer, 500);
+
+	// Lua builds the dialog (background, title, text) and places the menu
+	lua_call_func_self(PauseFlowKeys::kBuildConfirm, this, "PauseLayer");
 }
 
 void PauseLayer::onLeft(Ref *sender)

@@ -181,11 +181,12 @@ void HudLayer::initGearButton(const string &charName)
 
 	if (gearMenu)
 		gearMenu->removeFromParent();
-	gearMenuSprite->setAnchorPoint(Vec2(0, 0));
 	gearMenu = Menu::create(gearMenuSprite, nullptr);
-	gearMenu->setPosition(Vec2(0, winSize.height - gearMenuSprite->getContentSize().height));
 	gearMenu->setTouchPriority(10);
 	addChild(gearMenu, 100);
+
+	// Lua places the avatar button (lua/ui/HudLayer.lua)
+	lua_call_func_self(HudFlowKeys::kLayoutAvatar, this, "HudLayer");
 }
 
 void HudLayer::playGameOpeningAnimation()
@@ -228,67 +229,33 @@ void HudLayer::initHeroInterface()
 
 	// produce status bar
 	status_bar = Sprite::createWithSpriteFrameName("status_bar_bg.png");
-	status_bar->setAnchorPoint(Vec2(0, 0));
-	status_bar->setPosition(Vec2(0, winHeight - status_bar->getContentSize().height));
 	uiBatch->addChild(status_bar);
 
 	// HP bar, HP mark and XP bar (+ labels) are built by lua/ui/HudLayer.lua,
 	// see HudLayer_InitStatusBars below.
-	MenuItem *menu_button = MenuItemSprite::create(Sprite::createWithSpriteFrameName("minimap_bg.png"), nullptr, nullptr, this, menu_selector(HudLayer::pauseButtonClick));
-	menu_button->setAnchorPoint(Vec2(1, 1));
-	pauseNenu = Menu::create(menu_button, nullptr);
-	pauseNenu->setPosition(Vec2(winWidth, winHeight));
+	pauseButton = MenuItemSprite::create(Sprite::createWithSpriteFrameName("minimap_bg.png"), nullptr, nullptr, this, menu_selector(HudLayer::pauseButtonClick));
+	pauseNenu = Menu::create(pauseButton, nullptr);
 	addChild(pauseNenu);
 
-	Sprite *killIcon = Sprite::createWithSpriteFrameName("kill_icon.png");
-	killIcon->setAnchorPoint(Vec2(0, 1));
-	killIcon->setPosition(Vec2(winWidth - 114, winHeight - 46));
+	killIcon = Sprite::createWithSpriteFrameName("kill_icon.png");
 	addChild(killIcon, 5000);
 
 	killLabel = CCLabelBMFont::create("0", Fonts::Default);
-	killLabel->setScale(0.26f);
-	killLabel->setAnchorPoint(Vec2(0, 1));
-	killLabel->setPosition(Vec2(killIcon->getPositionX() + killIcon->getContentSize().width / 2 + 5, winHeight - 56));
 	addChild(killLabel, 5001);
 
-	Sprite *deadIcon = Sprite::createWithSpriteFrameName("dead_icon.png");
-	deadIcon->setAnchorPoint(Vec2(0, 1));
-	deadIcon->setPosition(Vec2(winWidth - 114 + 26, winHeight - 47));
+	deadIcon = Sprite::createWithSpriteFrameName("dead_icon.png");
 	addChild(deadIcon, 5000);
 
 	deadLabel = CCLabelBMFont::create("0", Fonts::Default);
-	deadLabel->setScale(0.26f);
-	deadLabel->setAnchorPoint(Vec2(0, 1));
-	deadLabel->setPosition(Vec2(deadIcon->getPositionX() + deadIcon->getContentSize().width / 2 + 5, winHeight - 56));
 	addChild(deadLabel, 5001);
 
 	KonoLabel = CCLabelBMFont::create("0", Fonts::Blue);
-	KonoLabel->setScale(0.35f);
 
 	AkaLabel = CCLabelBMFont::create("0", Fonts::Red);
-	AkaLabel->setScale(0.35f);
-
-	if (getGameLayer()->playerGroup == Group::Konoha)
-	{
-		KonoLabel->setAnchorPoint(Vec2(1, 1));
-		AkaLabel->setAnchorPoint(Vec2(0, 1));
-		KonoLabel->setPosition(Vec2(winWidth - 42, winHeight - 46));
-		AkaLabel->setPosition(Vec2(winWidth - 32, winHeight - 46));
-	}
-	else
-	{
-		AkaLabel->setAnchorPoint(Vec2(1, 1));
-		KonoLabel->setAnchorPoint(Vec2(0, 1));
-		AkaLabel->setPosition(Vec2(winWidth - 42, winHeight - 46));
-		KonoLabel->setPosition(Vec2(winWidth - 32, winHeight - 46));
-	}
 
 	addChild(KonoLabel, 5000);
 	addChild(AkaLabel, 5000);
-	auto hengLabel = CCLabelBMFont::create(":", Fonts::Default);
-	hengLabel->setScale(0.5f);
-	hengLabel->setAnchorPoint(Vec2(0.5f, 1));
-	hengLabel->setPosition(Vec2(winWidth - 37, KonoLabel->getPositionY() + 2));
+	hengLabel = CCLabelBMFont::create(":", Fonts::Default);
 	addChild(hengLabel, 5000);
 
 	auto currentPlayer = getGameLayer()->currentPlayer;
@@ -303,14 +270,9 @@ void HudLayer::initHeroInterface()
 					   (int)currentPlayer->getLV());
 
 	gameClock = CCLabelBMFont::create("00:00", Fonts::Default);
-	gameClock->setAnchorPoint(Vec2(0.5f, 0));
-	gameClock->setScale(0.4f);
-	gameClock->setPosition(Vec2(mScaleX * 25, 0));
 	addChild(gameClock, 5000);
 
 	coinLabel = CCLabelBMFont::create(currentPlayer->getCoin_Value().asString().c_str(), Fonts::Arial);
-	coinLabel->setAnchorPoint(Vec2(0, 0));
-	coinLabel->setPosition(Vec2(121, winHeight - 61));
 
 	addChild(coinLabel, 5000);
 
@@ -399,7 +361,8 @@ void HudLayer::initHeroInterface()
 #else
 	const bool isMobileLayout = false;
 #endif
-	lua_call_func_self(HudFlowKeys::kLayoutControls, this, "HudLayer", isMobileLayout);
+	lua_call_func_self(HudFlowKeys::kLayoutControls, this, "HudLayer", isMobileLayout,
+					   getGameLayer()->playerGroup == Group::Konoha, mScaleX);
 
 	// Set mask
 	skill1Button->setMarkSprite("skill_freeze.png");
@@ -501,32 +464,34 @@ void HudLayer::updateGears()
 	if (!gear1Button && !gear2Button && !gear3Button)
 	{
 		gear1Button = ActionButton::create("gearbg.png");
-		gear1Button->setPosition(Vec2(0, winSize.height - 92));
 		gear1Button->setDelegate(this);
 		gear1Button->setCD(15000);
 		gear1Button->setABType(GearBtn);
-
-		gear1Button->setMarkSprite("gear_freeze.png");
 		gear1Button->_gearType = GearType::None;
-		addChild(gear1Button, 200);
 
 		gear2Button = ActionButton::create("gearbg.png");
-		gear2Button->setPosition(Vec2(35, winSize.height - 112));
 		gear2Button->setDelegate(this);
 		gear2Button->setCD(15000);
 		gear2Button->_gearType = GearType::None;
 		gear2Button->setABType(GearBtn);
-		gear2Button->setMarkSprite("gear_freeze.png");
-
-		addChild(gear2Button, 200);
 
 		gear3Button = ActionButton::create("gearbg.png");
-		gear3Button->setPosition(Vec2(70, winSize.height - 92));
 		gear3Button->setCD(15000);
 		gear3Button->setDelegate(this);
 		gear3Button->_gearType = GearType::None;
-
 		gear3Button->setABType(GearBtn);
+
+		// Lua places the three buttons as one group (lua/ui/HudLayer.lua). This has to happen
+		// BEFORE setMarkSprite: it copies the button's position for the freeze overlay and the
+		// gear sign (position + 17), so a button placed afterwards loses its gear sign.
+		lua_call_func_self(HudFlowKeys::kLayoutGear, this, "HudLayer");
+
+		gear1Button->setMarkSprite("gear_freeze.png");
+		addChild(gear1Button, 200);
+
+		gear2Button->setMarkSprite("gear_freeze.png");
+		addChild(gear2Button, 200);
+
 		gear3Button->setMarkSprite("gear_freeze.png");
 		addChild(gear3Button, 200);
 

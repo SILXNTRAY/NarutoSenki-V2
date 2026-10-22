@@ -118,6 +118,48 @@ public:
 	CCLayer *getCurrentGearLayer();
 };
 
+/* PauseLayer.h
+ * Created by C++ (GameLayer::onPause). Audio, the sound / preload toggles,
+ * resuming and surrendering stay in C++; lua/ui/PauseLayer.lua builds the
+ * decoration, lays out the menus and builds the confirm dialog through the
+ * getters below.
+ * NOTE: only methods are declared (see the HudLayer note below).
+ */
+class PauseLayer : public CCLayer {
+public:
+	CCSprite *getSnapshotBg();
+	CCMenu *getPauseMenu();
+	CCMenu *getSoundMenu();
+	CCMenu *getPreMenu();
+	CCLayer *getExitLayer();
+	CCMenu *getConfirmMenu();
+	CCMenuItem *getResumeButton();
+	CCMenuItem *getBackButton();
+	CCMenuItem *getBgmButton();
+	CCMenuItem *getVoiceButton();
+	CCMenuItem *getPreloadButton();
+	CCMenuItem *getYesButton();
+	CCMenuItem *getNoButton();
+};
+
+/* GameOver.h
+ * Created by C++ (GameLayer game over flow). Score, reward and record
+ * calculation, anti-cheat checks and leaving the screen stay in C++;
+ * lua/ui/GameOver.lua draws the screen through the getters below.
+ * NOTE: only methods are declared (see the HudLayer note below).
+ */
+class GameOver : public CCLayer {
+public:
+	CCSprite *getSnapshotBg();
+	CCSprite *getResultBg();
+	CCMenu *getOverMenu();
+	CCLayer *getExitLayer();
+	CCMenu *getConfirmMenu();
+	CCMenuItem *getCloseButton();
+	CCMenuItem *getYesButton();
+	CCMenuItem *getNoButton();
+};
+
 /* LoadLayer.h */
 class LoadLayer : public CCLayer {
 public:
@@ -170,6 +212,23 @@ public:
 	ActionButton *getItem4Button();
 
 	CCLayer *getMiniLayer();
+	CCSprite *getStatusBar();
+	CCMenu *getPauseMenu();
+	CCMenuItem *getPauseButton();
+	CCSprite *getKillIcon();
+	CCLabelBMFont *getKillLabel();
+	CCSprite *getDeadIcon();
+	CCLabelBMFont *getDeadLabel();
+	CCLabelBMFont *getKonoLabel();
+	CCLabelBMFont *getAkaLabel();
+	CCLabelBMFont *getColonLabel();
+	CCLabelBMFont *getCoinLabel();
+	CCLabelBMFont *getGameClock();
+	CCMenu *getGearMenu();
+	CCMenuItem *getGearMenuSprite();
+	ActionButton *getGear1Button();
+	ActionButton *getGear2Button();
+	ActionButton *getGear3Button();
 };
 
 /* SelectLayer.h */

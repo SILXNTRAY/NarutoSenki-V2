@@ -1,5 +1,6 @@
 #pragma once
 #include "Hero.hpp"
+#include "BuffMechanics.hpp"
 
 class Suigetsu : public Hero
 {
@@ -145,41 +146,11 @@ class Suigetsu : public Hero
 
 	void changeAction() override
 	{
-		setTempAttackValue1(getNAttackValue());
-		setNAttackValue(1960);
-
-		_isOnlySkillLocked = true;
-
-		_nAttackRangeX = 16;
-		_nAttackRangeY = 48;
-
-		_isArmored = true;
-
-		setIdleAction(createAnimation(skillSPC1Array, 5, true, false));
-		setWalkAction(createAnimation(skillSPC2Array, 10, true, false));
-		setNAttackAction(createAnimation(skillSPC3Array, 10, false, true));
-
-		lockOugisButtons();
+		BuffMechanics::suigetsuChange(*this);
 	}
 
 	void setActionResume() override
 	{
-		_isArmored = false;
-		if (hasTempAttackValue1())
-		{
-			setNAttackValue(getTempAttackValue1());
-			setTempAttackValue1(0);
-		}
-		_isOnlySkillLocked = false;
-		unlockOugisButtons();
-
-		_nAttackRangeX = 16;
-		_nAttackRangeY = 48;
-
-		setIdleAction(createAnimation(idleArray, 5, true, false));
-		setWalkAction(createAnimation(walkArray, 10, true, false));
-		setNAttackAction(createAnimation(nattackArray, 10, false, true));
-
-		_skillChangeBuffValue = 0;
+		BuffMechanics::suigetsuActionResume(*this);
 	}
 };

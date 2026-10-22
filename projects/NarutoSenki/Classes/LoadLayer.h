@@ -6,6 +6,11 @@
 class CharacterBase;
 class Hero;
 
+// Loading screen shown before a match. Asset preloading, the timers (loading
+// music, starting the match) and building the game scene stay in C++.
+// lua/ui/LoadLayer.lua owns the look: bars, title, clouds, background, the tip
+// picture, the blinking "loading" text and the walking hero avatars.
+// See Classes/Constants/UiFlowKeys.hpp (LoadFlowKeys) for the Lua entry points.
 class LoadLayer : public Layer
 {
 public:

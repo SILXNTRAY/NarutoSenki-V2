@@ -161,6 +161,7 @@ public:
 		readMons(L, ns);
 		readBullets(L, ns);
 		readLinks(L, ns);
+		readBuffs(L, ns);
 		readTransforms(L, ns);
 		readExtras(L, ns);
 		finalize();
@@ -207,6 +208,23 @@ public:
 
 	/** ---- Transform ---- */
 
+	/**
+	 * Optional AI hint of a transform chain (ns.Transform { ..., via = 'ougis2', below = 0.5 }):
+	 * which skill slot (1-3 = skill1-3, 4 = ougis1, 5 = ougis2) holds the setTransform event,
+	 * and the HP fraction at or below which the AI should use it. Set on every form of the chain.
+	 */
+	struct TransformAi
+	{
+		int slot = 0;
+		float below = 1.0f;
+	};
+
+	const TransformAi *transformAiOf(const std::string &form) const
+	{
+		auto it = transformAi_.find(form);
+		return it == transformAi_.end() ? nullptr : &it->second;
+	}
+
 	const std::string *transformNext(const std::string &name) const
 	{
 		auto it = next_.find(name);
@@ -251,14 +269,63 @@ public:
 		return o && *o == owner;
 	}
 
-	/** First linked clone-kind summon of an owner (what a plain setClone spawns), or nullptr. */
+	/**
+	 * Key of a keyed link ({ 'Owner', key } in ns.LinkSummon): the number the owner's
+	 * <e type="setClone">key</e> must carry to spawn this summon. nullptr = unkeyed.
+	 */
+	const int *keyOf(const std::string &summon) const
+	{
+		auto it = key_.find(summon);
+		return it == key_.end() ? nullptr : &it->second;
+	}
+
+	/** The summon of `owner` linked with exactly this key (clone or kuchiyose), or nullptr. */
+	const Unit *linkedByKey(const std::string &owner, int key) const
+	{
+		for (auto &s : summonsOf(owner))
+		{
+			auto k = keyOf(s);
+			if (!k || *k != key)
+				continue;
+			auto u = findUnit(s);
+			if (u && u->kind != Kind::Hero)
+				return u;
+		}
+		return nullptr;
+	}
+
+	/**
+	 * First UNKEYED clone-kind summon of an owner: what a setClone spawns when no keyed
+	 * link matches its number. Unkeyed kuchiyose are only spawned by setSummon.
+	 */
 	const Unit *firstLinkedClone(const std::string &owner) const
 	{
 		for (auto &s : summonsOf(owner))
 		{
+			if (keyOf(s))
+				continue;
 			auto u = findUnit(s);
 			if (u && u->kind == Kind::Clone)
 				return u;
+		}
+		return nullptr;
+	}
+
+	/**
+	 * ns.CustomBuffs: the character whose cBuff mechanics `unit` uses for buff `id`
+	 * (the number of the xml's <e type="setBuff">id</e>), or nullptr. Later forms of a
+	 * transform chain use the base form's entries unless they declare their own.
+	 */
+	const std::string *buffDonor(const std::string &unit, int id) const
+	{
+		for (const std::string &name : {unit, baseOf(unit)})
+		{
+			auto it = buffs_.find(name);
+			if (it == buffs_.end())
+				continue;
+			auto d = it->second.find(id);
+			if (d != it->second.end())
+				return &d->second;
 		}
 		return nullptr;
 	}
@@ -418,8 +485,11 @@ private:
 	std::unordered_map<std::string, MonProfile> mons_;
 	std::unordered_map<std::string, BulletProfile> bullets_;
 	std::unordered_map<std::string, std::string> owner_;				  // summon -> owner
+	std::unordered_map<std::string, std::unordered_map<int, std::string>> buffs_; // unit -> buff id -> donor
+	std::unordered_map<std::string, int> key_;							  // summon -> setClone key (keyed links only)
 	std::unordered_map<std::string, std::vector<std::string>> summons_;	  // owner -> summons
 	std::unordered_map<std::string, std::string> next_;					  // form -> next form
+	std::unordered_map<std::string, TransformAi> transformAi_;			  // form -> AI hint (optional)
 	std::unordered_map<std::string, std::vector<std::string>> forms_;	  // base -> later forms
 	std::unordered_set<std::string> nonBase_;
 	std::unordered_map<std::string, std::string> base_;					  // later form -> base form
@@ -434,8 +504,11 @@ private:
 		mons_.clear();
 		bullets_.clear();
 		owner_.clear();
+		key_.clear();
+		buffs_.clear();
 		summons_.clear();
 		next_.clear();
+		transformAi_.clear();
 		forms_.clear();
 		nonBase_.clear();
 		base_.clear();
@@ -727,6 +800,7 @@ private:
 		lua_pop(L, 1);
 	}
 
+	/** LinkSummon.Name = 'Owner'  |  { 'Owner' }  |  { 'Owner', key } */
 	void readLinks(lua_State *L, int ns)
 	{
 		lua_getfield(L, ns, "LinkSummon");
@@ -734,12 +808,105 @@ private:
 		{
 			eachStringKey(L, lua_gettop(L), [&](const std::string &summon, int v)
 			{
-				if (lua_type(L, v) != LUA_TSTRING)
+				if (lua_type(L, v) == LUA_TSTRING)
 				{
-					CUSTOM_LOG("[Custom] LinkSummon.%s must be the owner's name (a string), skipped", summon.c_str());
+					owner_[summon] = lua_tostring(L, v);
 					return;
 				}
-				owner_[summon] = lua_tostring(L, v);
+
+				if (lua_istable(L, v))
+				{
+					lua_rawgeti(L, v, 1);
+					bool ownerOk = lua_type(L, -1) == LUA_TSTRING;
+					std::string owner = ownerOk ? lua_tostring(L, -1) : "";
+					lua_pop(L, 1);
+
+					if (!ownerOk)
+					{
+						CUSTOM_LOG("[Custom] LinkSummon.%s: the first entry must be the owner's name, skipped", summon.c_str());
+						return;
+					}
+
+					owner_[summon] = owner;
+
+					lua_rawgeti(L, v, 2);
+					if (lua_isnumber(L, -1))
+						key_[summon] = (int)lua_tonumber(L, -1);
+					else if (!lua_isnil(L, -1))
+						CUSTOM_LOG("[Custom] LinkSummon.%s: the key must be a number, link kept without a key", summon.c_str());
+					lua_pop(L, 1);
+					return;
+				}
+
+				CUSTOM_LOG("[Custom] LinkSummon.%s must be the owner's name or { owner, key }, skipped", summon.c_str());
+			});
+		}
+		lua_pop(L, 1);
+	}
+
+	/** Optional  via = 'skill1'|'skill2'|'skill3'|'ougis1'|'ougis2',  below = 0..1  on a chain table. */
+	void readTransformAi(lua_State *L, int chainTbl, const std::vector<std::string> &chain)
+	{
+		std::string via;
+		if (!readString(L, chainTbl, "via", via) || chain.size() < 2)
+			return;
+
+		TransformAi ai;
+		if (via == "skill1")
+			ai.slot = 1;
+		else if (via == "skill2")
+			ai.slot = 2;
+		else if (via == "skill3")
+			ai.slot = 3;
+		else if (via == "ougis1")
+			ai.slot = 4;
+		else if (via == "ougis2")
+			ai.slot = 5;
+		else
+		{
+			CUSTOM_LOG("[Custom] Transform chain '%s': via must be skill1, skill2, skill3, ougis1 or ougis2, got '%s'; ignored", chain[0].c_str(), via.c_str());
+			return;
+		}
+
+		float below = 1.0f;
+		if (readNumber(L, chainTbl, "below", below))
+		{
+			if (below <= 0.0f || below > 1.0f)
+			{
+				CUSTOM_LOG("[Custom] Transform chain '%s': below must be between 0 and 1, using 1 (any HP)", chain[0].c_str());
+				below = 1.0f;
+			}
+			ai.below = below;
+		}
+
+		for (auto &form : chain)
+			transformAi_[form] = ai;
+	}
+
+	/** CustomBuffs = { Unit = { [17] = 'Suigetsu', [18] = 'Kakashi' } } */
+	void readBuffs(lua_State *L, int ns)
+	{
+		lua_getfield(L, ns, "CustomBuffs");
+		if (lua_istable(L, -1))
+		{
+			eachStringKey(L, lua_gettop(L), [&](const std::string &unit, int v)
+			{
+				if (!lua_istable(L, v))
+				{
+					CUSTOM_LOG("[Custom] CustomBuffs.%s must be a table { [id] = 'Character' }, skipped", unit.c_str());
+					return;
+				}
+
+				lua_pushnil(L);
+				while (lua_next(L, v) != 0)
+				{
+					// key at -2, value at -1
+					if (lua_type(L, -2) == LUA_TNUMBER && lua_type(L, -1) == LUA_TSTRING)
+						buffs_[unit][(int)lua_tonumber(L, -2)] = lua_tostring(L, -1);
+					else
+						CUSTOM_LOG("[Custom] CustomBuffs.%s: entries must look like [17] = 'Suigetsu', one skipped", unit.c_str());
+					lua_pop(L, 1);
+				}
 			});
 		}
 		lua_pop(L, 1);
@@ -761,7 +928,9 @@ private:
 				}
 				if (lua_istable(L, -1))
 				{
-					auto chain = readArray(L, lua_gettop(L));
+					int chainTbl = lua_gettop(L);
+					auto chain = readArray(L, chainTbl);
+					readTransformAi(L, chainTbl, chain);
 					for (size_t k = 0; k + 1 < chain.size(); k++)
 					{
 						if (next_.count(chain[k]))
@@ -824,6 +993,27 @@ private:
 				CUSTOM_LOG("[Custom] LinkSummon.%s is not declared in CustomClones or CustomKuchiyose", s.first.c_str());
 			else if (units_[unitIndex_[s.first]].kind == Kind::Hero)
 				CUSTOM_LOG("[Custom] LinkSummon.%s is a character; summons belong in CustomClones or CustomKuchiyose", s.first.c_str());
+		}
+
+		for (auto &b : buffs_)
+			if (!unitIndex_.count(b.first))
+				CUSTOM_LOG("[Custom] CustomBuffs.%s is not a declared custom unit", b.first.c_str());
+
+		// two summons of one owner sharing a key: the first (by name) wins at runtime
+		for (auto &kv : summons_)
+		{
+			std::unordered_map<int, std::string> seen;
+			for (auto &name : kv.second)
+			{
+				auto k = key_.find(name);
+				if (k == key_.end())
+					continue;
+				auto dup = seen.find(k->second);
+				if (dup != seen.end())
+					CUSTOM_LOG("[Custom] LinkSummon: '%s' and '%s' both use key %d on '%s', '%s' wins", dup->second.c_str(), name.c_str(), k->second, kv.first.c_str(), dup->second.c_str());
+				else
+					seen[k->second] = name;
+			}
 		}
 
 		for (auto &u : units_)

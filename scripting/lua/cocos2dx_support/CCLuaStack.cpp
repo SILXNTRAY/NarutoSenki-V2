@@ -572,7 +572,8 @@ int CCLuaStack::luaLoadBuffer(lua_State* L, const char* chunk, int chunkSize, co
 {
     int r = 0;
     
-    if (m_xxteaEnabled && strncmp(chunk, m_xxteaSign, m_xxteaSignLen) == 0)
+    // the buffer is not NUL terminated: compare by length, never past the end of the file
+    if (m_xxteaEnabled && chunkSize >= m_xxteaSignLen && memcmp(chunk, m_xxteaSign, m_xxteaSignLen) == 0)
     {
         // decrypt XXTEA
         xxtea_long len = 0;
@@ -581,6 +582,13 @@ int CCLuaStack::luaLoadBuffer(lua_State* L, const char* chunk, int chunkSize, co
                                               (unsigned char*)m_xxteaKey,
                                               (xxtea_long)m_xxteaKeyLen,
                                               &len);
+        if (!result)
+        {
+            // wrong key, or the file was changed after it was encrypted: say so instead of loading nothing
+            CCLOG("[LUA ERROR] cannot decrypt \"%s\" (wrong key, or the file was changed after encrypting)", chunkName);
+            lua_pushfstring(L, "cannot decrypt \"%s\" (wrong key, or the file was changed after encrypting)", chunkName);
+            return LUA_ERRSYNTAX;
+        }
         r = luaL_loadbuffer(L, (char*)result, len, chunkName);
         free(result);
     }

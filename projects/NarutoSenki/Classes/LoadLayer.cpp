@@ -1,6 +1,7 @@
 #include "LoadLayer.h"
 #include "GameMode/GameModeImpl.h"
 #include "Core/CustomRegistry.hpp"
+#include "Constants/UiFlowKeys.hpp"
 
 LoadLayer::LoadLayer()
 {
@@ -17,44 +18,8 @@ bool LoadLayer::init()
 	if (!Layer::init())
 		return false;
 
-	// produce the menu_bar
-	Sprite *menu_bar_b = Sprite::create("menu_bar2.png");
-	menu_bar_b->setAnchorPoint(Vec2(0, 0));
-	FULL_SCREEN_SPRITE(menu_bar_b);
-	addChild(menu_bar_b, 2);
-
-	Sprite *menu_bar_t = Sprite::create("menu_bar3.png");
-	menu_bar_t->setAnchorPoint(Vec2(0, 0));
-	menu_bar_t->setPosition(Vec2(0, winSize.height - menu_bar_t->getContentSize().height));
-	FULL_SCREEN_SPRITE(menu_bar_t);
-	addChild(menu_bar_t, 2);
-
-	Sprite *loading_title = Sprite::createWithSpriteFrameName("loading_title.png");
-	loading_title->setAnchorPoint(Vec2(0, 0));
-	loading_title->setPosition(Vec2(2, winSize.height - loading_title->getContentSize().height - 2));
-	addChild(loading_title, 3);
-
-	// produce the cloud
-	Sprite *cloud_left = Sprite::createWithSpriteFrameName("cloud.png");
-	cloud_left->setPosition(Vec2(0, 15));
-	cloud_left->setFlipX(true);
-	cloud_left->setFlipY(true);
-	cloud_left->setAnchorPoint(Vec2(0, 0));
-	addChild(cloud_left, 1);
-
-	auto cmv1 = MoveBy::create(1, Vec2(-15, 0));
-	auto cseq1 = RepeatForever::create(newSequence(cmv1, cmv1->reverse()));
-	cloud_left->runAction(cseq1);
-
-	Sprite *cloud_right = Sprite::createWithSpriteFrameName("cloud.png");
-	cloud_right->setPosition(Vec2(winSize.width - cloud_right->getContentSize().width,
-								  winSize.height - (cloud_right->getContentSize().height + 15)));
-	cloud_right->setAnchorPoint(Vec2(0, 0));
-	addChild(cloud_right, 1);
-
-	auto cmv2 = MoveBy::create(1, Vec2(15, 0));
-	auto cseq2 = RepeatForever::create(newSequence(cmv2, cmv2->reverse()));
-	cloud_right->runAction(cseq2);
+	// Lua builds the bars, title and clouds (lua/ui/LoadLayer.lua)
+	lua_call_func_self(LoadFlowKeys::kInitDecor, this, "LoadLayer");
 
 	const auto &gd = getGameModeHandler()->getGameData();
 	_enableGear = gd.enableGear;
@@ -114,16 +79,10 @@ void LoadLayer::preloadIMG()
 
 	setRand();
 	int num = rand() % 3 + 1;
-	Sprite *tips = Sprite::createWithSpriteFrameName(format("tip{}.png", num).c_str());
-	tips->setPosition(Vec2(winSize.width / 2, winSize.height / 2));
-	addChild(tips);
 
-	Sprite *loading = Sprite::createWithSpriteFrameName("loading_font.png");
-	loading->setPosition(Vec2(winSize.width - 120, 45));
-	auto fade = FadeOut::create(1.0f);
-	auto fadeseq = RepeatForever::create(newSequence(fade, fade->reverse()));
-	addChild(loading);
-	loading->runAction(fadeseq);
+	// Lua draws the tip picture and the blinking "loading" text
+	lua_call_func_self(LoadFlowKeys::kShowTip, this, "LoadLayer", num);
+	lua_call_func_self(LoadFlowKeys::kShowLoadingText, this, "LoadLayer");
 
 	scheduleOnce(schedule_selector(LoadLayer::playBGM), 1.0f);
 	scheduleOnce(schedule_selector(LoadLayer::onLoadFinish), 3.0f);
@@ -315,26 +274,11 @@ void LoadLayer::unloadAllCharsIMG(const vector<Hero *> &players)
 
 void LoadLayer::setLoadingAnimation(const char *player, int index)
 {
-	auto loadingAvator = Sprite::createWithSpriteFrameName(format("{}_Walk_01", player).c_str());
-	loadingAvator->setFlipX(true);
-	loadingAvator->setPosition(Vec2(winSize.width - 100 + index * 16, 30));
-	loadingAvator->setAnchorPoint(Vec2(0, 0));
-
 	// FIXME: Use the other way get animation frame count
-	ssize_t frameCount = is_same(player, HeroEnum::Konan) ? 1 : 7;
-	Vector<SpriteFrame *> animeFrames(frameCount);
-	for (int i = 1; i < frameCount; i++)
-	{
-		auto frame = getSpriteFrame("{}_Walk_{:02d}", player, i);
-		animeFrames.pushBack(frame);
-	}
+	int frameCount = is_same(player, HeroEnum::Konan) ? 1 : 7;
 
-	auto tempAnimation = Animation::createWithSpriteFrames(animeFrames, 1.0f / 10.0f);
-	auto tempAction = Animate::create(tempAnimation);
-	auto animAction = RepeatForever::create(tempAction);
-
-	addChild(loadingAvator);
-	loadingAvator->runAction(animAction);
+	// Lua builds the sprite and its walk animation
+	lua_call_func_self(LoadFlowKeys::kAddAvatar, this, "LoadLayer", player, index, frameCount);
 }
 
 void LoadLayer::playBGM(float dt)
@@ -345,12 +289,8 @@ void LoadLayer::playBGM(float dt)
 void LoadLayer::preloadAudio()
 {
 	auto bg_src = _enableGear ? "blue_bg.png" : "red_bg.png";
-	Sprite *bgSprite = Sprite::create(bg_src);
-
-	FULL_SCREEN_SPRITE(bgSprite);
-	bgSprite->setAnchorPoint(Vec2(0, 0));
-	bgSprite->setPosition(Vec2(0, 0));
-	addChild(bgSprite, -5);
+	// Lua draws the background
+	lua_call_func_self(LoadFlowKeys::kSetBackground, this, "LoadLayer", bg_src);
 
 	preloadIMG();
 }

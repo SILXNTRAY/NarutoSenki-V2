@@ -1,6 +1,45 @@
 #include "ActionButton.h"
 #include "CharacterBase.h"
 #include "HudLayer.h"
+#include "Utils/Cocos2dxHelper.hpp"
+
+// BEGIN hudMarkOffset
+namespace
+{
+// ns.HudMarks[name] = { x = , y = } (lua/ui/HudLayer.lua): where an overlay sits on its button, in
+// button units from the bottom-left corner. `fallback` is the original hardcoded value, used
+// whenever Lua is not ready or the entry is missing, so behaviour never changes by accident.
+Vec2 hudMarkOffset(const char *name, const Vec2 &fallback)
+{
+	if (!LuaBridge::isReady())
+		return fallback;
+
+	auto L = LuaEngine::defaultEngine()->getLuaStack()->getLuaState();
+	const int top = lua_gettop(L);
+	Vec2 result = fallback;
+
+	lua_getglobal(L, "ns");
+	if (lua_istable(L, -1))
+	{
+		lua_getfield(L, -1, "HudMarks");
+		if (lua_istable(L, -1))
+		{
+			lua_getfield(L, -1, name);
+			if (lua_istable(L, -1))
+			{
+				lua_getfield(L, -1, "x");
+				lua_getfield(L, -2, "y");
+				if (lua_isnumber(L, -2) && lua_isnumber(L, -1))
+					result = Vec2((float)lua_tonumber(L, -2), (float)lua_tonumber(L, -1));
+			}
+		}
+	}
+
+	lua_settop(L, top);
+	return result;
+}
+} // namespace
+// END hudMarkOffset
 
 ActionButton::ActionButton()
 {
@@ -291,7 +330,8 @@ void ActionButton::setMarkSprite(const char *mark)
 	markSprite->setType(kCCProgressTimerTypeRadial);
 
 	markSprite->setReverseDirection(true);
-	markSprite->setPosition(getPosition());
+	// offset from lua/ui/HudLayer.lua (ns.HudMarks), scaled with the button
+	markSprite->setPosition(getPosition() + hudMarkOffset(_abType == GearBtn ? "gearFreeze" : "skillFreeze", Vec2(0, 0)) * getScale());
 	markSprite->setAnchorPoint(Vec2(0, 0));
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 #else
@@ -304,7 +344,7 @@ void ActionButton::setMarkSprite(const char *mark)
 		if (getGameLayer()->_enableGear)
 		{
 			gearSign = Sprite::createWithSpriteFrameName("gearsign.png");
-			gearSign->setPosition(Vec2(getPositionX() + 17, getPositionY() + 17));
+			gearSign->setPosition(getPosition() + hudMarkOffset("gearSign", Vec2(17, 17)) * getScale());
 			_delegate->addChild(gearSign, 500);
 		}
 	}
@@ -313,7 +353,7 @@ void ActionButton::setMarkSprite(const char *mark)
 void ActionButton::setOugisMark()
 {
 	ougismarkSprite = Sprite::createWithSpriteFrameName("skill_freeze.png");
-	ougismarkSprite->setPosition(getPosition());
+	ougismarkSprite->setPosition(getPosition() + hudMarkOffset("skillFreeze", Vec2(0, 0)) * getScale());
 	ougismarkSprite->setAnchorPoint(Vec2(0, 0));
 	_delegate->addChild(ougismarkSprite, 500);
 	if (_abType == OUGIS1)

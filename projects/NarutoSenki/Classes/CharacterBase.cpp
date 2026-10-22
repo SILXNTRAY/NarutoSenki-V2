@@ -1,5 +1,6 @@
 #include "CharacterBase.h"
 #include "Core/Provider.hpp"
+#include "Core/BuffMechanics.hpp"
 #include "HudLayer.h"
 #include "GameLayer.h"
 #include "GameMode/GameModeImpl.h"
@@ -2227,9 +2228,15 @@ void CharacterBase::setBuff(int buffValue)
 	{
 		_skillChangeBuffValue = buffValue;
 
-		if (getGimmickName() == HeroEnum::Shino ||
-			getGimmickName() == HeroEnum::Sai ||
-			getGimmickName() == HeroEnum::Deidara)
+		// ns.CustomBuffs: borrow another character's cBuff mechanics (and its timing rules) for this id
+		_buffDonor.clear();
+		if (auto donor = Custom::Registry::get().buffDonor(getName(), buffValue))
+			_buffDonor = *donor;
+		const string gimmick = _buffDonor.empty() ? getGimmickName() : _buffDonor;
+
+		if (gimmick == HeroEnum::Shino ||
+			gimmick == HeroEnum::Sai ||
+			gimmick == HeroEnum::Deidara)
 		{
 			if (_skillChangeBuffValue == 17)
 			{
@@ -2242,15 +2249,15 @@ void CharacterBase::setBuff(int buffValue)
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
 		}
-		else if (getGimmickName() == HeroEnum::Kiba)
+		else if (gimmick == HeroEnum::Kiba)
 		{
 			if (_skillChangeBuffValue == 18)
 			{
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
 		}
-		else if ((getGimmickName() == HeroEnum::ImmortalSasuke ||
-			getGimmickName() == HeroEnum::Sasuke) &&
+		else if ((gimmick == HeroEnum::ImmortalSasuke ||
+			gimmick == HeroEnum::Sasuke) &&
 			_skillChangeBuffValue == 18)
 		{
 			unschedule(schedule_selector(CharacterBase::resumeAction));
@@ -2262,7 +2269,7 @@ void CharacterBase::setBuff(int buffValue)
 
 			scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 		}
-		else if (getGimmickName() == HeroEnum::Minato)
+		else if (gimmick == HeroEnum::Minato)
 		{
 			if (_skillChangeBuffValue == 18)
 			{
@@ -2272,22 +2279,23 @@ void CharacterBase::setBuff(int buffValue)
 		else
 		{
 			if (isNotGuardian() &&
-				getGimmickName() != HeroEnum::Kankuro &&
-				getGimmickName() != HeroEnum::Chiyo &&
-				getGimmickName() != HeroEnum::Hiruzen &&
-				getGimmickName() != HeroEnum::Suigetsu &&
-				getGimmickName() != HeroEnum::Jugo &&
-				getGimmickName() != HeroEnum::Kisame &&
-				getGimmickName() != KugutsuEnum::Parents &&
-				getGimmickName() != HeroEnum::Lee &&
-				getGimmickName() != HeroEnum::RockLee &&
-				getGimmickName() != HeroEnum::Nagato)
+				gimmick != HeroEnum::Kankuro &&
+				gimmick != HeroEnum::Chiyo &&
+				gimmick != HeroEnum::Hiruzen &&
+				gimmick != HeroEnum::Suigetsu &&
+				gimmick != HeroEnum::Jugo &&
+				gimmick != HeroEnum::Kisame &&
+				gimmick != KugutsuEnum::Parents &&
+				gimmick != HeroEnum::Lee &&
+				gimmick != HeroEnum::RockLee &&
+				gimmick != HeroEnum::Nagato)
 			{
 				scheduleOnce(schedule_selector(CharacterBase::resumeAction), buffStayTime);
 			}
 		}
 
-		changeAction();
+		if (_buffDonor.empty() || !BuffMechanics::change(_buffDonor, *this))
+			changeAction();
 	}
 	else if (_attackType == "tBuff")
 	{
@@ -2691,11 +2699,20 @@ void CharacterBase::reCatched(float dt)
 
 void CharacterBase::resumeAction(float dt)
 {
+	// ns.CustomBuffs: the buff timer ended for a borrowed mechanic
+	if (!_buffDonor.empty())
+	{
+		BuffMechanics::resume(_buffDonor, *this);
+		_buffDonor.clear();
+	}
 	_skillChangeBuffValue = 0;
 }
 
 void CharacterBase::setActionResume()
 {
+	// ns.CustomBuffs: the xml's setActionResume event for a borrowed mechanic
+	if (!_buffDonor.empty() && BuffMechanics::actionResume(_buffDonor, *this))
+		_buffDonor.clear();
 }
 
 void CharacterBase::setActionResume2()
@@ -2901,13 +2918,36 @@ string CharacterBase::getGimmickName()
 	return registry.hasAliases() ? registry.gimmickOf(getName()) : getName();
 }
 
+Hero* CharacterBase::createLinked(const string& name)
+{
+	auto& registry = Custom::Registry::get();
+	auto unit = registry.findSummon(name);
+	if (!unit)
+		return nullptr;
+
+	Role role = Role::Clone;
+	if (unit->kind == Custom::Kind::Kuchiyose)
+		role = Custom::Registry::folderOf(name, true) == "Kugutsu" ? Role::Kugutsu : Role::Summon;
+
+	Hero* hero = Provider::create(name, role, getGroup());
+	if (hero && unit->kind == Custom::Kind::Kuchiyose)
+		_monsterArray.push_back(hero); // owners keep track of their kuchiyose here (see Kiba::createClone)
+
+	return hero;
+}
+
 void CharacterBase::setClone(int cloneTime)
 {
 	Hero* clone = nullptr;
+	auto& registry = Custom::Registry::get();
 
-	// A custom clone linked to this unit (ns.LinkSummon) wins over the character's own createClone()
-	if (auto linked = Custom::Registry::get().firstLinkedClone(getName()))
-		clone = Provider::create(linked->name, Role::Clone, getGroup());
+	// ns.LinkSummon wins over the character's own createClone():
+	// 1. a keyed link { 'Owner', cloneTime } (clone or kuchiyose / kugutsu),
+	// 2. otherwise the first unkeyed linked clone.
+	if (auto keyed = registry.linkedByKey(getName(), cloneTime))
+		clone = createLinked(keyed->name);
+	else if (auto linked = registry.firstLinkedClone(getName()))
+		clone = createLinked(linked->name);
 	else
 		clone = createClone(cloneTime);
 
@@ -2927,25 +2967,17 @@ void CharacterBase::setSummon(const string& spec)
 	}
 
 	auto& registry = Custom::Registry::get();
-	auto summon = registry.findSummon(summonName);
-	if (!summon || !registry.isLinked(summonName, getName()))
+	if (!registry.findSummon(summonName) || !registry.isLinked(summonName, getName()))
 	{
 		CCLOG("[Custom] %s can not summon '%s': not linked to it in ns.LinkSummon", getName().c_str(), summonName.c_str());
 		return;
 	}
 
-	Role role = Role::Clone;
-	if (summon->kind == Custom::Kind::Kuchiyose)
-		role = Custom::Registry::folderOf(summonName, true) == "Kugutsu" ? Role::Kugutsu : Role::Summon;
-
-	Hero* hero = Provider::create(summonName, role, getGroup());
-	if (hero && summon->kind == Custom::Kind::Kuchiyose)
-		_monsterArray.push_back(hero); // owners keep track of their kuchiyose here (see Kiba::createClone)
-
-	attachClone(hero, lifeTime);
+	// the lifetime is only a lifetime here: it never selects the stock clone tweaks
+	attachClone(createLinked(summonName), lifeTime, false);
 }
 
-void CharacterBase::attachClone(Hero* clone, int cloneTime)
+void CharacterBase::attachClone(Hero* clone, int cloneTime, bool stockClone)
 {
 	if (clone == nullptr)
 	{
@@ -2965,8 +2997,8 @@ void CharacterBase::attachClone(Hero* clone, int cloneTime)
 
 	clone->setPosition(Vec2(getPositionX() + (_isFlipped ? -32 : 32), getPositionY() - 1));
 
-	if ((getGimmickName() == HeroEnum::SageNaruto || getGimmickName() == HeroEnum::Naruto) ||
-		(getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 10))
+	if (stockClone && ((getGimmickName() == HeroEnum::SageNaruto || getGimmickName() == HeroEnum::Naruto) ||
+					   (getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 10)))
 	{
 		clone->setHPValue(getHP(), false);
 	}
@@ -2983,7 +3015,7 @@ void CharacterBase::attachClone(Hero* clone, int cloneTime)
 	clone->setHPbar();
 	clone->_hpBar->getHPBAR()->setScaleX(clone->getHpPercent());
 
-	if (getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 9)
+	if (stockClone && getGimmickName() == HeroEnum::RikudoNaruto && cloneTime == 9)
 	{
 		if (clone->_hpBar)
 		{
@@ -2991,7 +3023,7 @@ void CharacterBase::attachClone(Hero* clone, int cloneTime)
 		}
 		clone->setNAttackValue(1060);
 	}
-	else if (getGimmickName() == HeroEnum::Kakashi)
+	else if (stockClone && getGimmickName() == HeroEnum::Kakashi)
 	{
 		clone->setNAttackValue(1060);
 	}

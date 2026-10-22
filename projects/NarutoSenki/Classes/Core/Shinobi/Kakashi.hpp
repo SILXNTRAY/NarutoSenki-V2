@@ -1,5 +1,6 @@
 #pragma once
 #include "Hero.hpp"
+#include "BuffMechanics.hpp"
 #include "Kuchiyose/DogWall.hpp"
 
 class Kakashi : public Hero
@@ -120,68 +121,12 @@ class Kakashi : public Hero
 
 	void changeAction() override
 	{
-		setSkill1Action(createAnimation(skillSPC1Array, 10, false, true));
-		setSkill2Action(createAnimation(skillSPC2Array, 10, false, true));
-		setIdleAction(createAnimation(skillSPC3Array, 5, true, false));
-		setTempAttackValue1(getSAttackValue1());
-		setSAttackValue1(getSpcAttackValue1());
-
-		for (auto hero : getGameLayer()->_CharacterArray)
-		{
-			if (getGroup() != hero->getGroup() &&
-				hero->isPlayerOrCom() &&
-				hero->getState() != State::HURT &&
-				hero->getState() != State::DEAD)
-			{
-				float distanceX = (hero->getPosition() - getPosition()).x;
-				if (distanceX < kAttackRange)
-				{
-					if (!hero->_isVisable)
-					{
-						if (hero->getGimmickName() == HeroEnum::Konan ||
-							hero->getGimmickName() == HeroEnum::Deidara)
-						{
-							hero->unschedule(schedule_selector(CharacterBase::disableBuff));
-						}
-
-						hero->setOpacity(255);
-						hero->setVisible(true);
-
-						if (hero->_hpBar)
-							hero->_hpBar->setVisible(true);
-						if (hero->_shadow)
-							hero->_shadow->setVisible(true);
-
-						hero->_isVisable = true;
-					}
-				}
-			}
-		}
-
-		if (isPlayer())
-		{
-			auto frame = getSpriteFrame("Kakashi_skill1_1.png");
-			getGameLayer()->getHudLayer()->skill1Button->setDisplayFrame(frame);
-			frame = getSpriteFrame("Kakashi_skill2_1.png");
-			getGameLayer()->getHudLayer()->skill2Button->setDisplayFrame(frame);
-		}
+		BuffMechanics::kakashiChange(*this);
 	}
 
 	void resumeAction(float dt) override
 	{
-		setIdleAction(createAnimation(idleArray, 5, true, false));
-		setSkill1Action(createAnimation(skill1Array, 10, false, true));
-		setSkill2Action(createAnimation(skill2Array, 10, false, true));
-
-		setSAttackValue1(getTempAttackValue1());
-
-		if (isPlayer())
-		{
-			auto frame = getSpriteFrame("Kakashi_skill1.png");
-			getGameLayer()->getHudLayer()->skill1Button->setDisplayFrame(frame);
-			frame = getSpriteFrame("Kakashi_skill2.png");
-			getGameLayer()->getHudLayer()->skill2Button->setDisplayFrame(frame);
-		}
+		BuffMechanics::kakashiResume(*this);
 		CharacterBase::resumeAction(dt);
 	}
 

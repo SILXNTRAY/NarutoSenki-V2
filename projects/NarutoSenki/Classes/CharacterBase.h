@@ -24,10 +24,12 @@ enum class State : uint16_t
 
 class HPBar;
 class Hero;
+struct BuffMechanics;
 
 class CharacterBase : public Sprite
 {
 	friend class CommandSystem;
+	friend struct BuffMechanics;
 
 	using ActionMap = Map<ActionFlag, FiniteTimeAction*>;
 
@@ -66,6 +68,8 @@ public:
 
 	// buff
 	uint32_t			_healBuffValue;
+	// ns.CustomBuffs: character whose cBuff mechanics the active cBuff borrowed (empty = the unit's own)
+	string				_buffDonor;
 	uint32_t			_dehealBuffValue;
 	uint32_t			_powerUPBuffValue;
 	uint32_t			_skillUPBuffValue;
@@ -410,8 +414,15 @@ public:
 
 	virtual Hero* createClone(int cloneTime);
 	void				setClone(int cloneTime);
-	/** Add a freshly created clone/summon to the battle (shared by setClone and setSummon) */
-	void				attachClone(Hero* clone, int cloneTime);
+	/**
+	 * Add a freshly created clone/summon to the battle (shared by setClone and setSummon).
+	 * cloneTime > 0 is also the seconds before it despawns. stockClone is true on the
+	 * setClone path only: the original characters' clone tweaks (Naruto's current-HP copy,
+	 * RikudoNaruto's 10 / 9, Kakashi's attack value) must not leak into setSummon.
+	 */
+	void				attachClone(Hero* clone, int cloneTime, bool stockClone = true);
+	/** Build a custom clone / kuchiyose / kugutsu from ns.LinkSummon (role picked from its kind and folder) */
+	Hero*				createLinked(const string& name);
 	/** Spawn a summon linked to this unit in ns.LinkSummon. spec is "Name" or "Name:seconds" */
 	void				setSummon(const string& spec);
 	/** The stock character whose gimmick this unit copies. Equals getName() for stock characters. */

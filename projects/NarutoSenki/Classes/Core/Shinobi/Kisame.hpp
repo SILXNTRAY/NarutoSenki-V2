@@ -1,5 +1,6 @@
 #pragma once
 #include "Hero.hpp"
+#include "BuffMechanics.hpp"
 
 class Kisame : public Hero
 {
@@ -153,47 +154,11 @@ class Kisame : public Hero
 
 	void changeAction() override
 	{
-		setTempAttackValue1(getNAttackValue());
-		setNAttackValue(660);
-
-		_isOnlySkillLocked = true;
-
-		_nAttackRangeX = 32;
-		_nAttackRangeY = 48;
-
-		setIdleAction(createAnimation(skillSPC1Array, 5, true, false));
-		setWalkAction(createAnimation(skillSPC2Array, 10, true, false));
-		setNAttackAction(createAnimation(skillSPC3Array, 10, false, true));
-
-		setWalkSpeed(112);
-		_originSpeed = 112;
-
-		lockOugisButtons();
+		BuffMechanics::kisameChange(*this);
 	}
 
 	void setActionResume() override
 	{
-		if (_skillChangeBuffValue == 0)
-			return;
-
-		if (hasTempAttackValue1())
-		{
-			setNAttackValue(getTempAttackValue1());
-			setTempAttackValue1(0);
-		}
-		_isOnlySkillLocked = false;
-		unlockOugisButtons();
-
-		_nAttackRangeX = 16;
-		_nAttackRangeY = 48;
-
-		setIdleAction(createAnimation(idleArray, 5, true, false));
-		setWalkAction(createAnimation(walkArray, 10, true, false));
-		setNAttackAction(createAnimation(nattackArray, 10, false, true));
-
-		_skillChangeBuffValue = 0;
-
-		setWalkSpeed(224);
-		_originSpeed = 224;
+		BuffMechanics::kisameActionResume(*this);
 	}
 };
